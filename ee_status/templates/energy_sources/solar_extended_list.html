@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+<form method="get">
+                {{ filter.form|crispy }} <input type="hidden"/>
+                <button class="btn btn-outline-primary btn-block" type="submit">{% trans "Filter" %}</button>
+            </form>
+
+<h1 class="title">{% trans "EnergySource: Solar" %}</h1>
+
+  <div>
+  <canvas id="myChart"></canvas>
+</div>
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Month</th>
+      <th scope="col">Nettonennleistung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tbody>
+                {% for se in solar_extended_list %}
+                    <tr>
+                      <td>{{ se.month|date:"Y-M"}}</td>
+                      <td>{{ se.net_sum|floatformat:0 }}</td>
+
+                    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
+<script>
+
+  const data = {
+        datasets: [{
+            data: [
+              {% for se in solar_extended_list %}
+              {
+                x: '{{ se.month }}',
+                y: '{{ se.net_sum|floatformat:0}}'
+            },
+              {% endfor %}
+            ]
+        }],
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+        scales: {
+            x: {
+              min: '2000-01-01 00:00:00',
+            }
+        }
+    }
+  };
+</script>
+
+<script>
+  const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+</script>
+
+
+
+
+
+{% endblock content %}

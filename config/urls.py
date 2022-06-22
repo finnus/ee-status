@@ -16,6 +16,10 @@ urlpatterns = [
     path("users/", include("ee_status.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path(
+        "energy_sources/",
+        include("ee_status.energy_sources.urls", namespace="energy_sources"),
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

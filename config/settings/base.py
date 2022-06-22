@@ -77,10 +77,12 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "django_filters",
 ]
 
 LOCAL_APPS = [
     "ee_status.users",
+    "ee_status.energy_sources",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
