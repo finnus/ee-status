@@ -3,53 +3,7 @@ load database
      into postgresql:///solar
 
  with include drop, create tables, create indexes, reset sequences
- including only table names like 'solar_extended'
- AFTER LOAD DO
- $$ ALTER TABLE solar_extended DROP COLUMN DatenQuelle,
-                               DROP COLUMN DatumDownload,
-                               DROP COLUMN NetzbetreiberMastrNummer,
-                               DROP COLUMN DatumLetzteAktualisierung,
-                               DROP COLUMN Registrierungsdatum,
-                               DROP COLUMN LokationMastrNummer,
-                               DROP COLUMN NetzbetreiberpruefungStatus,
-                               DROP COLUMN NetzbetreiberpruefungDatum,
-                               DROP COLUMN AnlagenbetreiberMastrNummer,
-                               DROP COLUMN Gemarkung,
-                               DROP COLUMN FlurFlurstuecknummern,
-                               DROP COLUMN Strasse,
-                               DROP COLUMN StrasseNichtGefunden,
-                               DROP COLUMN Hausnummer,
-                               DROP COLUMN HausnummerNichtGefunden,
-                               DROP COLUMN Adresszusatz,
-                               DROP COLUMN Laengengrad,
-                               DROP COLUMN UtmZonenwert,
-                               DROP COLUMN UtmEast,
-                               DROP COLUMN UtmNorth,
-                               DROP COLUMN GaussKruegerHoch,
-                               DROP COLUMN GaussKruegerRechts,
-                               DROP COLUMN Meldedatum,
-                               DROP COLUMN EinheitSystemstatus,
-                               DROP COLUMN BestandsanlageMastrNummer,
-                               DROP COLUMN AltAnlagenbetreiberMastrNummer,
-                               DROP COLUMN DatumDesBetreiberwechsels,
-                               DROP COLUMN DatumRegistrierungDesBetreiberwechsels,
-                               DROP COLUMN StatisikFlag,
-                               DROP COLUMN NameStromerzeugungseinheit,
-                               DROP COLUMN Weic,
-                               DROP COLUMN WeicDisplayName,
-                               DROP COLUMN Kraftwerksnummer,
-                               DROP COLUMN Energietraeger,
-                               DROP COLUMN GenMastrNummer,
-                               DROP COLUMN Hausnummer_nv,
-                               DROP COLUMN Weic_nv,
-                               DROP COLUMN Kraftwerksnummer_nv,
-                               DROP COLUMN NichtVorhandenInMigriertenEinheiten,
-                               DROP COLUMN Einsatzverantwortlicher,
-                               DROP COLUMN zugeordneteWirkleistungWechselrichter,
-                               DROP COLUMN AnzahlModule,
-                               DROP COLUMN EinheitlicheAusrichtungUndNeigungswinkel,
-                               DROP COLUMN Nebenausrichtung,
-                               DROP COLUMN NebenausrichtungNeigungswinkel,
-                               DROP COLUMN EegMastrNummer;$$
+ including only table names like 'solar_extended', 'hydro_extended', 'wind_extended', 'biomass_extended'
+ AFTER LOAD EXECUTE 02_unite_tables.sql
 
-  set work_mem to '16MB', maintenance_work_mem to '512 MB';
+  set work_mem to '512MB', maintenance_work_mem to '1024 MB';

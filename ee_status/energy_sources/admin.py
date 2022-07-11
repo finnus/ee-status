@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from ee_status.energy_sources.models import SolarExtended
+from ee_status.energy_sources.models import EnergySources
 
-admin.site.register(SolarExtended)
+admin.site.register(EnergySources)

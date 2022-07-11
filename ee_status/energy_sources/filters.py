@@ -1,9 +1,9 @@
 import django_filters
 
-from ee_status.energy_sources.models import SolarExtended
+from ee_status.energy_sources.models import EnergySources
 
 
-class SolarExtendedFilter(django_filters.FilterSet):
+class EnergySourcesFilter(django_filters.FilterSet):
     BUNDESLAENDER = (
         ("Baden-Württemberg", "Baden-Württemberg"),
         ("Bayern", "Bayern"),
@@ -25,5 +25,5 @@ class SolarExtendedFilter(django_filters.FilterSet):
     bundesland = django_filters.ChoiceFilter(choices=BUNDESLAENDER)
 
     class Meta:
-        model = SolarExtended
+        model = EnergySources
         fields = ["postleitzahl", "bundesland", "landkreis"]
