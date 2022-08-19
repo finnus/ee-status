@@ -1,10 +1,10 @@
 import django_filters
 
-from ee_status.energy_sources.models import EnergySources
+from ee_status.energy_sources.models import MonthlyTimeline
 
 
-class EnergySourcesFilter(django_filters.FilterSet):
-    BUNDESLAENDER = (
+class MonthlyTimelineFilter(django_filters.FilterSet):
+    STATES = (
         ("Baden-Württemberg", "Baden-Württemberg"),
         ("Bayern", "Bayern"),
         ("Berlin", "Berlin"),
@@ -21,9 +21,17 @@ class EnergySourcesFilter(django_filters.FilterSet):
         ("Sachsen-Anhalt", "Sachsen-Anhalt"),
         ("Schleswig-Holstein", "Schleswig-Holstein"),
         ("Thüringen", "Thüringen"),
+        ("Ausschließliche Wirtschaftszone", "Ausschließliche Wirtschaftszone"),
     )
-    bundesland = django_filters.ChoiceFilter(choices=BUNDESLAENDER)
+    state = django_filters.ChoiceFilter(choices=STATES)
+    ENERGY_SOURCES = (
+        ("Solare Strahlungsenergie", "Solare Strahlungsenergie"),
+        ("Wasser", "Wasser"),
+        ("Biomasse", "Biomasse"),
+        ("Wind", "Wind"),
+    )
+    energy_source = django_filters.ChoiceFilter(choices=ENERGY_SOURCES)
 
     class Meta:
-        model = EnergySources
-        fields = ["postleitzahl", "bundesland", "landkreis"]
+        model = MonthlyTimeline
+        fields = ["state", "energy_source", "zip_code", "commune", "county"]

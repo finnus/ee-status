@@ -11,21 +11,31 @@
   <h1 class="title">{% trans "Entwicklung Erneuerbare Energien" %}</h1>
 
   <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/maps/modules/map.js"></script>
   <div id="container1" style="width:100%; height:400px;"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const chart = new Highcharts.chart('container1', {
+        title: {
+              text: 'Entwicklung'
+              },
         chart: {
                 zoomType: 'x'
             },
+      yAxis: {
+          title: {
+            text: 'Nettonennleistung'
+          }
+        },
         xAxis: {
           type: 'datetime'
         },
         series: [{
+          name: '',
           data: [
-            {% for es in energy_sources_list %}
-            [Date.UTC({{ es.inbetriebnahmedatum|date:"Y, n, j"}}), {{ es.net_sum|floatformat:2}}],
+            {% for mt in monthly_timeline %}
+            [Date.UTC({{ mt.date|date:"Y, n, j"}}), {{ mt.net_sum}}],
           {% endfor %}
           ]
         }]
@@ -34,6 +44,11 @@
     });
 
   </script>
+
+  {% for mt in monthly_timeline %}
+            [Date.UTC({{ mt.date|date:"Y, n, j"}}), {{ mt.net_sum}}, {{ mt.energy_source }}],
+            <br>
+          {% endfor %}
 
 
 {% endblock content %}

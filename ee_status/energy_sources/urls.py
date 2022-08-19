@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import energy_sources_list_view
+from .views import monthly_timeline_view
 
 app_name = "energy_sources"
 urlpatterns = [
-    path("", energy_sources_list_view, name="list"),
+    path("timeline", monthly_timeline_view, name="timeline"),
 ]

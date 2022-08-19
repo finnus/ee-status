@@ -3,7 +3,7 @@ load database
      into postgresql:///solar
 
  with include drop, create tables, create indexes, reset sequences
- including only table names like 'solar_extended', 'hydro_extended', 'wind_extended', 'biomass_extended'
+ including only table names like 'hydro_extended', 'wind_extended', 'biomass_extended', 'solar_extended'
  AFTER LOAD EXECUTE 02_unite_tables.sql
 
   set work_mem to '512MB', maintenance_work_mem to '1024 MB';

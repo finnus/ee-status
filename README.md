@@ -59,3 +59,17 @@ The following details how to deploy this application.
 ### Heroku
 
 See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-on-heroku.html).
+
+
+### Get the data
+ * get the data with help from open-MaStR:
+
+### Import data wit pgloader
+ * run pgloader transform data from open-MaStR: pgloader sql_scripts/01_import_from_open-mastr
+   * adapt path to open_MaStR to your needs; data usually gets downloaded to /home/$USER
+ * pgloader will also run the script 02_unite_tables.sql
+
+### Transform the table into a TimescaleDB hypertable
+ * run sql_scripts/03_timescaledb_hypertable.sql to create the hypertable and the view for monthly data
+ * import the newly created materialized view 'monthly_energy_source' into django
+ * run Django as usual "python manage.py runserver" and browse to /energy_sources/timeline

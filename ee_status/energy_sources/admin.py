@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from ee_status.energy_sources.models import EnergySources
+from ee_status.energy_sources.models import MonthlyTimeline
 
-admin.site.register(EnergySources)
+admin.site.register(MonthlyTimeline)

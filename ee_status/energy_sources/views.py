@@ -1,26 +1,19 @@
 from django.db.models import F, Sum, Window
 from django_filters.views import FilterView
 
-from .filters import EnergySourcesFilter
-from .models import EnergySources
+from .filters import MonthlyTimelineFilter
+from .models import MonthlyTimeline
 
 
-class EnergySourcesListView(FilterView):
-    context_object_name = "energy_sources_list"
-    filterset_class = EnergySourcesFilter
+class MonthlyTimelineView(FilterView):
+    context_object_name = "monthly_timeline"
+    filterset_class = MonthlyTimelineFilter
 
-    queryset = (
-        EnergySources.objects.exclude(inbetriebnahmedatum__isnull=True)
-        .filter(einheitbetriebsstatus="In Betrieb")
-        .annotate(
-            net_sum=Window(
-                expression=Sum(F("nettonennleistung")),
-                order_by=("inbetriebnahmedatum", "einheitmastrnummer"),
-            )
-        )
-    )
+    queryset = MonthlyTimeline.objects.annotate(
+        net_sum=Window(expression=Sum(F("net_nominal_capacity")), order_by=["date"])
+    ).distinct("date")
 
-    template_name = "energy_sources/solar_extended_list.html"
+    template_name = "energy_sources/timeline.html"
 
 
-energy_sources_list_view = EnergySourcesListView.as_view()
+monthly_timeline_view = MonthlyTimelineView.as_view()
