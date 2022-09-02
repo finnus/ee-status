@@ -13,3 +13,16 @@ class MonthlyTimeline(models.Model):
     class Meta:
         managed = False
         db_table = "monthly_timeline"
+
+
+class CurrentTotal(models.Model):
+    zip_code = models.CharField(max_length=200)
+    commune = models.CharField(max_length=200)
+    county = models.CharField(max_length=200)
+    state = models.CharField(max_length=200, blank=True)
+    energy_source = models.CharField(max_length=200)
+    net_nominal_capacity = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = "current_totals"

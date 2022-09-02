@@ -13,10 +13,7 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # Your stuff: custom urls includes go here
-    path(
-        "energy_sources/",
-        include("ee_status.energy_sources.urls", namespace="energy_sources"),
-    ),
+    path("", include("ee_status.energy_sources.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

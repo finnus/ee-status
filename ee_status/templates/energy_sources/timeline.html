@@ -46,9 +46,10 @@
   </script>
 
   {% for mt in monthly_timeline %}
-            [Date.UTC({{ mt.date|date:"Y, n, j"}}), {{ mt.net_sum}}, {{ mt.energy_source }}],
+            [Date.UTC({{ mt.date|date:"Y, n, j"}}), {{ mt.net_sum}}, {{ mt.energy_source }}]
             <br>
           {% endfor %}
+
 
 
 {% endblock content %}
