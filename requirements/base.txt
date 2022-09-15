@@ -5,6 +5,8 @@ argon2-cffi==21.3.0  # https://github.com/hynek/argon2_cffi
 whitenoise==6.2.0  # https://github.com/evansd/whitenoise
 redis==4.3.3  # https://github.com/redis/redis-py
 hiredis==2.0.0  # https://github.com/redis/hiredis-py
+bokeh==2.4.3  # https://bokeh.org/
+pandas==1.4.4  # https://pandas.pydata.org/
 
 # Django
 # ------------------------------------------------------------------------------
@@ -16,7 +18,6 @@ django-crispy-forms==1.14.0  # https://github.com/django-crispy-forms/django-cri
 crispy-bootstrap5==0.6  # https://github.com/django-crispy-forms/crispy-bootstrap5
 django-redis==5.2.0  # https://github.com/jazzband/django-redis
 django-timescaledb==0.2.12 # https://github.com/schlunsen/django-timescaledb
-
 django-debug-toolbar==3.4.0
 pytest==7.1.2
 django-filter==22.1

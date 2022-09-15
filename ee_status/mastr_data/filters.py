@@ -1,7 +1,6 @@
 import django_filters
-from django.db.models import Q, Sum
 
-from ee_status.energy_sources.models import CurrentTotal, MonthlyTimeline
+from ee_status.mastr_data.models import CurrentTotal, MonthlyTimeline
 
 STATES = (
     ("Baden-Württemberg", "Baden-Württemberg"),
@@ -47,20 +46,6 @@ class MonthlyTimelineFilter(django_filters.FilterSet):
 
 class CurrentTotalFilter(django_filters.FilterSet):
     state = django_filters.ChoiceFilter(choices=STATES)
-
-    @property
-    def sum(self):
-        qs = super().qs
-
-        return qs.aggregate(
-            water_sum=Sum("net_nominal_capacity", filter=Q(energy_source="Wasser")),
-            solar_sum=Sum(
-                "net_nominal_capacity",
-                filter=Q(energy_source="Solare Strahlungsenergie"),
-            ),
-            biomass_sum=Sum("net_nominal_capacity", filter=Q(energy_source="Biomasse")),
-            wind_sum=Sum("net_nominal_capacity", filter=Q(energy_source="Wind")),
-        )
 
     class Meta:
         model = CurrentTotal

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+  <form method="get">
+    {{ filter.form|crispy }} <input type="hidden"/>
+    <button class="btn btn-outline-primary btn-block" type="submit">{% trans "Filter" %}</button>
+  </form>
+
+  <h1 class="title">{% trans "Derzeitiger Stand" %}</h1>
+
+
+  <link href=”http://cdn.pydata.org/bokeh/release/bokeh-2.4.2.min.css" rel=”stylesheet” type=”text/css”>
+<link href=”http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.4.2.min.css" rel=”stylesheet” type=”text/css”>
+
+  <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.2.min.js"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.2.min.js"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.2.min.js"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.4.2.min.js"></script>
+
+  {{div| safe}}
+  {{script| safe}}
+
+{% endblock content %}

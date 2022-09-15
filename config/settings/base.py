@@ -82,8 +82,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "ee_status.mastr_data.apps.MastrDataConfig",
     "ee_status.users",
-    "ee_status.energy_sources",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
