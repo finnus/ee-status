@@ -1,0 +1,19 @@
+LOAD CSV
+   FROM 'municipality_key_import_file.csv' WITH ENCODING UTF-8
+        HAVING FIELDS
+        (
+           municipality_key, municipality, area, population
+        )
+   INTO postgresql:///solar
+        TARGET TABLE municipality_keys
+        TARGET COLUMNS
+        (
+           municipality_key, municipality, area, population
+        )
+   WITH truncate,
+        skip header = 1,
+        fields optionally enclosed by '"',
+        fields escaped by backslash-quote,
+        fields terminated by ','
+
+    SET work_mem to '32 MB', maintenance_work_mem to '64 MB';

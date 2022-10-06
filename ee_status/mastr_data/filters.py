@@ -21,26 +21,18 @@ STATES = (
     ("Thüringen", "Thüringen"),
     ("Ausschließliche Wirtschaftszone", "Ausschließliche Wirtschaftszone"),
 )
-ENERGY_SOURCES = (
-    ("Solare Strahlungsenergie", "Solare Strahlungsenergie"),
-    ("Wasser", "Wasser"),
-    ("Biomasse", "Biomasse"),
-    ("Wind", "Wind"),
-)
 
 
 class MonthlyTimelineFilter(django_filters.FilterSet):
-    energy_source = django_filters.ChoiceFilter(choices=ENERGY_SOURCES)
     state = django_filters.ChoiceFilter(choices=STATES)
 
     class Meta:
         model = MonthlyTimeline
         fields = [
-            "state",
-            "energy_source",
-            "zip_code",
-            "commune",
+            "municipality_key",
+            "municipality",
             "county",
+            "state",
         ]
 
 
@@ -50,8 +42,8 @@ class CurrentTotalFilter(django_filters.FilterSet):
     class Meta:
         model = CurrentTotal
         fields = [
-            "state",
-            "zip_code",
-            "commune",
+            "municipality_key",
+            "municipality",
             "county",
+            "state",
         ]

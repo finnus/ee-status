@@ -11,86 +11,79 @@ DROP TABLE IF EXISTS energy_units;
 
 CREATE TABLE energy_units
 (
-    unit_nr              VARCHAR(50),
-    grid_operator_status VARCHAR(3),
-    zip_code             VARCHAR(6),
-    commune              VARCHAR(200),
-    municipality         VARCHAR(200),
-    county               VARCHAR(200),
-    state                VARCHAR(200),
-    start_up_date        DATE,
-    close_down_date       DATE,
-    date                 DATE,
-    energy_source        VARCHAR(50),
-    net_nominal_capacity NUMERIC(20, 2)
+    unit_nr                      VARCHAR(50),
+    grid_operator_status         VARCHAR(3),
+    municipality_key             VARCHAR(8),
+    municipality                 VARCHAR(200),
+    county                       VARCHAR(200),
+    state                        VARCHAR(200),
+    start_up_date                DATE,
+    close_down_date              DATE,
+    date                         DATE,
+    pv_net_nominal_capacity      NUMERIC(20, 2),
+    wind_net_nominal_capacity    NUMERIC(20, 2),
+    biomass_net_nominal_capacity NUMERIC(20, 2),
+    hydro_net_nominal_capacity   NUMERIC(20, 2)
 );
 
-INSERT INTO energy_units (unit_nr, grid_operator_status, zip_code, commune, municipality, county,
+INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, start_up_date,
-                          close_down_date, date, energy_source, net_nominal_capacity)
-SELECT EinheitMastrNummer,
-       NetzbetreiberpruefungStatus,
-       Postleitzahl,
-       Gemeinde,
-       Ort,
-       Landkreis,
-       Bundesland,
-       Inbetriebnahmedatum,
-       DatumEndgueltigeStilllegung,
-       Inbetriebnahmedatum,
-       Energietraeger,
-       Nettonennleistung
+                          close_down_date, date, hydro_net_nominal_capacity)
+SELECT einheitmastrnummer,
+       netzbetreiberpruefungstatus,
+       gemeindeschluessel,
+       gemeinde,
+       landkreis,
+       bundesland,
+       inbetriebnahmedatum,
+       datumendgueltigestilllegung,
+       inbetriebnahmedatum,
+       nettonennleistung
 FROM hydro_extended;
 
-INSERT INTO energy_units (unit_nr, grid_operator_status, zip_code, commune, municipality, county,
+INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, start_up_date,
-                          close_down_date, date, energy_source, net_nominal_capacity)
-SELECT EinheitMastrNummer,
-       NetzbetreiberpruefungStatus,
-       Postleitzahl,
-       Gemeinde,
-       Ort,
-       Landkreis,
-       Bundesland,
-       Inbetriebnahmedatum,
-       DatumEndgueltigeStilllegung,
-       Inbetriebnahmedatum,
-       Energietraeger,
-       Nettonennleistung
+                          close_down_date, date, wind_net_nominal_capacity)
+SELECT einheitmastrnummer,
+       netzbetreiberpruefungstatus,
+       gemeindeschluessel,
+       gemeinde,
+       landkreis,
+       bundesland,
+       inbetriebnahmedatum,
+       datumendgueltigestilllegung,
+       inbetriebnahmedatum,
+       nettonennleistung
 FROM wind_extended;
 
-INSERT INTO energy_units (unit_nr, grid_operator_status, zip_code, commune, municipality, county,
+INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, start_up_date,
-                          close_down_date, date, energy_source, net_nominal_capacity)
-SELECT EinheitMastrNummer,
-       NetzbetreiberpruefungStatus,
-       Postleitzahl,
-       Gemeinde,
-       Ort,
-       Landkreis,
-       Bundesland,
-       Inbetriebnahmedatum,
-       DatumEndgueltigeStilllegung,
-       Inbetriebnahmedatum,
-       Energietraeger,
-       Nettonennleistung
+                          close_down_date, date, biomass_net_nominal_capacity)
+SELECT einheitmastrnummer,
+       netzbetreiberpruefungstatus,
+       gemeindeschluessel,
+       gemeinde,
+       landkreis,
+       bundesland,
+       inbetriebnahmedatum,
+       datumendgueltigestilllegung,
+       inbetriebnahmedatum,
+       nettonennleistung
 FROM biomass_extended;
 
-INSERT INTO energy_units (unit_nr, grid_operator_status, zip_code, commune, municipality, county,
+INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, start_up_date,
-                          close_down_date, date, energy_source, net_nominal_capacity)
-SELECT EinheitMastrNummer,
-       NetzbetreiberpruefungStatus,
-       Postleitzahl,
-       Gemeinde,
-       Ort,
-       Landkreis,
-       Bundesland,
-       Inbetriebnahmedatum,
-       DatumEndgueltigeStilllegung,
-       Inbetriebnahmedatum,
-       Energietraeger,
-       Nettonennleistung
+                          close_down_date, date, pv_net_nominal_capacity)
+SELECT einheitmastrnummer,
+       netzbetreiberpruefungstatus,
+       gemeindeschluessel,
+       gemeinde,
+       landkreis,
+       bundesland,
+       inbetriebnahmedatum,
+       datumendgueltigestilllegung,
+       inbetriebnahmedatum,
+       nettonennleistung
 FROM solar_extended;
 
 -- Drop units that are not approved or disapproved
@@ -103,20 +96,22 @@ ALTER TABLE energy_units
 
 
 -- Duplicate rows with units not longer being active and make their values negative
-INSERT INTO energy_units (unit_nr, zip_code, commune, municipality, county,
+INSERT INTO energy_units (unit_nr, municipality_key, municipality, county,
                           state, start_up_date,
-                          close_down_date, date, energy_source, net_nominal_capacity)
+                          close_down_date, date, pv_net_nominal_capacity, wind_net_nominal_capacity,
+                          biomass_net_nominal_capacity, hydro_net_nominal_capacity)
 SELECT unit_nr,
-       zip_code,
-       commune,
+       municipality_key,
        municipality,
        county,
        state,
        start_up_date,
        close_down_date,
        date,
-       energy_source,
-       -net_nominal_capacity
+       -pv_net_nominal_capacity,
+       -wind_net_nominal_capacity,
+       -biomass_net_nominal_capacity,
+       -hydro_net_nominal_capacity
 FROM energy_units
 WHERE close_down_date is not null;
 
