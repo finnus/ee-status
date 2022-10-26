@@ -44,14 +44,6 @@ SELECT timescaledb_experimental.time_bucket_ng('1 month', date) AS bucket,
 FROM energy_units_hyper
 GROUP BY bucket, municipality_key, municipality, county, state;
 
-ALTER TABLE monthly_timeline
-    ADD COLUMN total_net_nominal_capacity NUMERIC(20, 2);
-
-UPDATE monthly_timeline
-    SET total_net_nominal_capacity = COALESCE(pv_net_nominal_capacity, 0) + COALESCE(wind_net_nominal_capacity, 0) +
-                                 COALESCE(biomass_net_nominal_capacity, 0) +
-                                 COALESCE(hydro_net_nominal_capacity, 0);
-
 
 
 -- transform into table for django
@@ -100,10 +92,7 @@ CREATE TABLE current_totals
     hydro_net_nominal_capacity         NUMERIC(20, 2),
     total_net_nominal_capacity         NUMERIC(20, 2),
     population                         INTEGER,
-    nnc_per_capita                     NUMERIC(20, 2),
-    nnc_per_capita_rank_within_germany INTEGER,
-    nnc_per_capita_rank_within_state   INTEGER,
-    nnc_per_capita_rank_within_county  INTEGER
+    nnc_per_capita                     NUMERIC(20, 2)
 );
 
 INSERT INTO current_totals (municipality_key, municipality, county, state, pv_net_nominal_capacity,
@@ -132,66 +121,3 @@ CREATE TABLE municipality_keys
     area             NUMERIC(20, 2),
     population       INTEGER
 );
-
-UPDATE current_totals
-SET population = (SELECT population
-                  FROM municipality_keys
-                  WHERE municipality_key = current_totals.municipality_key)
-;
-
-UPDATE current_totals
-SET population = 0
-WHERE population IS NULL;
-
--- calculate total of all renewable energy sources
-UPDATE current_totals
-SET total_net_nominal_capacity = COALESCE(pv_net_nominal_capacity, 0) + COALESCE(wind_net_nominal_capacity, 0) +
-                                 COALESCE(biomass_net_nominal_capacity, 0) +
-                                 COALESCE(hydro_net_nominal_capacity, 0);
-
--- calculate nnc per capita
-UPDATE current_totals
-SET nnc_per_capita = total_net_nominal_capacity / population
-WHERE population != 0;
-
--- create ranks on the national level
-WITH cte AS (SELECT municipality_key,
-                    nnc_per_capita,
-                    RANK() OVER (
-                        ORDER BY nnc_per_capita DESC
-                        ) rank_within_germany
-             FROM current_totals
-             WHERE nnc_per_capita IS NOT NULL)
-UPDATE current_totals
-SET nnc_per_capita_rank_within_germany=rank_within_germany
-FROM cte
-WHERE current_totals.municipality_key = cte.municipality_key;
-
-
--- create ranks per state
-WITH cte AS (SELECT municipality_key,
-                    state,
-                    nnc_per_capita,
-                    RANK() OVER (
-                        PARTITION BY state ORDER BY nnc_per_capita DESC
-                        ) rank_within_state
-             FROM current_totals
-             WHERE nnc_per_capita IS NOT NULL)
-UPDATE current_totals
-SET nnc_per_capita_rank_within_state=rank_within_state
-FROM cte
-WHERE current_totals.municipality_key = cte.municipality_key;
-
--- create ranks per county
-WITH cte AS (SELECT municipality_key,
-                    state,
-                    nnc_per_capita,
-                    RANK() OVER (
-                        PARTITION BY county ORDER BY nnc_per_capita DESC
-                        ) rank_within_county
-             FROM current_totals
-             WHERE nnc_per_capita IS NOT NULL)
-UPDATE current_totals
-SET nnc_per_capita_rank_within_county=rank_within_county
-FROM cte
-WHERE current_totals.municipality_key = cte.municipality_key;
