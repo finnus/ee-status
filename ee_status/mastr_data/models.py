@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Sum
+from django.utils.translation import gettext_lazy as _
 
 
 class MonthlyTimeline(models.Model):
@@ -19,76 +20,90 @@ class MonthlyTimeline(models.Model):
 
 
 class CurrentTotal(models.Model):
-    municipality_key = models.CharField(max_length=200)
-    municipality = models.CharField(max_length=200)
-    county = models.CharField(max_length=200)
-    state = models.CharField(max_length=200, blank=True)
-    pv_net_nominal_capacity = models.FloatField()
-    wind_net_nominal_capacity = models.FloatField()
-    biomass_net_nominal_capacity = models.FloatField()
-    hydro_net_nominal_capacity = models.FloatField()
-    total_net_nominal_capacity = models.FloatField()
-    population = models.IntegerField()
+    municipality_key = models.CharField(
+        verbose_name=_("Municipality Key"), max_length=200
+    )
+    municipality = models.CharField(verbose_name=_("Municipality"), max_length=200)
+    county = models.CharField(verbose_name=_("County"), max_length=200)
+    state = models.CharField(verbose_name=_("State"), max_length=200, blank=True)
+    pv_net_nominal_capacity = models.FloatField(
+        verbose_name=_("PV net nominal capacity")
+    )
+    wind_net_nominal_capacity = models.FloatField(
+        verbose_name=_("Wind net nominal capacity")
+    )
+    biomass_net_nominal_capacity = models.FloatField(
+        verbose_name=_("Biomass net nominal capacity")
+    )
+    hydro_net_nominal_capacity = models.FloatField(
+        verbose_name=_("Hydro net nominal capacity")
+    )
+    total_net_nominal_capacity = models.FloatField(
+        verbose_name=_("total net nominal capacity")
+    )
+    population = models.IntegerField(verbose_name=_("Population"))
     nnc_per_capita = models.FloatField()
 
     class Meta:
         managed = False
         db_table = "current_totals"
 
-    def nnc_per_capita_rank_within_county(self):
-        county = self.county
-        municipalities_ranking = (
-            CurrentTotal.objects.filter(county=county)
-            .exclude(nnc_per_capita__isnull=True)
-            .values("municipality_key")
-            .annotate(score=Sum("total_net_nominal_capacity") / Sum("population"))
-            .order_by("-score")
-        )
-        nnc_per_capita_rank_within_county = [
-            i
-            for i, d in enumerate(municipalities_ranking)
-            if self.municipality_key in d.values()
-        ]
+    def ratio_and_rank(self, numerator, denominator, realm_type, scope):
 
-        return nnc_per_capita_rank_within_county
+        scope_dict = {
+            "municipality": {"municipality": self.municipality},
+            "county": {"county": self.county},
+            "state": {"state": self.state},
+            "country": {},
+        }
 
-    def nnc_per_capita_rank_within_state(self, scope):
-        if scope == "county":
-            me = self.county
-        elif scope == "municipality_key":
-            me = self.municipality_key
+        if realm_type == "country":
+            realm_type_for_values = "state"
+        else:
+            realm_type_for_values = realm_type
 
-        state = self.state
         ranking = (
-            CurrentTotal.objects.filter(state=state)
+            CurrentTotal.objects.filter(**scope_dict.get(scope))
             .exclude(nnc_per_capita__isnull=True)
-            .values(scope)
-            .annotate(score=Sum("total_net_nominal_capacity") / Sum("population"))
+            .values_list(realm_type_for_values)
+            .annotate(score=Sum(numerator) / Sum(denominator))
             .order_by("-score")
         )
-        nnc_per_capita_rank_within_state_general = [
-            i for i, d in enumerate(ranking) if me in d.values()
-        ]
 
-        return nnc_per_capita_rank_within_state_general
+        self_dict = {
+            "municipality": self.municipality,
+            "county": self.county,
+            "state": self.state,
+        }
 
-    def nnc_per_capita_rank_within_germany(self, scope):
-        if scope == "county":
-            me = self.county
-        elif scope == "municipality_key":
-            me = self.municipality_key
-        elif scope == "state":
-            me = self.state
+        if realm_type == scope:
+            rank = "n.a"
+        else:
+            rank = [i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d][
+                0
+            ] + 1
 
-        national_ranking = (
-            CurrentTotal.objects.all()
-            .exclude(nnc_per_capita__isnull=True)
-            .values(scope)
-            .annotate(score=Sum("total_net_nominal_capacity") / Sum("population"))
-            .order_by("-score")
+        return [(rank, len(ranking))]
+
+    def scope_average(self, scope):
+        scope_dict = {
+            "municipality": {"municipality": self.municipality},
+            "county": {"county": self.county},
+            "state": {"state": self.state},
+            "country": {},
+        }
+
+        scope_average = CurrentTotal.objects.filter(**scope_dict.get(scope)).aggregate(
+            **{scope: Sum("total_net_nominal_capacity") / Sum("population")}
         )
-        nnc_per_capita_rank_within_germany = [
-            i for i, d in enumerate(national_ranking) if me in d.values()
-        ]
 
-        return nnc_per_capita_rank_within_germany
+        return scope_average
+
+    def get_scope_name(self, scope):
+        self_dict = {
+            "municipality": self.municipality,
+            "county": self.county,
+            "state": self.state,
+            "country": "Deutschland",
+        }
+        return self_dict.get(scope)

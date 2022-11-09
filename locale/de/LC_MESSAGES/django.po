@@ -1,0 +1,383 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-09 09:36+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: config/settings/base.py:30
+msgid "English"
+msgstr "Englisch"
+
+#: config/settings/base.py:31
+msgid "German"
+msgstr "Deutsch"
+
+#: ee_status/mastr_data/apps.py:8
+msgid "MaStR Data"
+msgstr ""
+
+#: ee_status/mastr_data/models.py:23
+msgid "Municipality Key"
+msgstr "Gemeindeschlüssel"
+
+#: ee_status/mastr_data/models.py:24
+msgid "Municipality"
+msgstr "Gemeinde"
+
+#: ee_status/mastr_data/models.py:25
+msgid "County"
+msgstr "Stadt-/Landkreis"
+
+#: ee_status/mastr_data/models.py:26
+msgid "State"
+msgstr "Bundesland"
+
+#: ee_status/mastr_data/models.py:27
+msgid "PV net nominal capacity"
+msgstr ""
+
+#: ee_status/mastr_data/models.py:28
+msgid "Wind net nominal capacity"
+msgstr ""
+
+#: ee_status/mastr_data/models.py:29
+msgid "Biomass net nominal capacity"
+msgstr ""
+
+#: ee_status/mastr_data/models.py:30
+msgid "Hydro net nominal capacity"
+msgstr ""
+
+#: ee_status/mastr_data/models.py:31
+msgid "total net nominal capacity"
+msgstr ""
+
+#: ee_status/mastr_data/models.py:32
+msgid "Population"
+msgstr "Bevölkerung"
+
+#: ee_status/templates/account/account_inactive.html:5
+#: ee_status/templates/account/account_inactive.html:8
+msgid "Account Inactive"
+msgstr ""
+
+#: ee_status/templates/account/account_inactive.html:10
+msgid "This account is inactive."
+msgstr ""
+
+#: ee_status/templates/account/email.html:7
+msgid "Account"
+msgstr ""
+
+#: ee_status/templates/account/email.html:10
+msgid "E-mail Addresses"
+msgstr ""
+
+#: ee_status/templates/account/email.html:13
+msgid "The following e-mail addresses are associated with your account:"
+msgstr ""
+
+#: ee_status/templates/account/email.html:27
+msgid "Verified"
+msgstr ""
+
+#: ee_status/templates/account/email.html:29
+msgid "Unverified"
+msgstr ""
+
+#: ee_status/templates/account/email.html:31
+msgid "Primary"
+msgstr ""
+
+#: ee_status/templates/account/email.html:37
+msgid "Make Primary"
+msgstr ""
+
+#: ee_status/templates/account/email.html:38
+msgid "Re-send Verification"
+msgstr ""
+
+#: ee_status/templates/account/email.html:39
+msgid "Remove"
+msgstr ""
+
+#: ee_status/templates/account/email.html:46
+msgid "Warning:"
+msgstr ""
+
+#: ee_status/templates/account/email.html:46
+msgid ""
+"You currently do not have any e-mail address set up. You should really add "
+"an e-mail address so you can receive notifications, reset your password, etc."
+msgstr ""
+
+#: ee_status/templates/account/email.html:51
+msgid "Add E-mail Address"
+msgstr ""
+
+#: ee_status/templates/account/email.html:56
+msgid "Add E-mail"
+msgstr ""
+
+#: ee_status/templates/account/email.html:66
+msgid "Do you really want to remove the selected e-mail address?"
+msgstr ""
+
+#: ee_status/templates/account/email_confirm.html:6
+#: ee_status/templates/account/email_confirm.html:10
+msgid "Confirm E-mail Address"
+msgstr ""
+
+#: ee_status/templates/account/email_confirm.html:16
+#, python-format
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
+"address for user %(user_display)s."
+msgstr ""
+
+#: ee_status/templates/account/email_confirm.html:20
+msgid "Confirm"
+msgstr ""
+
+#: ee_status/templates/account/email_confirm.html:27
+#, python-format
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please <a href="
+"\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr ""
+
+#: ee_status/templates/account/login.html:7
+#: ee_status/templates/account/login.html:11
+#: ee_status/templates/account/login.html:56
+msgid "Sign In"
+msgstr ""
+
+#: ee_status/templates/account/login.html:17
+msgid "Please sign in with one of your existing third party accounts:"
+msgstr ""
+
+#: ee_status/templates/account/login.html:19
+#, python-format
+msgid ""
+"Or, <a href=\"%(signup_url)s\">sign up</a> for a %(site_name)s account and "
+"sign in below:"
+msgstr ""
+
+#: ee_status/templates/account/login.html:32
+msgid "or"
+msgstr ""
+
+#: ee_status/templates/account/login.html:41
+#, python-format
+msgid ""
+"If you have not created an account yet, then please <a href=\"%(signup_url)s"
+"\">sign up</a> first."
+msgstr ""
+
+#: ee_status/templates/account/login.html:55
+msgid "Forgot Password?"
+msgstr ""
+
+#: ee_status/templates/account/logout.html:5
+#: ee_status/templates/account/logout.html:8
+#: ee_status/templates/account/logout.html:17
+msgid "Sign Out"
+msgstr ""
+
+#: ee_status/templates/account/logout.html:10
+msgid "Are you sure you want to sign out?"
+msgstr ""
+
+#: ee_status/templates/account/password_change.html:6
+#: ee_status/templates/account/password_change.html:9
+#: ee_status/templates/account/password_change.html:14
+#: ee_status/templates/account/password_reset_from_key.html:5
+#: ee_status/templates/account/password_reset_from_key.html:8
+#: ee_status/templates/account/password_reset_from_key_done.html:4
+#: ee_status/templates/account/password_reset_from_key_done.html:7
+msgid "Change Password"
+msgstr ""
+
+#: ee_status/templates/account/password_reset.html:7
+#: ee_status/templates/account/password_reset.html:11
+#: ee_status/templates/account/password_reset_done.html:6
+#: ee_status/templates/account/password_reset_done.html:9
+msgid "Password Reset"
+msgstr ""
+
+#: ee_status/templates/account/password_reset.html:16
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr ""
+
+#: ee_status/templates/account/password_reset.html:21
+msgid "Reset My Password"
+msgstr ""
+
+#: ee_status/templates/account/password_reset.html:24
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+
+#: ee_status/templates/account/password_reset_done.html:15
+msgid ""
+"We have sent you an e-mail. Please contact us if you do not receive it "
+"within a few minutes."
+msgstr ""
+
+#: ee_status/templates/account/password_reset_from_key.html:8
+msgid "Bad Token"
+msgstr ""
+
+#: ee_status/templates/account/password_reset_from_key.html:12
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+
+#: ee_status/templates/account/password_reset_from_key.html:18
+msgid "change password"
+msgstr ""
+
+#: ee_status/templates/account/password_reset_from_key.html:21
+#: ee_status/templates/account/password_reset_from_key_done.html:8
+msgid "Your password is now changed."
+msgstr ""
+
+#: ee_status/templates/account/password_set.html:6
+#: ee_status/templates/account/password_set.html:9
+#: ee_status/templates/account/password_set.html:14
+msgid "Set Password"
+msgstr ""
+
+#: ee_status/templates/account/signup.html:6
+msgid "Signup"
+msgstr ""
+
+#: ee_status/templates/account/signup.html:9
+#: ee_status/templates/account/signup.html:19
+msgid "Sign Up"
+msgstr ""
+
+#: ee_status/templates/account/signup.html:11
+#, python-format
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+
+#: ee_status/templates/account/signup_closed.html:5
+#: ee_status/templates/account/signup_closed.html:8
+msgid "Sign Up Closed"
+msgstr ""
+
+#: ee_status/templates/account/signup_closed.html:10
+msgid "We are sorry, but the sign up is currently closed."
+msgstr ""
+
+#: ee_status/templates/account/verification_sent.html:5
+#: ee_status/templates/account/verification_sent.html:8
+#: ee_status/templates/account/verified_email_required.html:5
+#: ee_status/templates/account/verified_email_required.html:8
+msgid "Verify Your E-mail Address"
+msgstr ""
+
+#: ee_status/templates/account/verification_sent.html:10
+msgid ""
+"We have sent an e-mail to you for verification. Follow the link provided to "
+"finalize the signup process. Please contact us if you do not receive it "
+"within a few minutes."
+msgstr ""
+
+#: ee_status/templates/account/verified_email_required.html:12
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your e-mail address. "
+msgstr ""
+
+#: ee_status/templates/account/verified_email_required.html:16
+msgid ""
+"We have sent an e-mail to you for\n"
+"verification. Please click on the link inside this e-mail. Please\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+
+#: ee_status/templates/account/verified_email_required.html:20
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
+"mail address</a>."
+msgstr ""
+
+#: ee_status/templates/mastr_data/municipality.html:6
+#: ee_status/templates/mastr_data/rankings.html:19
+msgid "Ranking"
+msgstr "Ranking"
+
+#: ee_status/templates/mastr_data/municipality.html:9
+#: ee_status/templates/mastr_data/rankings.html:8
+#: ee_status/templates/mastr_data/rankings.html:13
+#: ee_status/templates/mastr_data/totals.html:9
+#: ee_status/templates/mastr_data/totals.html:14
+msgid "Filter"
+msgstr "Filter"
+
+#: ee_status/templates/mastr_data/totals.html:29
+msgid "Development of Renewable Energies"
+msgstr "Entwicklung erneuerbare Energien"
+
+#: ee_status/templates/mastr_data/totals.html:37
+msgid "Production capacity per capita"
+msgstr "Erzeugungskapazität pro Person"
+
+#: ee_status/templates/mastr_data/totals.html:46
+msgid "Rank (of"
+msgstr "Platz (von"
+
+#: ee_status/templates/mastr_data/totals.html:56
+msgid "Storage capacity per capita"
+msgstr "Speicherkapazität pro Person"
+
+#: ee_status/users/admin.py:18
+msgid "Personal info"
+msgstr ""
+
+#: ee_status/users/admin.py:20
+msgid "Permissions"
+msgstr ""
+
+#: ee_status/users/admin.py:31
+msgid "Important dates"
+msgstr ""
+
+#: ee_status/users/apps.py:7
+msgid "Users"
+msgstr ""
+
+#: ee_status/users/forms.py:25 ee_status/users/tests/test_forms.py:39
+msgid "This username has already been taken."
+msgstr ""
+
+#: ee_status/users/models.py:15
+msgid "Name of User"
+msgstr ""
+
+#: ee_status/users/views.py:25
+msgid "Information successfully updated"
+msgstr ""

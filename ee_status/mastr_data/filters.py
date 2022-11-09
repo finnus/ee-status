@@ -47,3 +47,14 @@ class CurrentTotalFilter(django_filters.FilterSet):
             "county",
             "state",
         ]
+
+
+class RankingsFilter(django_filters.FilterSet):
+    state = django_filters.ChoiceFilter(choices=STATES)
+
+    class Meta:
+        model = CurrentTotal
+        fields = [
+            "county",
+            "state",
+        ]

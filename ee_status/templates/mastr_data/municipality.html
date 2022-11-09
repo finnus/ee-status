@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+  <h1 class="title">{% trans "Ranking" %}</h1>
+  <form method="get">
+    {{ filter.form|crispy }} <input type="hidden"/>
+    <button class="btn btn-outline-primary btn-block" type="submit">{% trans "Filter" %}</button>
+  </form>
+
+
+  <link href=”http://cdn.pydata.org/bokeh/release/bokeh-2.4.2.min.css" rel=”stylesheet” type=”text/css”>
+<link href=”http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.4.2.min.css" rel=”stylesheet” type=”text/css”>
+
+  <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.2.min.js"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.2.min.js"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.2.min.js"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.4.2.min.js"></script>
+
+  {{ rankings.score }}
+
+  <div class="row">
+        <table class="table table-striped sortable">
+            <thead>
+                <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Object</th>
+                    <th scope="col">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in rankings %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ object.municipality }}</td>
+                        <td>{{ object.score }}</td>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+<br>
+
+
+
+
+
+{% endblock content %}

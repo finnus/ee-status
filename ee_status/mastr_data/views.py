@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 import pandas as pd
 from bokeh.embed import components
 from bokeh.models import DatetimeTickFormatter, HoverTool, NumeralTickFormatter
@@ -5,7 +7,7 @@ from bokeh.plotting import figure
 from django.db.models import F, Sum, Window
 from django.shortcuts import render
 
-from .filters import CurrentTotalFilter, MonthlyTimelineFilter
+from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
 from .models import CurrentTotal, MonthlyTimeline
 
 
@@ -19,10 +21,6 @@ def totals_view(request):
     state = tempdict.get("state")
 
     f = MonthlyTimelineFilter(tempdict, queryset=MonthlyTimeline.objects.all())
-    f_current_totals = CurrentTotalFilter(
-        request.GET, queryset=CurrentTotal.objects.all()
-    )
-    # get the queryset to depict data for the graphs
     data = (
         f.qs.annotate(
             pv_net_sum=Window(
@@ -100,77 +98,96 @@ def totals_view(request):
             mode="vline",
         )
     )
-
-    # aggregate the results as we want to display sums and not lists of objects
-    totals = f_current_totals.qs.aggregate(
-        pv_net_sum=Sum("pv_net_nominal_capacity"),
-        wind_net_sum=Sum("wind_net_nominal_capacity"),
-        biomass_net_sum=Sum("biomass_net_nominal_capacity"),
-        hydro_net_sum=Sum("hydro_net_nominal_capacity"),
-        nnc_per_capita=Sum("total_net_nominal_capacity") / Sum("population"),
-    )
-
-    # draw the plots with bokeh
-    net_nominal_capacity_plot = figure(plot_width=400, plot_height=400)
-    net_nominal_capacity_plot.hbar(
-        y=[1, 2, 3, 4, 5],
-        right=list(totals.values()),
-        height=0.5,
-    )
-
-    # get the ranks
-    nnc_per_capita_rank_within_county = "n.a."
-    nnc_per_capita_rank_within_state = "n.a."
-    nnc_per_capita_rank_within_germany = "n.a."
-    if municipality or municipality_key:
-        if municipality_key:
-            municipality_object = CurrentTotal.objects.get(
-                municipality_key=municipality_key
-            )
-        else:
-            municipality_object = CurrentTotal.objects.get(municipality=municipality)
-
-        nnc_per_capita_rank_within_county = (
-            municipality_object.nnc_per_capita_rank_within_county()
-        )
-        nnc_per_capita_rank_within_state = (
-            municipality_object.nnc_per_capita_rank_within_state("municipality_key")
-        )
-        nnc_per_capita_rank_within_germany = (
-            municipality_object.nnc_per_capita_rank_within_germany("municipality_key")
-        )
-
-    elif county:
-        county_object = CurrentTotal.objects.filter(county=county).first()
-        nnc_per_capita_rank_within_state = (
-            county_object.nnc_per_capita_rank_within_state("county")
-        )
-        nnc_per_capita_rank_within_germany = (
-            county_object.nnc_per_capita_rank_within_germany("county")
-        )
-
-    elif state:
-        state_object = CurrentTotal.objects.filter(state=state).first()
-        nnc_per_capita_rank_within_germany = (
-            state_object.nnc_per_capita_rank_within_germany("state")
-        )
-
-    ranks = {
-        "nnc_per_capita_rank_within_county": nnc_per_capita_rank_within_county,
-        "nnc_per_capita_rank_within_state": nnc_per_capita_rank_within_state,
-        "nnc_per_capita_rank_within_germany": nnc_per_capita_rank_within_germany,
+    # define plots for bokeh
+    plots = {
+        "Timeline": p,
     }
+    script, div = components(plots)
+    div_timeline = div["Timeline"]
 
-    script, div = components((p, net_nominal_capacity_plot))
+    f_current_totals = CurrentTotalFilter(
+        request.GET, queryset=CurrentTotal.objects.all()
+    )
+    current_object = f_current_totals.qs.first()
+
+    # Determine which realm_type we are about to handle
+    if municipality or municipality_key:
+        realm_type = "municipality"
+    elif county:
+        realm_type = "county"
+    elif state:
+        realm_type = "state"
+    else:
+        realm_type = "country"
+
+    # Define order for looping over multiple admin scopes
+    order = ["municipality", "county", "state", "country"]
+    total_net_nominal_capacity = []
+
+    # loop over each admin scope
+    for i in order[order.index(realm_type) : :]:  # noqa: E203
+        total_net_nominal_capacity.append(
+            (
+                current_object.get_scope_name(i),
+                current_object.scope_average(i)[i],
+                current_object.ratio_and_rank(
+                    "total_net_nominal_capacity", "population", realm_type, i
+                ),
+            )
+        )
+        # max is needed to calculate width of the css progress bar
+        print(total_net_nominal_capacity)
+        get_max = max(total_net_nominal_capacity, key=itemgetter(1))[1]
+
     return render(
         request,
         "mastr_data/totals.html",
         {
             "script": script,
             "div": div,
-            "data": data,
-            "filter": f,
-            "ranks": ranks,
-            "totals": totals,
+            "filter": f_current_totals,
+            "total_net_nominal_capacity": total_net_nominal_capacity,
+            "div_timeline": div_timeline,
+            "get_max": get_max,
         },
+    )
+
+
+def rankings_view(request):
+    tempdict = request.GET
+    county = tempdict.get("county")
+    state = tempdict.get("state")
+
+    f = RankingsFilter(tempdict, queryset=CurrentTotal.objects.all())
+
+    if county:
+        realm_type = "county"
+        values_type = "municipality"
+    elif state:
+        realm_type = "state"
+        values_type = "county"
+    else:
+        realm_type = "country"
+        values_type = "state"
+
+    filter_dict = {
+        "county": {"county": county},
+        "state": {"state": state},
+        "country": {},
+    }
+
+    ranking = (
+        CurrentTotal.objects.filter(**filter_dict.get(realm_type))
+        .exclude(nnc_per_capita__isnull=True)
+        .values_list(values_type)
+        .annotate(numerator=Sum("population"))
+        .annotate(denominator=Sum("total_net_nominal_capacity"))
+        .annotate(score=Sum("total_net_nominal_capacity") / Sum("population"))
+        .order_by("-score")
+    )
+
+    return render(
+        request,
+        "mastr_data/rankings.html",
+        {"filter": f, "rankings": ranking},
     )

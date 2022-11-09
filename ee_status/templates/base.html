@@ -52,6 +52,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'mastr_data:totals' %}">Totals</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'mastr_data:rankings' %}">Rankings</a>
+              </li>
             </ul>
           </div>
         </div>
@@ -59,7 +62,15 @@
 
     </div>
 
-    <div class="container">
+    <div class="container-fluid mt-5">
+            <div class="row">
+                <div class="col-md-2 mb-5">
+                    <div class="sticky-top pr-3 pt-1 sticky-offset">
+                        {% block left_sidebar %}
+                        {% endblock left_sidebar %}
+                    </div>
+                </div>
+<div class="col-md-10 pr-5">
 
       {% if messages %}
         {% for message in messages %}
@@ -73,6 +84,7 @@
       {% block content %}
         <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}
+</div>
 
     </div> <!-- /container -->
 
@@ -86,6 +98,7 @@
       window.addEventListener('DOMContentLoaded', () => {/* Run whatever you want */});
     </script>
     {% endcomment %}
+       <script src="{% static 'js/external/sorttable.js' %}"></script>
     {% endblock inline_javascript %}
   </body>
 </html>
