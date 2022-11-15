@@ -84,8 +84,8 @@ THIRD_PARTY_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
+    # "allauth.account",
+    # "allauth.socialaccount",
     "django_filters",
 ]
 
