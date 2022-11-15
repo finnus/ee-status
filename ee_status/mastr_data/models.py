@@ -42,7 +42,7 @@ class CurrentTotal(models.Model):
         verbose_name=_("total net nominal capacity")
     )
     population = models.IntegerField(verbose_name=_("Population"))
-    nnc_per_capita = models.FloatField()
+    area = models.FloatField(verbose_name="Area")
 
     class Meta:
         managed = False
@@ -57,6 +57,11 @@ class CurrentTotal(models.Model):
             "country": {},
         }
 
+        denominator_filter_kwargs = {
+            "{}__{}".format(denominator, "isnull"): False,
+            "{}__{}".format(denominator, "gt"): 0,
+        }
+
         if realm_type == "country":
             realm_type_for_values = "state"
         else:
@@ -64,7 +69,7 @@ class CurrentTotal(models.Model):
 
         ranking = (
             CurrentTotal.objects.filter(**scope_dict.get(scope))
-            .exclude(nnc_per_capita__isnull=True)
+            .filter(**denominator_filter_kwargs)
             .values_list(realm_type_for_values)
             .annotate(score=Sum(numerator) / Sum(denominator))
             .order_by("-score")
@@ -85,7 +90,7 @@ class CurrentTotal(models.Model):
 
         return [(rank, len(ranking))]
 
-    def scope_average(self, scope):
+    def scope_average(self, numerator, denominator, scope):
         scope_dict = {
             "municipality": {"municipality": self.municipality},
             "county": {"county": self.county},
@@ -94,7 +99,7 @@ class CurrentTotal(models.Model):
         }
 
         scope_average = CurrentTotal.objects.filter(**scope_dict.get(scope)).aggregate(
-            **{scope: Sum("total_net_nominal_capacity") / Sum("population")}
+            **{scope: Sum(numerator) / Sum(denominator)}
         )
 
         return scope_average

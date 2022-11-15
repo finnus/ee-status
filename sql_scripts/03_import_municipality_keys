@@ -16,4 +16,6 @@ LOAD CSV
         fields escaped by backslash-quote,
         fields terminated by ','
 
+   AFTER LOAD EXECUTE 04_timescaledb_hypertable.sql
+
     SET work_mem to '32 MB', maintenance_work_mem to '64 MB';

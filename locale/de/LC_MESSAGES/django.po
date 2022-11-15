@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-09 09:36+0100\n"
+"POT-Creation-Date: 2022-11-14 07:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: config/settings/base.py:30
+#: config/settings/base.py:31
 msgid "English"
 msgstr "Englisch"
 
-#: config/settings/base.py:31
+#: config/settings/base.py:32
 msgid "German"
 msgstr "Deutsch"
 
@@ -30,43 +30,43 @@ msgstr "Deutsch"
 msgid "MaStR Data"
 msgstr ""
 
-#: ee_status/mastr_data/models.py:23
+#: ee_status/mastr_data/models.py:24
 msgid "Municipality Key"
 msgstr "Gemeindeschlüssel"
 
-#: ee_status/mastr_data/models.py:24
+#: ee_status/mastr_data/models.py:26
 msgid "Municipality"
 msgstr "Gemeinde"
 
-#: ee_status/mastr_data/models.py:25
+#: ee_status/mastr_data/models.py:27
 msgid "County"
 msgstr "Stadt-/Landkreis"
 
-#: ee_status/mastr_data/models.py:26
+#: ee_status/mastr_data/models.py:28
 msgid "State"
 msgstr "Bundesland"
 
-#: ee_status/mastr_data/models.py:27
+#: ee_status/mastr_data/models.py:30
 msgid "PV net nominal capacity"
 msgstr ""
 
-#: ee_status/mastr_data/models.py:28
+#: ee_status/mastr_data/models.py:33
 msgid "Wind net nominal capacity"
 msgstr ""
 
-#: ee_status/mastr_data/models.py:29
+#: ee_status/mastr_data/models.py:36
 msgid "Biomass net nominal capacity"
 msgstr ""
 
-#: ee_status/mastr_data/models.py:30
+#: ee_status/mastr_data/models.py:39
 msgid "Hydro net nominal capacity"
 msgstr ""
 
-#: ee_status/mastr_data/models.py:31
+#: ee_status/mastr_data/models.py:42
 msgid "total net nominal capacity"
 msgstr ""
 
-#: ee_status/mastr_data/models.py:32
+#: ee_status/mastr_data/models.py:44
 msgid "Population"
 msgstr "Bevölkerung"
 
@@ -347,12 +347,13 @@ msgid "Production capacity per capita"
 msgstr "Erzeugungskapazität pro Person"
 
 #: ee_status/templates/mastr_data/totals.html:46
+#: ee_status/templates/mastr_data/totals.html:65
 msgid "Rank (of"
 msgstr "Platz (von"
 
 #: ee_status/templates/mastr_data/totals.html:56
-msgid "Storage capacity per capita"
-msgstr "Speicherkapazität pro Person"
+msgid "Production capacity per km²"
+msgstr "Erzeugungskapazität pro km²"
 
 #: ee_status/users/admin.py:18
 msgid "Personal info"
@@ -381,3 +382,6 @@ msgstr ""
 #: ee_status/users/views.py:25
 msgid "Information successfully updated"
 msgstr ""
+
+#~ msgid "Storage capacity per capita"
+#~ msgstr "Speicherkapazität pro Person"

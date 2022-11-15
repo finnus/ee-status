@@ -2,6 +2,6 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/sql_scripts/02_unite_tables.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/sql_scripts/03_timescaledb_hypertable.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/sql_scripts/04_timescaledb_hypertable.sql" dialect="PostgreSQL" />
   </component>
 </project>

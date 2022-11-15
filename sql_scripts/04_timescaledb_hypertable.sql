@@ -76,8 +76,6 @@ CREATE INDEX municipality_key_idx ON monthly_timeline_table (municipality_key);
 ALTER TABLE monthly_timeline_table
     ADD COLUMN id SERIAL PRIMARY KEY;
 
-
-
 DROP TABLE IF EXISTS current_totals;
 CREATE TABLE current_totals
 (
@@ -92,7 +90,7 @@ CREATE TABLE current_totals
     hydro_net_nominal_capacity         NUMERIC(20, 2),
     total_net_nominal_capacity         NUMERIC(20, 2),
     population                         INTEGER,
-    nnc_per_capita                     NUMERIC(20, 2)
+    area                               NUMERIC(20,2)
 );
 
 INSERT INTO current_totals (municipality_key, municipality, county, state, pv_net_nominal_capacity,
@@ -113,11 +111,13 @@ CREATE INDEX totals_county_idx ON current_totals (county);
 CREATE INDEX totals_municipality_idx ON current_totals (municipality);
 CREATE INDEX totals_municipality_key_idx ON current_totals (municipality_key);
 
-DROP TABLE IF EXISTS municipality_keys;
-CREATE TABLE municipality_keys
-(
-    municipality_key VARCHAR(8),
-    municipality     VARCHAR(200),
-    area             NUMERIC(20, 2),
-    population       INTEGER
-);
+UPDATE current_totals
+SET population = (SELECT population FROM municipality_keys WHERE municipality_key = current_totals.municipality_key);
+
+UPDATE current_totals
+SET area = (SELECT area FROM municipality_keys WHERE municipality_key = current_totals.municipality_key);
+;
+
+UPDATE current_totals
+SET total_net_nominal_capacity = coalesce(pv_net_nominal_capacity, 0) + coalesce(wind_net_nominal_capacity, 0) +coalesce(biomass_net_nominal_capacity, 0) +coalesce(hydro_net_nominal_capacity, 0)
+;

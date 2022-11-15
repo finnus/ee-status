@@ -24,11 +24,9 @@
   <table class="table table-striped sortable">
     <thead>
     <tr>
-      <th scope="col">Rank</th>
-      <th scope="col">Object</th>
-      <th scope="col">Denominator</th>
-      <th scope="col">Nominator</th>
-      <th scope="col">Score</th>
+      {% for caption in table_captions %}
+        <th scope="col">{{ caption }}</th>
+      {% endfor %}
     </tr>
     </thead>
     <tbody>

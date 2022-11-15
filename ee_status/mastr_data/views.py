@@ -6,6 +6,7 @@ from bokeh.models import DatetimeTickFormatter, HoverTool, NumeralTickFormatter
 from bokeh.plotting import figure
 from django.db.models import F, Sum, Window
 from django.shortcuts import render
+from django.utils.translation import gettext_lazy as _
 
 from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
 from .models import CurrentTotal, MonthlyTimeline
@@ -24,28 +25,16 @@ def totals_view(request):
     data = (
         f.qs.annotate(
             pv_net_sum=Window(
-                expression=Sum(F("pv_net_nominal_capacity")),
-                order_by=[
-                    "date",
-                ],
+                expression=Sum(F("pv_net_nominal_capacity")), order_by=("date",)
             ),
             wind_net_sum=Window(
-                expression=Sum(F("wind_net_nominal_capacity")),
-                order_by=[
-                    "date",
-                ],
+                expression=Sum(F("wind_net_nominal_capacity")), order_by=("date",)
             ),
             biomass_net_sum=Window(
-                expression=Sum(F("biomass_net_nominal_capacity")),
-                order_by=[
-                    "date",
-                ],
+                expression=Sum(F("biomass_net_nominal_capacity")), order_by=("date",)
             ),
             hydro_net_sum=Window(
-                expression=Sum(F("hydro_net_nominal_capacity")),
-                order_by=[
-                    "date",
-                ],
+                expression=Sum(F("hydro_net_nominal_capacity")), order_by=("date",)
             ),
         )
         .distinct("date")
@@ -122,22 +111,46 @@ def totals_view(request):
 
     # Define order for looping over multiple admin scopes
     order = ["municipality", "county", "state", "country"]
-    total_net_nominal_capacity = []
 
-    # loop over each admin scope
+    # GET TOTAL NET NOMINAL CAPACITY PER CAPITA
+    total_net_nominal_capacity_per_capita = []
+    # loop over each administrative scope
     for i in order[order.index(realm_type) : :]:  # noqa: E203
-        total_net_nominal_capacity.append(
+        total_net_nominal_capacity_per_capita.append(
             (
                 current_object.get_scope_name(i),
-                current_object.scope_average(i)[i],
+                current_object.scope_average(
+                    "total_net_nominal_capacity", "population", i
+                )[i],
                 current_object.ratio_and_rank(
                     "total_net_nominal_capacity", "population", realm_type, i
                 ),
             )
         )
         # max is needed to calculate width of the css progress bar
-        print(total_net_nominal_capacity)
-        get_max = max(total_net_nominal_capacity, key=itemgetter(1))[1]
+        total_net_nominal_capacity_per_capita_max = max(
+            total_net_nominal_capacity_per_capita, key=itemgetter(1)
+        )[1]
+
+        # GET TOTAL NET NOMINAL CAPACITY PER SQUARE METERS
+        total_net_nominal_capacity_per_sm = []
+        # loop over each administrative scope
+        for i in order[order.index(realm_type) : :]:  # noqa: E203
+            total_net_nominal_capacity_per_sm.append(
+                (
+                    current_object.get_scope_name(i),
+                    current_object.scope_average(
+                        "total_net_nominal_capacity", "area", i
+                    )[i],
+                    current_object.ratio_and_rank(
+                        "total_net_nominal_capacity", "area", realm_type, i
+                    ),
+                )
+            )
+            # max is needed to calculate width of the css progress bar
+            total_net_nominal_capacity_per_sm_max = max(
+                total_net_nominal_capacity_per_sm, key=itemgetter(1)
+            )[1]
 
     return render(
         request,
@@ -146,9 +159,11 @@ def totals_view(request):
             "script": script,
             "div": div,
             "filter": f_current_totals,
-            "total_net_nominal_capacity": total_net_nominal_capacity,
+            "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita,
             "div_timeline": div_timeline,
-            "get_max": get_max,
+            "total_net_nominal_capacity_per_capita_max": total_net_nominal_capacity_per_capita_max,
+            "total_net_nominal_capacity_per_sm": total_net_nominal_capacity_per_sm,
+            "total_net_nominal_capacity_per_sm_max": total_net_nominal_capacity_per_sm_max,
         },
     )
 
@@ -157,18 +172,21 @@ def rankings_view(request):
     tempdict = request.GET
     county = tempdict.get("county")
     state = tempdict.get("state")
+    scope = tempdict.get("scope")
+    numerator = tempdict.get("numerator")
+    denominator = tempdict.get("denominator")
+
+    if not scope:
+        scope = "municipality"
 
     f = RankingsFilter(tempdict, queryset=CurrentTotal.objects.all())
 
     if county:
         realm_type = "county"
-        values_type = "municipality"
     elif state:
         realm_type = "state"
-        values_type = "county"
     else:
         realm_type = "country"
-        values_type = "state"
 
     filter_dict = {
         "county": {"county": county},
@@ -176,18 +194,46 @@ def rankings_view(request):
         "country": {},
     }
 
+    table_captions = [_("Rank"), scope]
+
+    if numerator:
+        numerator_annotate = {"numerator": Sum(numerator)}
+        table_captions.append(numerator)
+        if denominator:
+            denominator_filter_kwargs = {
+                "{}__{}".format(denominator, "isnull"): False,
+                "{}__{}".format(denominator, "gt"): 0,
+            }
+            denominator_annotate = {"denominator": Sum(denominator)}
+            score_expression = {"score": Sum(numerator) / Sum(denominator)}
+            order_by_expression = ("-score",)
+            table_captions.append(denominator)
+            table_captions.append(_("Score"))
+        else:
+            denominator_filter_kwargs = {}
+            denominator_annotate = {}
+            score_expression = {}
+            order_by_expression = ("-numerator",)
+    else:
+        numerator_annotate = {}
+        denominator_filter_kwargs = {}
+        denominator_annotate = {}
+        score_expression = {}
+        order_by_expression = ()
+
     ranking = (
         CurrentTotal.objects.filter(**filter_dict.get(realm_type))
-        .exclude(nnc_per_capita__isnull=True)
-        .values_list(values_type)
-        .annotate(numerator=Sum("population"))
-        .annotate(denominator=Sum("total_net_nominal_capacity"))
-        .annotate(score=Sum("total_net_nominal_capacity") / Sum("population"))
-        .order_by("-score")
+        .filter(**denominator_filter_kwargs)
+        .values_list(scope)
+        .annotate(**numerator_annotate)
+        .annotate(**denominator_annotate)
+        .annotate(**score_expression)
+        .order_by(*order_by_expression)
+        .distinct()
     )
 
     return render(
         request,
         "mastr_data/rankings.html",
-        {"filter": f, "rankings": ranking},
+        {"filter": f, "rankings": ranking, "table_captions": table_captions},
     )

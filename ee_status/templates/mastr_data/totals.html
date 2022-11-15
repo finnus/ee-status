@@ -37,10 +37,10 @@
     <h2 class="title">{% trans "Production capacity per capita" %}</h2>
       <table class="table">
         <tbody>
-        {% for realm_name, score, rankings in total_net_nominal_capacity %}
+        {% for realm_name, score, rankings in total_net_nominal_capacity_per_capita %}
             <td class="text-end">{{ realm_name }}</td>
             <td><div class="progress" style="height: 25px;">
-              <div class="progress-bar" role="progressbar" style="width: calc(100% * {{ score|unlocalize }} / {{ get_max|unlocalize }})" aria-valuenow="" aria-valuemin="0" aria-valuemax="">{{ score|floatformat:2 }} kW / Person</div></div></td>
+              <div class="progress-bar" role="progressbar" style="width: calc(100% * {{ score|unlocalize }} / {{ total_net_nominal_capacity_per_capita_max|unlocalize }})" aria-valuenow="" aria-valuemin="0" aria-valuemax="">{{ score|floatformat:2 }} kW / Person</div></div></td>
               {% if not forloop.first %}
                 {% for rank, total_ranks in rankings %}
                   <td>{{ rank }}. {% trans "Rank (of" %} {{ total_ranks }})</td>
@@ -53,17 +53,25 @@
     </div>
 
   <div class="col">
-    <h2 class="title">{% trans "Storage capacity per capita" %}</h2>
-    <div class="col">
-      {{ div_ranking|safe }}
+    <h2 class="title">{% trans "Production capacity per km²" %}</h2>
+      <table class="table">
+        <tbody>
+        {% for realm_name, score, rankings in total_net_nominal_capacity_per_sm %}
+            <td class="text-end">{{ realm_name }}</td>
+            <td><div class="progress" style="height: 25px;">
+              <div class="progress-bar" role="progressbar" style="width: calc(100% * {{ score|unlocalize }} / {{ total_net_nominal_capacity_per_sm_max|unlocalize }})" aria-valuenow="" aria-valuemin="0" aria-valuemax="">{{ score|floatformat:2 }} kW / km²</div></div></td>
+              {% if not forloop.first %}
+                {% for rank, total_ranks in rankings %}
+                  <td>{{ rank }}. {% trans "Rank (of" %} {{ total_ranks }})</td>
+                {% endfor %}
+          {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-    </div>
-    <div class="col">
-      {% for key, value in total_net_nominal_capacity.items %}
-        {{ key }}: {{ value }}<br>
-      {% endfor %}
-    </div>
-  </div>
+
 
 
 

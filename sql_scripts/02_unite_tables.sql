@@ -23,7 +23,8 @@ CREATE TABLE energy_units
     pv_net_nominal_capacity      NUMERIC(20, 2),
     wind_net_nominal_capacity    NUMERIC(20, 2),
     biomass_net_nominal_capacity NUMERIC(20, 2),
-    hydro_net_nominal_capacity   NUMERIC(20, 2)
+    hydro_net_nominal_capacity   NUMERIC(20, 2),
+    storage_net_nominal_capacity NUMERIC(20,2)
 );
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
@@ -86,6 +87,21 @@ SELECT einheitmastrnummer,
        nettonennleistung
 FROM solar_extended;
 
+INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
+                          state, start_up_date,
+                          close_down_date, date, storage_net_nominal_capacity)
+SELECT einheitmastrnummer,
+       netzbetreiberpruefungstatus,
+       gemeindeschluessel,
+       gemeinde,
+       landkreis,
+       bundesland,
+       inbetriebnahmedatum,
+       datumendgueltigestilllegung,
+       inbetriebnahmedatum,
+       nettonennleistung
+FROM storage_extended;
+
 -- Drop units that are not approved or disapproved
 DELETE
 FROM energy_units
@@ -99,7 +115,7 @@ ALTER TABLE energy_units
 INSERT INTO energy_units (unit_nr, municipality_key, municipality, county,
                           state, start_up_date,
                           close_down_date, date, pv_net_nominal_capacity, wind_net_nominal_capacity,
-                          biomass_net_nominal_capacity, hydro_net_nominal_capacity)
+                          biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
 SELECT unit_nr,
        municipality_key,
        municipality,
@@ -111,7 +127,8 @@ SELECT unit_nr,
        -pv_net_nominal_capacity,
        -wind_net_nominal_capacity,
        -biomass_net_nominal_capacity,
-       -hydro_net_nominal_capacity
+       -hydro_net_nominal_capacity,
+       -storage_net_nominal_capacity
 FROM energy_units
 WHERE close_down_date is not null;
 
