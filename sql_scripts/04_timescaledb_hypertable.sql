@@ -29,7 +29,7 @@ FROM energy_units;
 -- create the materialized view that we will then use in Django (with monthly data as well)
 CREATE MATERIALIZED VIEW monthly_timeline
             (date, municipality_key, municipality, county, state, pv_net_nominal_capacity, wind_net_nominal_capacity,
-             biomass_net_nominal_capacity, hydro_net_nominal_capacity)
+             biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
             WITH (timescaledb.continuous)
 AS
 SELECT timescaledb_experimental.time_bucket_ng('1 month', date) AS bucket,
@@ -40,7 +40,8 @@ SELECT timescaledb_experimental.time_bucket_ng('1 month', date) AS bucket,
        sum(pv_net_nominal_capacity),
        sum(wind_net_nominal_capacity),
        sum(biomass_net_nominal_capacity),
-       sum(hydro_net_nominal_capacity)
+       sum(hydro_net_nominal_capacity),
+       sum(storage_net_nominal_capacity)
 FROM energy_units_hyper
 GROUP BY bucket, municipality_key, municipality, county, state;
 
@@ -54,7 +55,7 @@ CREATE TABLE monthly_timeline_table
 );
 
 INSERT INTO monthly_timeline_table (date, municipality_key, municipality, county, state, pv_net_nominal_capacity,
-                                    wind_net_nominal_capacity, biomass_net_nominal_capacity, hydro_net_nominal_capacity)
+                                    wind_net_nominal_capacity, biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
 SELECT date,
        municipality_key,
        municipality,
@@ -63,7 +64,8 @@ SELECT date,
        pv_net_nominal_capacity,
        wind_net_nominal_capacity,
        biomass_net_nominal_capacity,
-       hydro_net_nominal_capacity
+       hydro_net_nominal_capacity,
+       storage_net_nominal_capacity
 FROM monthly_timeline;
 
 -- add indexes for faster searching
@@ -89,12 +91,13 @@ CREATE TABLE current_totals
     biomass_net_nominal_capacity       NUMERIC(20, 2),
     hydro_net_nominal_capacity         NUMERIC(20, 2),
     total_net_nominal_capacity         NUMERIC(20, 2),
+    storage_net_nominal_capacity       NUMERIC(20, 2),
     population                         INTEGER,
     area                               NUMERIC(20,2)
 );
 
 INSERT INTO current_totals (municipality_key, municipality, county, state, pv_net_nominal_capacity,
-                            wind_net_nominal_capacity, biomass_net_nominal_capacity, hydro_net_nominal_capacity)
+                            wind_net_nominal_capacity, biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
 SELECT municipality_key,
        municipality,
        county,
@@ -102,7 +105,8 @@ SELECT municipality_key,
        sum(pv_net_nominal_capacity),
        sum(wind_net_nominal_capacity),
        sum(biomass_net_nominal_capacity),
-       sum(hydro_net_nominal_capacity)
+       sum(hydro_net_nominal_capacity),
+       sum(storage_net_nominal_capacity)
 FROM monthly_timeline
 GROUP BY municipality_key, municipality, county, state;
 

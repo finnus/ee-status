@@ -38,6 +38,9 @@ class CurrentTotal(models.Model):
     hydro_net_nominal_capacity = models.FloatField(
         verbose_name=_("Hydro net nominal capacity")
     )
+    storage_net_nominal_capacity = models.FloatField(
+        verbose_name=_("Storage net nominal capacity")
+    )
     total_net_nominal_capacity = models.FloatField(
         verbose_name=_("total net nominal capacity")
     )
