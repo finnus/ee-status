@@ -16,7 +16,7 @@ class MonthlyTimeline(models.Model):
 
     class Meta:
         managed = False
-        db_table = "monthly_timeline_table"
+        db_table = "monthly_timeline"
 
 
 class CurrentTotal(models.Model):

@@ -74,7 +74,7 @@ See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-djan
 ### Import data wit pgloader
  * run pgloader transform data from open-MaStR: pgloader sql_scripts/01_import_from_open-mastr
    * adapt path to open_MaStR to your needs; data usually gets downloaded to /home/$USER
- * pgloader will also run the script 02_unite_tables.sql
+ * pgloader will also run the script 03_unite_tables.sql
  * run pgloader a second time to import "population" and "area" from csv:
  * pgloader will also run the script 04_timescaledb_hypertable.sql
 

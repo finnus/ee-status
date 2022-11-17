@@ -136,3 +136,83 @@ WHERE close_down_date is not null;
 UPDATE energy_units
 SET date = '2000-01-01'
 WHERE date < '2000-01-01';
+
+ALTER TABLE energy_units
+    ALTER COLUMN date SET NOT NULL;
+
+DROP TABLE IF EXISTS monthly_timeline;
+
+CREATE TABLE monthly_timeline
+            (date, municipality_key, municipality, county, state, pv_net_nominal_capacity, wind_net_nominal_capacity,
+             biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
+AS
+SELECT date_trunc('month', date) AS date_monthly,
+       municipality_key,
+       municipality,
+       county,
+       state,
+       sum(pv_net_nominal_capacity),
+       sum(wind_net_nominal_capacity),
+       sum(biomass_net_nominal_capacity),
+       sum(hydro_net_nominal_capacity),
+       sum(storage_net_nominal_capacity)
+FROM energy_units
+GROUP BY date_monthly, municipality_key, municipality, county, state;
+
+-- add indexes for faster searching
+CREATE INDEX state_idx ON monthly_timeline (state);
+CREATE INDEX county_idx ON monthly_timeline (county);
+CREATE INDEX municipality_idx ON monthly_timeline (municipality);
+CREATE INDEX municipality_key_idx ON monthly_timeline (municipality_key);
+
+-- add ID column (needed by Django)
+ALTER TABLE monthly_timeline
+    ADD COLUMN id SERIAL PRIMARY KEY;
+
+DROP TABLE IF EXISTS current_totals;
+CREATE TABLE current_totals
+(
+    id                                 SERIAL PRIMARY KEY,
+    municipality_key                   VARCHAR(8),
+    municipality                       VARCHAR(200),
+    county                             VARCHAR(200),
+    state                              VARCHAR(200),
+    pv_net_nominal_capacity            NUMERIC(20, 2),
+    wind_net_nominal_capacity          NUMERIC(20, 2),
+    biomass_net_nominal_capacity       NUMERIC(20, 2),
+    hydro_net_nominal_capacity         NUMERIC(20, 2),
+    total_net_nominal_capacity         NUMERIC(20, 2),
+    storage_net_nominal_capacity       NUMERIC(20, 2),
+    population                         INTEGER,
+    area                               NUMERIC(20,2)
+);
+
+INSERT INTO current_totals (municipality_key, municipality, county, state, pv_net_nominal_capacity,
+                            wind_net_nominal_capacity, biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
+SELECT municipality_key,
+       municipality,
+       county,
+       state,
+       sum(pv_net_nominal_capacity),
+       sum(wind_net_nominal_capacity),
+       sum(biomass_net_nominal_capacity),
+       sum(hydro_net_nominal_capacity),
+       sum(storage_net_nominal_capacity)
+FROM monthly_timeline
+GROUP BY municipality_key, municipality, county, state;
+
+CREATE INDEX totals_state_idx ON current_totals (state);
+CREATE INDEX totals_county_idx ON current_totals (county);
+CREATE INDEX totals_municipality_idx ON current_totals (municipality);
+CREATE INDEX totals_municipality_key_idx ON current_totals (municipality_key);
+
+UPDATE current_totals
+SET population = (SELECT population FROM municipality_keys WHERE municipality_key = current_totals.municipality_key);
+
+UPDATE current_totals
+SET area = (SELECT area FROM municipality_keys WHERE municipality_key = current_totals.municipality_key);
+;
+
+UPDATE current_totals
+SET total_net_nominal_capacity = coalesce(pv_net_nominal_capacity, 0) + coalesce(wind_net_nominal_capacity, 0) +coalesce(biomass_net_nominal_capacity, 0) +coalesce(hydro_net_nominal_capacity, 0)
+;

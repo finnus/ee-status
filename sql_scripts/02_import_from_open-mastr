@@ -4,6 +4,6 @@ load database
 
  with include drop, create tables, create indexes, reset sequences
  including only table names like 'hydro_extended', 'wind_extended', 'biomass_extended', 'solar_extended', 'storage_extended'
- AFTER LOAD EXECUTE 02_unite_tables.sql
+ AFTER LOAD EXECUTE 03_unite_tables.sql
 
  set work_mem to '512MB', maintenance_work_mem to '1024 MB';
