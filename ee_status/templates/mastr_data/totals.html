@@ -71,6 +71,32 @@
       </table>
     </div>
 
+  <div class="row mt-5">
+  <div class="col">
+    <h2 class="title">{% trans "Storage capacity per capita" %}</h2>
+      <table class="table">
+        <tbody>
+        {% for realm_name, score, rankings in storage_capacity_per_capita %}
+            <td class="text-end">{{ realm_name }}</td>
+            <td><div class="progress" style="height: 25px;">
+              <div class="progress-bar" role="progressbar" style="width: calc(100% * {{ score|unlocalize }} / {{ storage_capacity_per_capita_max|unlocalize }})" aria-valuenow="" aria-valuemin="0" aria-valuemax="">{{ score|floatformat:2 }} kW / Person</div></div></td>
+              {% if not forloop.first %}
+                {% for rank, total_ranks in rankings %}
+                  <td>{{ rank }}. {% trans "Rank (of" %} {{ total_ranks }})</td>
+                {% endfor %}
+          {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  <div class="col">
+
+    </div>
+
+
+
 
 
 

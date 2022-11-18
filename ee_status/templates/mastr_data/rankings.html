@@ -34,7 +34,11 @@
       <tr>
         <td>{{ forloop.counter }}</td>
         {% for value_e in object %}
+          {%  if forloop.counter == 1 %}
+            <td><a href="{% url 'mastr_data:totals' %}?{{ table_captions.1 }}={{ value_e }}"> {{ value_e }} </a></td>
+          {% else %}
           <td>{{ value_e }}</td>
+          {% endif %}
         {% endfor %}
       </tr>
     {% endfor %}

@@ -152,7 +152,25 @@ def totals_view(request):
                 total_net_nominal_capacity_per_sm, key=itemgetter(1)
             )[1]
 
-            print(total_net_nominal_capacity_per_capita)
+        # GET Storage Capacity per capita
+        storage_capacity_per_capita = []
+        # loop over each administrative scope
+        for i in order[order.index(realm_type) : :]:  # noqa: E203
+            storage_capacity_per_capita.append(
+                (
+                    current_object.get_scope_name(i),
+                    current_object.scope_average(
+                        "storage_net_nominal_capacity", "population", i
+                    )[i],
+                    current_object.ratio_and_rank(
+                        "storage_net_nominal_capacity", "population", realm_type, i
+                    ),
+                )
+            )
+            # max is needed to calculate width of the css progress bar
+            storage_capacity_per_capita_max = max(
+                storage_capacity_per_capita, key=itemgetter(1)
+            )[1]
 
     return render(
         request,
@@ -161,11 +179,13 @@ def totals_view(request):
             "script": script,
             "div": div,
             "filter": f_current_totals,
-            "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita,
             "div_timeline": div_timeline,
+            "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita,
             "total_net_nominal_capacity_per_capita_max": total_net_nominal_capacity_per_capita_max,
             "total_net_nominal_capacity_per_sm": total_net_nominal_capacity_per_sm,
             "total_net_nominal_capacity_per_sm_max": total_net_nominal_capacity_per_sm_max,
+            "storage_capacity_per_capita": storage_capacity_per_capita,
+            "storage_capacity_per_capita_max": storage_capacity_per_capita_max,
         },
     )
 
@@ -179,7 +199,10 @@ def rankings_view(request):
     denominator = tempdict.get("denominator")
 
     if not scope:
-        scope = "municipality"
+        scope = "state"
+    if not numerator and not denominator:
+        numerator = "total_net_nominal_capacity"
+        denominator = "population"
 
     f = RankingsFilter(tempdict, queryset=CurrentTotal.objects.all())
 
