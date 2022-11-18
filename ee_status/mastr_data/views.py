@@ -152,6 +152,8 @@ def totals_view(request):
                 total_net_nominal_capacity_per_sm, key=itemgetter(1)
             )[1]
 
+            print(total_net_nominal_capacity_per_capita)
+
     return render(
         request,
         "mastr_data/totals.html",
