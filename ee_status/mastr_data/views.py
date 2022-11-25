@@ -8,7 +8,12 @@ from django.db.models import F, Sum, Window
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
-from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
+from .filters import (
+    CurrentTotalFilter,
+    MonthlyTimelineFilter,
+    RankingsFilter,
+    SearchFilter,
+)
 from .models import CurrentTotal, MonthlyTimeline
 
 
@@ -223,7 +228,7 @@ def rankings_view(request):
 
     if numerator:
         numerator_annotate = {"numerator": Sum(numerator)}
-        table_captions.append(numerator)
+        table_captions.append(CurrentTotal._meta.get_field(numerator).verbose_name)
         if denominator:
             denominator_filter_kwargs = {
                 "{}__{}".format(denominator, "isnull"): False,
@@ -232,7 +237,9 @@ def rankings_view(request):
             denominator_annotate = {"denominator": Sum(denominator)}
             score_expression = {"score": Sum(numerator) / Sum(denominator)}
             order_by_expression = ("-score",)
-            table_captions.append(denominator)
+            table_captions.append(
+                CurrentTotal._meta.get_field(denominator).verbose_name
+            )
             table_captions.append(_("Score"))
         else:
             denominator_filter_kwargs = {}
@@ -262,3 +269,9 @@ def rankings_view(request):
         "mastr_data/rankings.html",
         {"filter": f, "rankings": ranking, "table_captions": table_captions},
     )
+
+
+def search_view(request):
+    result_list = CurrentTotal.objects.all()
+    search_filter = SearchFilter(request.GET, queryset=result_list)
+    return render(request, "mastr_data/search.html", {"filter": search_filter})

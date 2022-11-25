@@ -11,12 +11,23 @@
       <form>
         <div class="form-group">
 
-          <input type="text" class="form-control form-control-lg mb-4 search-form" id="searchtext" aria-describedby="searchfield"
+          <input type="text" class="form-control form-control-lg mb-4 search-form" id="searchtext"
+                 aria-describedby="searchfield"
                  placeholder="{% trans "Search for Municipality, County, State, Zip-Code..." %}">
 
           <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">{% trans "Let's go!" %}</button>
         </div>
       </form>
+
+      <div class="alert alert-success mt-lg-5 text-start" role="alert">
+        <h4 class="alert-heading">{% trans "Did you mean..." %}</h4>
+        <ul>
+          <li><a href="#" class="alert-link">Gemeinde Benningen am Neckar</a> (Kreis Ludwigsburg, Baden-Württemberg)</li>
+          <li><a href="#" class="alert-link">Gemeinde Benningen</a> (Kreis Unterallgäu, Bayern)</li>
+        </ul>
+        <hr>
+        <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>
+      </div>
 
     </div>
   </div>

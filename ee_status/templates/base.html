@@ -62,15 +62,11 @@
 
     </div>
 
-    <div class="container-fluid mt-5">
-            <div class="row">
-                <div class="col-md-2 mb-5">
-                    <div class="sticky-top pr-3 pt-1 sticky-offset">
-                        {% block left_sidebar %}
+    {% block left_sidebar %}
                         {% endblock left_sidebar %}
-                    </div>
-                </div>
-<div class="col-md-10 pr-5">
+
+
+
 
       {% if messages %}
         {% for message in messages %}

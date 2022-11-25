@@ -76,3 +76,14 @@ class RankingsFilter(django_filters.FilterSet):
             "numerator",
             "denominator",
         ]
+
+
+class SearchFilter(django_filters.FilterSet):
+    class Meta:
+        model = CurrentTotal
+        fields = [
+            "municipality_key",
+            "municipality",
+            "county",
+            "state",
+        ]

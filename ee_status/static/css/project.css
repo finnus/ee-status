@@ -11,3 +11,7 @@
   background-color: #f2dede;
   border-color: #eed3d7;
 }
+
+.search-form {
+  border-radius: 3rem;
+}
