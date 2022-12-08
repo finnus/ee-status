@@ -9,6 +9,7 @@ These commands transform the data to only contain the needed values and prepare 
 
 DROP TABLE IF EXISTS energy_units;
 
+
 CREATE TABLE energy_units
 (
     unit_nr                      VARCHAR(50),
@@ -17,6 +18,7 @@ CREATE TABLE energy_units
     municipality                 VARCHAR(200),
     county                       VARCHAR(200),
     state                        VARCHAR(200),
+    zip_code                     VARCHAR(6),
     start_up_date                DATE,
     close_down_date              DATE,
     date                         DATE,
@@ -24,11 +26,11 @@ CREATE TABLE energy_units
     wind_net_nominal_capacity    NUMERIC(20, 2),
     biomass_net_nominal_capacity NUMERIC(20, 2),
     hydro_net_nominal_capacity   NUMERIC(20, 2),
-    storage_net_nominal_capacity NUMERIC(20,2)
+    storage_net_nominal_capacity NUMERIC(20, 2)
 );
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
-                          state, start_up_date,
+                          state, zip_code, start_up_date,
                           close_down_date, date, hydro_net_nominal_capacity)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
@@ -36,6 +38,7 @@ SELECT einheitmastrnummer,
        gemeinde,
        landkreis,
        bundesland,
+       postleitzahl,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
@@ -43,7 +46,7 @@ SELECT einheitmastrnummer,
 FROM hydro_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
-                          state, start_up_date,
+                          state, zip_code, start_up_date,
                           close_down_date, date, wind_net_nominal_capacity)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
@@ -51,6 +54,7 @@ SELECT einheitmastrnummer,
        gemeinde,
        landkreis,
        bundesland,
+       postleitzahl,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
@@ -58,7 +62,7 @@ SELECT einheitmastrnummer,
 FROM wind_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
-                          state, start_up_date,
+                          state, zip_code, start_up_date,
                           close_down_date, date, biomass_net_nominal_capacity)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
@@ -66,6 +70,7 @@ SELECT einheitmastrnummer,
        gemeinde,
        landkreis,
        bundesland,
+       postleitzahl,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
@@ -73,7 +78,7 @@ SELECT einheitmastrnummer,
 FROM biomass_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
-                          state, start_up_date,
+                          state, zip_code, start_up_date,
                           close_down_date, date, pv_net_nominal_capacity)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
@@ -81,6 +86,7 @@ SELECT einheitmastrnummer,
        gemeinde,
        landkreis,
        bundesland,
+       postleitzahl,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
@@ -88,7 +94,7 @@ SELECT einheitmastrnummer,
 FROM solar_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
-                          state, start_up_date,
+                          state, zip_code, start_up_date,
                           close_down_date, date, storage_net_nominal_capacity)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
@@ -96,6 +102,7 @@ SELECT einheitmastrnummer,
        gemeinde,
        landkreis,
        bundesland,
+       postleitzahl,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
@@ -113,7 +120,7 @@ ALTER TABLE energy_units
 
 -- Duplicate rows with units not longer being active and make their values negative
 INSERT INTO energy_units (unit_nr, municipality_key, municipality, county,
-                          state, start_up_date,
+                          state, zip_code, start_up_date,
                           close_down_date, date, pv_net_nominal_capacity, wind_net_nominal_capacity,
                           biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
 SELECT unit_nr,
@@ -121,6 +128,7 @@ SELECT unit_nr,
        municipality,
        county,
        state,
+       zip_code,
        start_up_date,
        close_down_date,
        date,
@@ -132,25 +140,25 @@ SELECT unit_nr,
 FROM energy_units
 WHERE close_down_date is not null;
 
--- set time to the minimum of 2000-01-01 as this is where we start displaying data (and timescaledb has problems otherwise)
+-- set time to the minimum of 2000-01-01 as this is where we start displaying data
 UPDATE energy_units
 SET date = '2000-01-01'
 WHERE date < '2000-01-01';
 
-ALTER TABLE energy_units
-    ALTER COLUMN date SET NOT NULL;
+ALTER TABLE energy_units ALTER COLUMN date SET NOT NULL;
 
 DROP TABLE IF EXISTS monthly_timeline;
 
 CREATE TABLE monthly_timeline
-            (date, municipality_key, municipality, county, state, pv_net_nominal_capacity, wind_net_nominal_capacity,
-             biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
+    (date, municipality_key, municipality, county, state, zip_code, pv_net_nominal_capacity, wind_net_nominal_capacity,
+     biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
 AS
 SELECT date_trunc('month', date) AS date_monthly,
        municipality_key,
        municipality,
        county,
        state,
+       string_agg(DISTINCT zip_code,','),
        sum(pv_net_nominal_capacity),
        sum(wind_net_nominal_capacity),
        sum(biomass_net_nominal_capacity),
@@ -172,27 +180,30 @@ ALTER TABLE monthly_timeline
 DROP TABLE IF EXISTS current_totals;
 CREATE TABLE current_totals
 (
-    id                                 SERIAL PRIMARY KEY,
-    municipality_key                   VARCHAR(8),
-    municipality                       VARCHAR(200),
-    county                             VARCHAR(200),
-    state                              VARCHAR(200),
-    pv_net_nominal_capacity            NUMERIC(20, 2),
-    wind_net_nominal_capacity          NUMERIC(20, 2),
-    biomass_net_nominal_capacity       NUMERIC(20, 2),
-    hydro_net_nominal_capacity         NUMERIC(20, 2),
-    total_net_nominal_capacity         NUMERIC(20, 2),
-    storage_net_nominal_capacity       NUMERIC(20, 2),
-    population                         INTEGER,
-    area                               NUMERIC(20,2)
+    id                           SERIAL PRIMARY KEY,
+    municipality_key             VARCHAR(8),
+    municipality                 VARCHAR(200),
+    county                       VARCHAR(200),
+    state                        VARCHAR(200),
+    zip_code                     TEXT,
+    pv_net_nominal_capacity      NUMERIC(20, 2),
+    wind_net_nominal_capacity    NUMERIC(20, 2),
+    biomass_net_nominal_capacity NUMERIC(20, 2),
+    hydro_net_nominal_capacity   NUMERIC(20, 2),
+    total_net_nominal_capacity   NUMERIC(20, 2),
+    storage_net_nominal_capacity NUMERIC(20, 2),
+    population                   INTEGER,
+    area                         NUMERIC(20, 2)
 );
 
-INSERT INTO current_totals (municipality_key, municipality, county, state, pv_net_nominal_capacity,
-                            wind_net_nominal_capacity, biomass_net_nominal_capacity, hydro_net_nominal_capacity, storage_net_nominal_capacity)
+INSERT INTO current_totals (municipality_key, municipality, county, state, zip_code, pv_net_nominal_capacity,
+                            wind_net_nominal_capacity, biomass_net_nominal_capacity, hydro_net_nominal_capacity,
+                            storage_net_nominal_capacity)
 SELECT municipality_key,
        municipality,
        county,
        state,
+       string_agg(DISTINCT zip_code,','),
        sum(pv_net_nominal_capacity),
        sum(wind_net_nominal_capacity),
        sum(biomass_net_nominal_capacity),
@@ -211,8 +222,12 @@ SET population = (SELECT population FROM municipality_keys WHERE municipality_ke
 
 UPDATE current_totals
 SET area = (SELECT area FROM municipality_keys WHERE municipality_key = current_totals.municipality_key);
-;
 
 UPDATE current_totals
-SET total_net_nominal_capacity = coalesce(pv_net_nominal_capacity, 0) + coalesce(wind_net_nominal_capacity, 0) +coalesce(biomass_net_nominal_capacity, 0) +coalesce(hydro_net_nominal_capacity, 0)
-;
+SET total_net_nominal_capacity = coalesce(pv_net_nominal_capacity, 0) + coalesce(wind_net_nominal_capacity, 0) +
+                                 coalesce(biomass_net_nominal_capacity, 0) + coalesce(hydro_net_nominal_capacity, 0);
+
+
+-- remove duplicate zip_code
+UPDATE current_totals
+set zip_code = array_to_string(array(SELECT DISTINCT unnest(string_to_array(zip_code, ','))), ',');

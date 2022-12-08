@@ -4,30 +4,30 @@
 
 {% block content %}
   <div class="px-4 py-5 my-5 text-center">
-    <img class="d-block mx-auto mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
     <h1 class="display-5 fw-bold">E<span class="h4">rneuerbare</span> E<span class="h4">nergien</span> S<span
       class="h4">tatus</span></h1>
     <div class="col-lg-6 mx-auto">
-      <form>
+      <form method="get">
         <div class="form-group">
 
-          <input type="text" class="form-control form-control-lg mb-4 search-form" id="searchtext"
+          <input type="text" class="form-control form-control-lg mb-4 search-form" name="q" id="searchtext"
                  aria-describedby="searchfield"
-                 placeholder="{% trans "Search for Municipality, County, State, Zip-Code..." %}">
+                 placeholder="{% trans "Search for Municipality, County, State, Zip-Code, Germany..." %}">
 
           <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">{% trans "Let's go!" %}</button>
         </div>
       </form>
-
+      {% if municipality_results %}
       <div class="alert alert-success mt-lg-5 text-start" role="alert">
         <h4 class="alert-heading">{% trans "Did you mean..." %}</h4>
         <ul>
-          <li><a href="#" class="alert-link">Gemeinde Benningen am Neckar</a> (Kreis Ludwigsburg, Baden-Württemberg)</li>
-          <li><a href="#" class="alert-link">Gemeinde Benningen</a> (Kreis Unterallgäu, Bayern)</li>
+          <li><a href="{% url 'mastr_data:totals' %}?county={{ county_results.county }}" class="alert-link">{% trans "County" %} {{ county_results.county }}</a> ({{ county_results.state }})</li>
+          {% for result in municipality_results %}
+          <li><a href="{% url 'mastr_data:totals' %}?municipality={{ result.municipality }}" class="alert-link">{% trans "Municipality" %} {{ result.municipality }}</a> ( {% trans "County" %} {{ result.county }}, {{ result.state }})</li>
+          {% endfor %}
         </ul>
-        <hr>
-        <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>
       </div>
+    {% endif %}
 
     </div>
   </div>

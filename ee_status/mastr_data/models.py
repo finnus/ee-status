@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 from django.db import models
 from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
@@ -26,6 +28,7 @@ class CurrentTotal(models.Model):
     municipality = models.CharField(verbose_name=_("Municipality"), max_length=200)
     county = models.CharField(verbose_name=_("County"), max_length=200)
     state = models.CharField(verbose_name=_("State"), max_length=200, blank=True)
+    zip_code = models.CharField(verbose_name=_("Zip-Code"), max_length=500, blank=True)
     pv_net_nominal_capacity = models.FloatField(
         verbose_name=_("PV net nominal capacity")
     )
@@ -51,7 +54,7 @@ class CurrentTotal(models.Model):
         managed = False
         db_table = "current_totals"
 
-    def ratio_and_rank(self, numerator, denominator, realm_type, scope):
+    def ratio_and_rank_per_scope(self, numerator, denominator, realm_type, scope):
 
         scope_dict = {
             "municipality": {"municipality": self.municipality},
@@ -87,6 +90,7 @@ class CurrentTotal(models.Model):
         if realm_type == scope:
             rank = "n.a"
         else:
+            print(ranking)
             rank = [i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d][
                 0
             ] + 1
@@ -115,3 +119,25 @@ class CurrentTotal(models.Model):
             "country": "Deutschland",
         }
         return self_dict.get(scope)
+
+    def ratio_and_rank(self, numerator, denominator, realm_type):
+        # Define order for looping over multiple admin scopes
+        order = ["municipality", "county", "state", "country"]
+        ratio_and_rank = []
+        for i in order[order.index(realm_type) : :]:  # noqa: E203
+            ratio_and_rank.append(
+                (
+                    self.get_scope_name(i),
+                    # scope_average can be None
+                    self.scope_average(numerator, denominator, i)[i] or 0,
+                    self.ratio_and_rank_per_scope(
+                        numerator, denominator, realm_type, i
+                    ),
+                )
+            )
+        # max is needed to calculate width of the css progress bar
+        total_net_nominal_capacity_per_capita_max = max(
+            ratio_and_rank, key=itemgetter(1)
+        )[1]
+
+        return ratio_and_rank, total_net_nominal_capacity_per_capita_max

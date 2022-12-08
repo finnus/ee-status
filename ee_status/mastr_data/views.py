@@ -1,19 +1,13 @@
-from operator import itemgetter
-
 import pandas as pd
 from bokeh.embed import components
 from bokeh.models import DatetimeTickFormatter, HoverTool, NumeralTickFormatter
 from bokeh.plotting import figure
-from django.db.models import F, Sum, Window
-from django.shortcuts import render
+from django.contrib import messages
+from django.db.models import F, Q, Sum, Window
+from django.shortcuts import redirect, render, reverse
 from django.utils.translation import gettext_lazy as _
 
-from .filters import (
-    CurrentTotalFilter,
-    MonthlyTimelineFilter,
-    RankingsFilter,
-    SearchFilter,
-)
+from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
 from .models import CurrentTotal, MonthlyTimeline
 
 
@@ -84,12 +78,8 @@ def totals_view(request):
                 ("Wind", "@wind_net_sum_list"),
                 ("Biomasse", "@biomass_net_sum_list"),
                 ("Wasserkraft", "@hydro_net_sum_list"),
-            ],
-            formatters={
-                "@date_list": "datetime",  # use 'datetime' formatter for '@date' field
-            },
+            ]
             # display a tooltip whenever the cursor is vertically in line with a glyph
-            mode="vline",
         )
     )
     # define plots for bokeh
@@ -114,68 +104,19 @@ def totals_view(request):
     else:
         realm_type = "country"
 
-    # Define order for looping over multiple admin scopes
-    order = ["municipality", "county", "state", "country"]
-
     # GET TOTAL NET NOMINAL CAPACITY PER CAPITA
-    total_net_nominal_capacity_per_capita = []
-    # loop over each administrative scope
-    for i in order[order.index(realm_type) : :]:  # noqa: E203
-        total_net_nominal_capacity_per_capita.append(
-            (
-                current_object.get_scope_name(i),
-                current_object.scope_average(
-                    "total_net_nominal_capacity", "population", i
-                )[i],
-                current_object.ratio_and_rank(
-                    "total_net_nominal_capacity", "population", realm_type, i
-                ),
-            )
-        )
-        # max is needed to calculate width of the css progress bar
-        total_net_nominal_capacity_per_capita_max = max(
-            total_net_nominal_capacity_per_capita, key=itemgetter(1)
-        )[1]
+    total_net_nominal_capacity_per_capita = current_object.ratio_and_rank(
+        "total_net_nominal_capacity", "population", realm_type
+    )
+    # GET TOTAL NET NOMINAL CAPACITY PER SQUARE METERS
+    total_net_nominal_capacity_per_sm = current_object.ratio_and_rank(
+        "total_net_nominal_capacity", "area", realm_type
+    )
 
-        # GET TOTAL NET NOMINAL CAPACITY PER SQUARE METERS
-        total_net_nominal_capacity_per_sm = []
-        # loop over each administrative scope
-        for i in order[order.index(realm_type) : :]:  # noqa: E203
-            total_net_nominal_capacity_per_sm.append(
-                (
-                    current_object.get_scope_name(i),
-                    current_object.scope_average(
-                        "total_net_nominal_capacity", "area", i
-                    )[i],
-                    current_object.ratio_and_rank(
-                        "total_net_nominal_capacity", "area", realm_type, i
-                    ),
-                )
-            )
-            # max is needed to calculate width of the css progress bar
-            total_net_nominal_capacity_per_sm_max = max(
-                total_net_nominal_capacity_per_sm, key=itemgetter(1)
-            )[1]
-
-        # GET Storage Capacity per capita
-        storage_capacity_per_capita = []
-        # loop over each administrative scope
-        for i in order[order.index(realm_type) : :]:  # noqa: E203
-            storage_capacity_per_capita.append(
-                (
-                    current_object.get_scope_name(i),
-                    current_object.scope_average(
-                        "storage_net_nominal_capacity", "population", i
-                    )[i],
-                    current_object.ratio_and_rank(
-                        "storage_net_nominal_capacity", "population", realm_type, i
-                    ),
-                )
-            )
-            # max is needed to calculate width of the css progress bar
-            storage_capacity_per_capita_max = max(
-                storage_capacity_per_capita, key=itemgetter(1)
-            )[1]
+    # GET Storage Capacity per capita
+    storage_capacity_per_capita = current_object.ratio_and_rank(
+        "storage_net_nominal_capacity", "population", realm_type
+    )
 
     return render(
         request,
@@ -185,12 +126,18 @@ def totals_view(request):
             "div": div,
             "filter": f_current_totals,
             "div_timeline": div_timeline,
-            "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita,
-            "total_net_nominal_capacity_per_capita_max": total_net_nominal_capacity_per_capita_max,
-            "total_net_nominal_capacity_per_sm": total_net_nominal_capacity_per_sm,
-            "total_net_nominal_capacity_per_sm_max": total_net_nominal_capacity_per_sm_max,
-            "storage_capacity_per_capita": storage_capacity_per_capita,
-            "storage_capacity_per_capita_max": storage_capacity_per_capita_max,
+            "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita[
+                0
+            ],
+            "total_net_nominal_capacity_per_capita_max": total_net_nominal_capacity_per_capita[
+                1
+            ],
+            "total_net_nominal_capacity_per_sm": total_net_nominal_capacity_per_sm[0],
+            "total_net_nominal_capacity_per_sm_max": total_net_nominal_capacity_per_sm[
+                1
+            ],
+            "storage_capacity_per_capita": storage_capacity_per_capita[0],
+            "storage_capacity_per_capita_max": storage_capacity_per_capita[1],
         },
     )
 
@@ -272,6 +219,74 @@ def rankings_view(request):
 
 
 def search_view(request):
-    result_list = CurrentTotal.objects.all()
-    search_filter = SearchFilter(request.GET, queryset=result_list)
-    return render(request, "mastr_data/search.html", {"filter": search_filter})
+    if request.method == "GET":
+        query = request.GET.get("q")
+        if not query:
+            return render(request, "mastr_data/search.html")
+
+    qs_filtered = CurrentTotal.objects.filter(
+        Q(municipality__icontains=query)
+        | Q(county__icontains=query)
+        | Q(state__icontains=query)
+        | Q(municipality_key__icontains=query)
+        | Q(zip_code__icontains=query)
+    )
+
+    # no results
+    if not qs_filtered:
+        messages.add_message(request, messages.INFO, "no result")
+        return render(request, "mastr_data/search.html")
+
+    # if there is only one result, it's a single municipality or a county with only one municipality
+    elif len(qs_filtered) == 1:
+        # County with the same name and no other municipalities.
+        if qs_filtered[0].county == qs_filtered[0].municipality:
+            return redirect(
+                reverse("mastr_data:totals") + "?county=" + qs_filtered[0].county
+            )
+        # single municipality result
+        else:
+            return redirect(
+                reverse("mastr_data:totals")
+                + "?municipality="
+                + qs_filtered[0].municipality
+            )
+
+    # if we have multiple results, it can be...
+    elif len(qs_filtered) > 1:
+        municipalities_in_county = CurrentTotal.objects.filter(
+            county=qs_filtered[0].county
+        ).count()
+        municipalities_in_state = CurrentTotal.objects.filter(
+            state=qs_filtered[0].state
+        ).count()
+        if municipalities_in_county == len(qs_filtered):
+            # if there are less results than municiaplities in the county, the user has to chose what s/he meant
+            if CurrentTotal.objects.filter(municipality=qs_filtered[0].county).exists():
+                result_list = qs_filtered.filter(
+                    municipality__icontains=qs_filtered[0].county
+                )
+                return render(
+                    request,
+                    "mastr_data/search.html",
+                    {
+                        "municipality_results": result_list,
+                        "county_results": qs_filtered[0],
+                    },
+                )
+            # or - if there are as many results as municipalities in the county it's probably the county itself
+            else:
+                return redirect(
+                    reverse("mastr_data:totals") + "?county=" + qs_filtered[0].county
+                )
+        elif municipalities_in_state == len(qs_filtered):
+            messages.add_message(request, messages.INFO, "a federal state")
+            return redirect(
+                reverse("mastr_data:totals") + "?state=" + qs_filtered[0].state
+            )
+        else:
+            return render(
+                request, "mastr_data/search.html", {"result_list": qs_filtered}
+            )
+
+    return render(request, "mastr_data/search.html")

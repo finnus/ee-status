@@ -42,12 +42,12 @@
           <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'home' %}">EE-Status</a>
+          <a class="navbar-brand" href="{% url 'mastr_data:search' %}">EE-Status</a>
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item active">
-                <a class="nav-link" href="{% url 'home' %}">Home <span class="visually-hidden">(current)</span></a>
+                <a class="nav-link" href="{% url 'mastr_data:search' %}">Home <span class="visually-hidden">(current)</span></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'mastr_data:totals' %}">Totals</a>
@@ -63,7 +63,7 @@
     </div>
 
     {% block left_sidebar %}
-                        {% endblock left_sidebar %}
+    {% endblock left_sidebar %}
 
 
 
