@@ -21,7 +21,9 @@
       <div class="alert alert-success mt-lg-5 text-start" role="alert">
         <h4 class="alert-heading">{% trans "Did you mean..." %}</h4>
         <ul>
+          {% if county_results %}
           <li><a href="{% url 'mastr_data:totals' %}?county={{ county_results.county }}" class="alert-link">{% trans "County" %} {{ county_results.county }}</a> ({{ county_results.state }})</li>
+          {% endif %}
           {% for result in municipality_results %}
           <li><a href="{% url 'mastr_data:totals' %}?municipality={{ result.municipality }}" class="alert-link">{% trans "Municipality" %} {{ result.municipality }}</a> ( {% trans "County" %} {{ result.county }}, {{ result.state }})</li>
           {% endfor %}

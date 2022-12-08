@@ -286,7 +286,7 @@ def search_view(request):
             )
         else:
             return render(
-                request, "mastr_data/search.html", {"result_list": qs_filtered}
+                request, "mastr_data/search.html", {"municipality_results": qs_filtered}
             )
 
     return render(request, "mastr_data/search.html")
