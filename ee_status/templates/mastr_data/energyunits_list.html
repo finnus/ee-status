@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="row">
+  <div class="col-md-2 mb-5">
+    <div class="sticky-top pr-3 pt-1 sticky-offset">
+
+      <div class="card">
+        <div class="card-header">
+          <strong>{% trans "Filter" %}</strong>
+        </div>
+        <div class="card-body">
+          <form method="get">
+            {{ filter.form|crispy }} <input type="hidden"/>
+            <button class="btn btn-outline-primary btn-block" type="submit">{% trans "Filter" %}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-10 pr-5">
+
+  <h1 class="title">{% trans "Energy Units" %}</h1>
+
+  <nav class="row">
+  <table class="table table-striped sortable">
+    <thead>
+    <tr>
+      <th scope="col">{% trans "Unit Nr." %}</th>
+      <th scope="col">{% trans "Municipality" %}</th>
+      <th scope="col">{% trans "County" %}</th>
+      <th scope="col">{% trans "Start Up Date" %}</th>
+      <th scope="col">{% trans "Close Down Date" %}</th>
+      <th scope="col">{% trans "Type" %}</th>
+      <th scope="col">{% trans "Capacity" %}</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for unit in units_list %}
+      <tr>
+        <td>{{ unit.unit_nr }}</td>
+        <td>{{ unit.municipality }}</td>
+        <td>{{ unit.county }}</td>
+        <td>{{ unit.start_up_date }}</td>
+        <td>{{ unit.close_down_date|default_if_none:""}}</td>
+        <td>
+          {% if unit.pv_net_nominal_capacity %}{% trans "PV" %}{% endif %}
+          {% if unit.storage_net_nominal_capacity %}{% trans "Battery" %}{% endif %}
+          {% if unit.hydro_net_nominal_capacity %}{% trans "Hydro" %}{% endif %}
+          {% if unit.wind_net_nominal_capacity %}{% trans "Wind" %}{% endif %}
+          {% if unit.biomass_net_nominal_capacity %}{% trans "Biomass" %}{% endif %}
+        </td>
+        <td>{{ unit.net_capacity|default_if_none:""}} kW</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <br>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page=1"><span aria-hidden="true">&laquo;</span></a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}"><span aria-hidden="true">&lsaquo;</span></a></li>
+        {% endif %}
+      <li class="page-item disabled"><a class="page-link">
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span></a>
+      </li>
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&rsaquo;</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+        {% endif %}
+    </ul>
+  </nav>
+{% endblock content %}

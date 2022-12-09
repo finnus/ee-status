@@ -1,7 +1,7 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
 
-from ee_status.mastr_data.models import CurrentTotal, MonthlyTimeline
+from ee_status.mastr_data.models import CurrentTotal, EnergyUnit, MonthlyTimeline
 
 STATES = (
     ("Baden-Württemberg", "Baden-Württemberg"),
@@ -78,12 +78,9 @@ class RankingsFilter(django_filters.FilterSet):
         ]
 
 
-class SearchFilter(django_filters.FilterSet):
+class EnergyUnitFilter(django_filters.FilterSet):
+    state = django_filters.ChoiceFilter(choices=STATES)
+
     class Meta:
-        model = CurrentTotal
-        fields = [
-            "municipality_key",
-            "municipality",
-            "county",
-            "state",
-        ]
+        model = EnergyUnit
+        fields = ["municipality_key", "municipality", "county", "state", "zip_code"]

@@ -4,11 +4,39 @@ from bokeh.models import DatetimeTickFormatter, HoverTool, NumeralTickFormatter
 from bokeh.plotting import figure
 from django.contrib import messages
 from django.db.models import F, Q, Sum, Window
+from django.db.models.functions import Coalesce
 from django.shortcuts import redirect, render, reverse
 from django.utils.translation import gettext_lazy as _
+from django_filters.views import FilterView
 
-from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
-from .models import CurrentTotal, MonthlyTimeline
+from .filters import (
+    CurrentTotalFilter,
+    EnergyUnitFilter,
+    MonthlyTimelineFilter,
+    RankingsFilter,
+)
+from .models import CurrentTotal, EnergyUnit, MonthlyTimeline
+
+
+class EnergyUnitListView(FilterView):
+    model = EnergyUnit
+    context_object_name = "units_list"
+    filterset_class = EnergyUnitFilter
+    queryset = EnergyUnit.objects.order_by("-start_up_date").annotate(
+        net_capacity=Coalesce(
+            "pv_net_nominal_capacity",
+            "wind_net_nominal_capacity",
+            "hydro_net_nominal_capacity",
+            "biomass_net_nominal_capacity",
+            "storage_net_nominal_capacity",
+        )
+    )
+    paginate_by = 50
+
+    template_name = "mastr_data/energyunits_list.html"
+
+
+energyunits_list_view = EnergyUnitListView.as_view()
 
 
 def totals_view(request):
