@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-08 17:33+0100\n"
+"POT-Creation-Date: 2022-12-09 08:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,98 +30,98 @@ msgstr "Deutsch"
 msgid "MaStR Data"
 msgstr ""
 
-#: ee_status/mastr_data/filters.py:56
+#: ee_status/mastr_data/filters.py:55
 msgid "Production Capacity"
 msgstr "Erzeugungskapazität"
 
-#: ee_status/mastr_data/filters.py:57
+#: ee_status/mastr_data/filters.py:56
 msgid "Storage Capacity"
 msgstr "Speicherkapazität"
 
-#: ee_status/mastr_data/filters.py:58 ee_status/mastr_data/models.py:51
+#: ee_status/mastr_data/filters.py:57 ee_status/mastr_data/models.py:50
 msgid "Population"
 msgstr "Einwohner"
 
-#: ee_status/mastr_data/filters.py:59
+#: ee_status/mastr_data/filters.py:58
 msgid "Area"
 msgstr "Fläche"
 
-#: ee_status/mastr_data/filters.py:62
+#: ee_status/mastr_data/filters.py:61
 msgid "Municipalities"
 msgstr "Gemeinden"
 
-#: ee_status/mastr_data/filters.py:63
+#: ee_status/mastr_data/filters.py:62
 msgid "Counties"
 msgstr "Stadt-/Landkreise"
 
-#: ee_status/mastr_data/filters.py:64
+#: ee_status/mastr_data/filters.py:63
 msgid "States"
 msgstr "Bundesländer"
 
-#: ee_status/mastr_data/filters.py:67
+#: ee_status/mastr_data/filters.py:66
 msgid "Scope"
 msgstr "Auswertungsbereich"
 
-#: ee_status/mastr_data/filters.py:68
+#: ee_status/mastr_data/filters.py:67
 msgid "Rank by"
 msgstr "Rangliste anhand von"
 
-#: ee_status/mastr_data/filters.py:69
+#: ee_status/mastr_data/filters.py:68
 msgid "per"
 msgstr "pro"
 
-#: ee_status/mastr_data/models.py:27
+#: ee_status/mastr_data/models.py:26
 msgid "Municipality Key"
 msgstr "Gemeindeschlüssel"
 
-#: ee_status/mastr_data/models.py:29
-#: ee_status/templates/mastr_data/search.html:26
+#: ee_status/mastr_data/models.py:28
+#: ee_status/templates/mastr_data/search.html:28
 msgid "Municipality"
 msgstr "Gemeinde"
 
-#: ee_status/mastr_data/models.py:30
-#: ee_status/templates/mastr_data/search.html:24
-#: ee_status/templates/mastr_data/search.html:26
+#: ee_status/mastr_data/models.py:29
+#: ee_status/templates/mastr_data/search.html:25
+#: ee_status/templates/mastr_data/search.html:28
 msgid "County"
 msgstr "Stadt-/Landkreis"
 
-#: ee_status/mastr_data/models.py:31
+#: ee_status/mastr_data/models.py:30
 msgid "State"
 msgstr "Bundesland"
 
-#: ee_status/mastr_data/models.py:32
+#: ee_status/mastr_data/models.py:31
 msgid "Zip-Code"
 msgstr "PLZ"
 
-#: ee_status/mastr_data/models.py:34
+#: ee_status/mastr_data/models.py:33
 msgid "PV net nominal capacity"
 msgstr "installierte PV-Leistung"
 
-#: ee_status/mastr_data/models.py:37
+#: ee_status/mastr_data/models.py:36
 msgid "Wind net nominal capacity"
 msgstr "installierte Windkraft-Leistung"
 
-#: ee_status/mastr_data/models.py:40
+#: ee_status/mastr_data/models.py:39
 msgid "Biomass net nominal capacity"
 msgstr "installierte Biomasse-Leistung"
 
-#: ee_status/mastr_data/models.py:43
+#: ee_status/mastr_data/models.py:42
 msgid "Hydro net nominal capacity"
 msgstr "installierte Wasserkraft-Leistung"
 
-#: ee_status/mastr_data/models.py:46
+#: ee_status/mastr_data/models.py:45
 msgid "Storage net nominal capacity"
 msgstr "installierte Speicherkapazität"
 
-#: ee_status/mastr_data/models.py:49
+#: ee_status/mastr_data/models.py:48
 msgid "total net nominal capacity"
 msgstr "gesamte Erzeugungskapazität"
 
-#: ee_status/mastr_data/views.py:181
+#: ee_status/mastr_data/views.py:174
 msgid "Rank"
 msgstr "Rang"
 
-#: ee_status/mastr_data/views.py:197
+#: ee_status/mastr_data/views.py:190
 msgid "Score"
 msgstr "Verhältnis"
 
@@ -380,22 +380,22 @@ msgid ""
 "mail address</a>."
 msgstr ""
 
+#: ee_status/templates/base.html:52
+msgid "Search"
+msgstr "Suche"
+
 #: ee_status/templates/mastr_data/municipality.html:6
-#: ee_status/templates/mastr_data/rankings.html:27
+#: ee_status/templates/mastr_data/rankings.html:26
 msgid "Ranking"
 msgstr "Ranking"
 
 #: ee_status/templates/mastr_data/municipality.html:9
 #: ee_status/templates/mastr_data/rankings.html:12
 #: ee_status/templates/mastr_data/rankings.html:17
-#: ee_status/templates/mastr_data/totals.html:13
-#: ee_status/templates/mastr_data/totals.html:18
 msgid "Filter"
 msgstr "Filter"
 
 #: ee_status/templates/mastr_data/search.html:15
-#, fuzzy
-#| msgid "Search for Municipality, County, State, Zip-Code..."
 msgid "Search for Municipality, County, State, Zip-Code, Germany..."
 msgstr "Suche nach Gemeinde, Kreis, Bundesland, PLZ, Deutschland..."
 
@@ -407,32 +407,41 @@ msgstr "Auf geht's!"
 msgid "Did you mean..."
 msgstr "Meintest du..."
 
-#: ee_status/templates/mastr_data/search_results.html:34
-#: ee_status/templates/mastr_data/totals.html:38
+#: ee_status/templates/mastr_data/totals.html:12
+msgid "Navigation"
+msgstr ""
+
+#: ee_status/templates/mastr_data/totals.html:16
+msgid "Overview"
+msgstr "Überblick"
+
+#: ee_status/templates/mastr_data/totals.html:17
+msgid "Production"
+msgstr "Erzeugung"
+
+#: ee_status/templates/mastr_data/totals.html:18
+msgid "Storage"
+msgstr "Speicher"
+
+#: ee_status/templates/mastr_data/totals.html:36
 msgid "Development of Renewable Energies"
 msgstr "Entwicklung erneuerbare Energien"
 
-#: ee_status/templates/mastr_data/search_results.html:42
-#: ee_status/templates/mastr_data/totals.html:46
+#: ee_status/templates/mastr_data/totals.html:44
 msgid "Production capacity per capita"
 msgstr "Erzeugungskapazität pro Person"
 
-#: ee_status/templates/mastr_data/search_results.html:57
-#: ee_status/templates/mastr_data/search_results.html:82
-#: ee_status/templates/mastr_data/search_results.html:108
-#: ee_status/templates/mastr_data/totals.html:61
-#: ee_status/templates/mastr_data/totals.html:86
-#: ee_status/templates/mastr_data/totals.html:112
+#: ee_status/templates/mastr_data/totals.html:59
+#: ee_status/templates/mastr_data/totals.html:84
+#: ee_status/templates/mastr_data/totals.html:110
 msgid "Rank (of"
 msgstr "Platz (von"
 
-#: ee_status/templates/mastr_data/search_results.html:67
-#: ee_status/templates/mastr_data/totals.html:71
+#: ee_status/templates/mastr_data/totals.html:69
 msgid "Production capacity per km²"
 msgstr "Erzeugungskapazität pro km²"
 
-#: ee_status/templates/mastr_data/search_results.html:93
-#: ee_status/templates/mastr_data/totals.html:97
+#: ee_status/templates/mastr_data/totals.html:95
 msgid "Storage capacity per capita"
 msgstr "Speicherkapazität pro Person"
 

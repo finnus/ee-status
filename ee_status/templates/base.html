@@ -1,101 +1,97 @@
 {% load static i18n %}<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE }}">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{% block title %}EE-Status{% endblock title %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Displaying Data from the "Marktstammdatenregister".">
-    <meta name="author" content="Finn Hees">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>{% block title %}EE-Status{% endblock title %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Displaying Data from the 'Marktstammdatenregister'.">
+  <meta name="author" content="Finn Hees">
 
-    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+  <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
 
-    {% block css %}
+  {% block css %}
     <!-- Latest compiled and minified Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <!-- Your stuff: Third-party CSS libraries go here -->
 
     <!-- This file stores project-specific CSS -->
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
-    {% endblock %}
-    <!-- Le javascript
-    ================================================== -->
-    {# Placed at the top of the document so pages load faster with defer #}
-    {% block javascript %}
-      <!-- Bootstrap JS -->
-      <script defer src="{% static 'js/bootstrap.min.js' %}"></script>
-      <!-- Your stuff: Third-party javascript libraries go here -->
+  {% endblock %}
+  <!-- Le javascript
+  ================================================== -->
+  {# Placed at the top of the document so pages load faster with defer #}
+  {% block javascript %}
+    <!-- Bootstrap JS -->
+    <script defer src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- Your stuff: Third-party javascript libraries go here -->
 
-      <!-- place project specific Javascript in this file -->
-      <script defer src="{% static 'js/project.js' %}"></script>
+    <!-- place project specific Javascript in this file -->
+    <script defer src="{% static 'js/project.js' %}"></script>
 
-    {% endblock javascript %}
+  {% endblock javascript %}
 
-  </head>
+</head>
 
-  <body>
+<body>
 
-    <div class="mb-1">
-      <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <div class="container-fluid">
-          <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <a class="navbar-brand" href="{% url 'mastr_data:search' %}">EE-Status</a>
+<div class="mb-1">
+  <nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'mastr_data:search' %}">EE-Status</a>
+      <button class="navbar-toggler navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="{% url 'mastr_data:search' %}">Home <span class="visually-hidden">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'mastr_data:totals' %}">Totals</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'mastr_data:rankings' %}">Rankings</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
 
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'mastr_data:search' %}">{% trans "Search" %} <span class="visually-hidden">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'mastr_data:rankings' %}">Rankings</a>
+          </li>
+        </ul>
+      </div>
     </div>
+  </nav>
 
-    {% block left_sidebar %}
-    {% endblock left_sidebar %}
-
-
-
-
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
-
-      {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
-      {% endblock content %}
 </div>
 
-    </div> <!-- /container -->
 
-    {% block modal %}{% endblock modal %}
 
-    {% block inline_javascript %}
-    {% comment %}
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% block content %}
+
+{% endblock content %}
+
+
+</div> <!-- /container -->
+
+{% block modal %}{% endblock modal %}
+
+{% block inline_javascript %}
+  {% comment %}
     Script tags with only code, no src (defer by default). To run
     with a "defer" so that you run inline code:
     <script>
-      window.addEventListener('DOMContentLoaded', () => {/* Run whatever you want */});
+      window.addEventListener('DOMContentLoaded', () => {/* Run whatever you want */
+      });
     </script>
-    {% endcomment %}
-       <script src="{% static 'js/external/sorttable.js' %}"></script>
-    {% endblock inline_javascript %}
-    </div>
-  </body>
+  {% endcomment %}
+  <script src="{% static 'js/external/sorttable.js' %}"></script>
+{% endblock inline_javascript %}
+</body>
 </html>

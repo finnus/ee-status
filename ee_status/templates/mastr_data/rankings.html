@@ -2,11 +2,11 @@
 {% load i18n %}
 
 {% load crispy_forms_tags %}
-{% block left_sidebar %}
-  <div class="container-fluid mt-5">
+{% block content %}
   <div class="row">
-  <div class="col-md-2 mb-5">
-    <div class="sticky-top pr-3 pt-1 sticky-offset">
+    <div class="col-md-2 mb-5">
+      <div class="sticky-top pr-3 pt-1 sticky-offset">
+
       <div class="card">
         <div class="card-header">
           <strong>{% trans "Filter" %}</strong>
@@ -18,12 +18,11 @@
           </form>
         </div>
       </div>
-
+      </div>
     </div>
-  </div>
+
   <div class="col-md-10 pr-5">
-{% endblock left_sidebar %}
-{% block content %}
+
   <h1 class="title">{% trans "Ranking" %}</h1>
 
   {{ rankings.score }}
