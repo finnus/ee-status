@@ -136,6 +136,7 @@ def totals_view(request):
     total_net_nominal_capacity_per_capita = current_object.ratio_and_rank(
         "total_net_nominal_capacity", "population", realm_type
     )
+    print(total_net_nominal_capacity_per_capita)
     # GET TOTAL NET NOMINAL CAPACITY PER SQUARE METERS
     total_net_nominal_capacity_per_sm = current_object.ratio_and_rank(
         "total_net_nominal_capacity", "area", realm_type
@@ -144,6 +145,13 @@ def totals_view(request):
     # GET Storage Capacity per capita
     storage_capacity_per_capita = current_object.ratio_and_rank(
         "storage_net_nominal_capacity", "population", realm_type
+    )
+
+    basics = f_current_totals.qs.aggregate(
+        total_population=Sum("population"),
+        total_area=Sum("area"),
+        total_production_capacity=Sum("total_net_nominal_capacity"),
+        total_storage_capacity=Sum("storage_net_nominal_capacity"),
     )
 
     return render(
@@ -166,6 +174,7 @@ def totals_view(request):
             ],
             "storage_capacity_per_capita": storage_capacity_per_capita[0],
             "storage_capacity_per_capita_max": storage_capacity_per_capita[1],
+            "basics": basics,
         },
     )
 

@@ -125,7 +125,6 @@ class CurrentTotal(models.Model):
         if realm_type == scope:
             rank = "n.a"
         else:
-            print(ranking)
             rank = [i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d][
                 0
             ] + 1
@@ -162,6 +161,7 @@ class CurrentTotal(models.Model):
         for i in order[order.index(realm_type) : :]:  # noqa: E203
             ratio_and_rank.append(
                 (
+                    i,
                     self.get_scope_name(i),
                     # scope_average can be None
                     self.scope_average(numerator, denominator, i)[i] or 0,
@@ -170,6 +170,7 @@ class CurrentTotal(models.Model):
                     ),
                 )
             )
+            print(i)
         # max is needed to calculate width of the css progress bar
         total_net_nominal_capacity_per_capita_max = max(
             ratio_and_rank, key=itemgetter(1)

@@ -1,42 +1,55 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load l10n %}
+{% load humanize %}
 
 {% load crispy_forms_tags %}
 {% block content %}
-  <div class="row">
-  <div class="col-sm-2 d-none d-sm-block mb-5">
-    <div class="sticky-top pr-3 pt-1 sticky-offset">
-      <div class="card">
-        <div class="card-header">
-          <strong>{% trans "Navigation" %}</strong>
-        </div>
-        <div class="card-body">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><a href="#">{% trans "Overview" %}</a></li>
-            <li class="list-group-item"><a href="#production">{% trans "Production" %}</a></li>
-            <li class="list-group-item"><a href="#storage">{% trans "Storage" %}</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-10 col-xs-12 pr-5">
+  <div class="container mt-5">
 
   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
     <ol class="breadcrumb">
-      {% for realm_name, score, rankings in total_net_nominal_capacity_per_capita reversed %}
-        <li class="breadcrumb-item {% if forloop.last is True %}active{% endif %}"
-            aria-current="page">{{ realm_name }}</li>
+      {% for realm_type, realm_name, score, rankings in total_net_nominal_capacity_per_capita reversed %}
+        {% if not forloop.last %}
+          <li class="breadcrumb-item active" aria-current="page">
+            <a href="{% url 'mastr_data:totals' %}?{{ realm_type }}={{ realm_name }}">{{ realm_name }}</a>
+          </li>
+        {% else %}
+          <li class="breadcrumb-item active" aria-current="page">
+            {{ realm_name }}
+          </li>
+        {% endif %}
       {% endfor %}
     </ol>
   </nav>
 
-  <div class="row mt-5">
-    <h1 class="title">{% trans "Development of Renewable Energies" %}</h1>
+  <div class="row mt-1">
+
+    {% for realm_type, realm_name, score, rankings in total_net_nominal_capacity_per_capita %}
+      {% if forloop.first %}<h1 class="title">{{ realm_name }}</h1>{% endif %}
+    {% endfor %}
     {{ div_timeline|safe }}
     {{ script| safe }}
   </div>
+
+  <div class="row mt-3">
+    <div class="col text-center">
+      <h3>{{ basics.total_population|intcomma }}</h3>
+      Einwohner:innen
+    </div>
+    <div class="col text-center">
+      <h3>{{ basics.total_area|floatformat:0|intcomma }}</h3>
+      km² Fläche
+    </div>
+    <div class="col text-center">
+      <h3>{{ basics.total_production_capacity|floatformat:0|intcomma}}</h3>
+      kW installierte Erzeugungsleistung
+    </div>
+    <div class="col text-center">
+      <h3>{{ basics.total_storage_capacity|floatformat:0|intcomma }}</h3>
+      kW Speicherkapazität
+    </div>
+  </div>
+
 
 
   <div class="row mt-5">
@@ -44,21 +57,21 @@
     <h2 class="title">{% trans "Production capacity per capita" %}</h2>
     <table class="table">
       <tbody>
-      {% for realm_name, score, rankings in total_net_nominal_capacity_per_capita %}
-        <td class="text-end">{{ realm_name }}</td>
-        <td>
-          <div class="progress" style="height: 25px;">
-            <div class="progress-bar" role="progressbar"
-                 style="width: calc(100% * {{ score|unlocalize }} / {{ total_net_nominal_capacity_per_capita_max|unlocalize }})"
-                 aria-valuenow="" aria-valuemin="0" aria-valuemax="">{{ score|floatformat:2 }} kW / Person
-            </div>
-          </div>
-        </td>
-        {% if not forloop.first %}
-          {% for rank, total_ranks in rankings %}
-            <td>{{ rank }}. {% trans "Rank (of" %} {{ total_ranks }})</td>
-          {% endfor %}
+      {% for realm_type, realm_name, score, rankings in total_net_nominal_capacity_per_capita %}
+        {% if forloop.first %}
+          <th>{{ realm_name }} (⌀ {{ score|floatformat:2 }} kW / Person)</th>
         {% endif %}
+
+        <tr>
+          {% if not forloop.first %}
+            {% for rank, total_ranks in rankings %}
+              <td>
+              <svg width="1.2em" height="1.2em">
+                <use href="#bi-arrow-return-right"/>
+              </svg>
+              {{ rank }}. {% trans "Rank (of" %} {{ total_ranks }}) {% endfor %}in {{ realm_name }}
+          </td>
+          {% endif %}
         </tr>
       {% endfor %}
       </tbody>
@@ -69,21 +82,21 @@
     <h2 class="title">{% trans "Production capacity per km²" %}</h2>
     <table class="table">
       <tbody>
-      {% for realm_name, score, rankings in total_net_nominal_capacity_per_sm %}
-        <td class="text-end">{{ realm_name }}</td>
-        <td>
-          <div class="progress" style="height: 25px;">
-            <div class="progress-bar" role="progressbar"
-                 style="width: calc(100% * {{ score|unlocalize }} / {{ total_net_nominal_capacity_per_sm_max|unlocalize }})"
-                 aria-valuenow="" aria-valuemin="0" aria-valuemax="">{{ score|floatformat:2 }} kW / km²
-            </div>
-          </div>
-        </td>
-        {% if not forloop.first %}
-          {% for rank, total_ranks in rankings %}
-            <td>{{ rank }}. {% trans "Rank (of" %} {{ total_ranks }})</td>
-          {% endfor %}
+      {% for realm_type, realm_name, score, rankings in total_net_nominal_capacity_per_sm %}
+        {% if forloop.first %}
+          <th>{{ realm_name }} (⌀ {{ score|floatformat:2 }} kW / km²)</th>
         {% endif %}
+
+        <tr>
+          {% if not forloop.first %}
+            {% for rank, total_ranks in rankings %}
+              <td>
+              <svg width="1.2em" height="1.2em">
+                <use href="#bi-arrow-return-right"/>
+              </svg>
+              {{ rank }}. {% trans "Rank (of" %} {{ total_ranks }}) {% endfor %}in {{ realm_name }}
+          </td>
+          {% endif %}
         </tr>
       {% endfor %}
       </tbody>
@@ -95,21 +108,21 @@
     <h2 class="title">{% trans "Storage capacity per capita" %}</h2>
     <table class="table">
       <tbody>
-      {% for realm_name, score, rankings in storage_capacity_per_capita %}
-        <td class="text-end">{{ realm_name }}</td>
-        <td>
-          <div class="progress" style="height: 25px;">
-            <div class="progress-bar" role="progressbar"
-                 style="width: calc(100% * {{ score|unlocalize }} / {{ storage_capacity_per_capita_max|unlocalize }})"
-                 aria-valuenow="" aria-valuemin="0" aria-valuemax="">{{ score|floatformat:2 }} kW / Person
-            </div>
-          </div>
-        </td>
-        {% if not forloop.first %}
-          {% for rank, total_ranks in rankings %}
-            <td>{{ rank }}. {% trans "Rank (of" %} {{ total_ranks }})</td>
-          {% endfor %}
+      {% for realm_type, realm_name, score, rankings in storage_capacity_per_capita %}
+        {% if forloop.first %}
+          <th>{{ realm_name }} (⌀ {{ score|floatformat:2 }} kW / Person)</th>
         {% endif %}
+
+        <tr>
+          {% if not forloop.first %}
+            {% for rank, total_ranks in rankings %}
+              <td>
+              <svg width="1.2em" height="1.2em">
+                <use href="#bi-arrow-return-right"/>
+              </svg>
+              {{ rank }}. {% trans "Rank (of" %} {{ total_ranks }}) {% endfor %}in {{ realm_name }}
+          </td>
+          {% endif %}
         </tr>
       {% endfor %}
       </tbody>
@@ -119,11 +132,6 @@
   <div class="col">
 
   </div>
-
-
-
-
-
 
 
 

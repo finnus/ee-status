@@ -96,5 +96,14 @@
   {% endcomment %}
   <script src="{% static 'js/external/sorttable.js' %}"></script>
 {% endblock inline_javascript %}
+<!-- SVG Icons
+    ================================================== -->
+                <!-- Placed at the end of the document so the pages load faster -->
+                <!-- Learn about this on: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use -->
+                {% block icons %}
+                    <div class="d-none">
+                        {% include "icons.html" %}
+                    </div>
+                {% endblock icons %}
 </body>
 </html>
