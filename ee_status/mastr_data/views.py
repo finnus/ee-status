@@ -147,11 +147,16 @@ def totals_view(request):
         "storage_net_nominal_capacity", "population", realm_type
     )
 
+    count_of_devices = CurrentTotalFilter(
+        request.GET, queryset=EnergyUnit.objects.all()
+    )
+    count = count_of_devices.qs.filter(close_down_date__isnull=True).count()
     basics = f_current_totals.qs.aggregate(
         total_population=Sum("population"),
         total_area=Sum("area"),
         total_production_capacity=Sum("total_net_nominal_capacity"),
         total_storage_capacity=Sum("storage_net_nominal_capacity"),
+        count_of_devices=Sum(count),
     )
 
     return render(
