@@ -4,7 +4,7 @@ from bokeh.models import DatetimeTickFormatter, HoverTool, NumeralTickFormatter
 from bokeh.plotting import figure
 from django.contrib import messages
 from django.db.models import F, Q, Sum, Window
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Round
 from django.shortcuts import redirect, render, reverse
 from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
@@ -138,13 +138,18 @@ def totals_view(request):
     )
     print(total_net_nominal_capacity_per_capita)
     # GET TOTAL NET NOMINAL CAPACITY PER SQUARE METERS
-    total_net_nominal_capacity_per_sm = current_object.ratio_and_rank(
+    total_net_nominal_capacity_per_area = current_object.ratio_and_rank(
         "total_net_nominal_capacity", "area", realm_type
     )
 
     # GET Storage Capacity per capita
     storage_capacity_per_capita = current_object.ratio_and_rank(
         "storage_net_nominal_capacity", "population", realm_type
+    )
+
+    # GET Storage Capacity per capita
+    storage_capacity_per_area = current_object.ratio_and_rank(
+        "storage_net_nominal_capacity", "area", realm_type
     )
 
     count_of_devices = CurrentTotalFilter(
@@ -159,6 +164,13 @@ def totals_view(request):
         count_of_devices=Sum(count),
     )
 
+    basics["realm_type"] = realm_type
+
+    if realm_type == "country":
+        basics["realm_name"] = _("Germany")
+    else:
+        basics["realm_name"] = getattr(current_object, realm_type)
+
     return render(
         request,
         "mastr_data/totals.html",
@@ -167,19 +179,12 @@ def totals_view(request):
             "div": div,
             "filter": f_current_totals,
             "div_timeline": div_timeline,
-            "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita[
-                0
-            ],
-            "total_net_nominal_capacity_per_capita_max": total_net_nominal_capacity_per_capita[
-                1
-            ],
-            "total_net_nominal_capacity_per_sm": total_net_nominal_capacity_per_sm[0],
-            "total_net_nominal_capacity_per_sm_max": total_net_nominal_capacity_per_sm[
-                1
-            ],
-            "storage_capacity_per_capita": storage_capacity_per_capita[0],
-            "storage_capacity_per_capita_max": storage_capacity_per_capita[1],
+            "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita,
+            "total_net_nominal_capacity_per_area": total_net_nominal_capacity_per_area,
+            "storage_capacity_per_capita": storage_capacity_per_capita,
+            "storage_capacity_per_area": storage_capacity_per_area,
             "basics": basics,
+            "realm_type": realm_type,
         },
     )
 
@@ -223,7 +228,7 @@ def rankings_view(request):
                 "{}__{}".format(denominator, "isnull"): False,
                 "{}__{}".format(denominator, "gt"): 0,
             }
-            denominator_annotate = {"denominator": Sum(denominator)}
+            denominator_annotate = {"denominator": Round(Sum(denominator))}
             score_expression = {"score": Sum(numerator) / Sum(denominator)}
             order_by_expression = ("-score",)
             table_captions.append(
@@ -245,13 +250,14 @@ def rankings_view(request):
     ranking = (
         CurrentTotal.objects.filter(**filter_dict.get(realm_type))
         .filter(**denominator_filter_kwargs)
-        .values_list(scope)
+        .values(scope)
         .annotate(**numerator_annotate)
         .annotate(**denominator_annotate)
         .annotate(**score_expression)
         .order_by(*order_by_expression)
         .distinct()
     )
+    print(ranking)
 
     return render(
         request,

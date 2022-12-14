@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-11 16:00+0100\n"
+"POT-Creation-Date: 2022-12-14 17:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,14 +81,14 @@ msgstr "Gemeindeschlüssel"
 
 #: ee_status/mastr_data/models.py:13 ee_status/mastr_data/models.py:63
 #: ee_status/templates/mastr_data/energyunits_list.html:33
-#: ee_status/templates/mastr_data/search.html:28
+#: ee_status/templates/mastr_data/search.html:31
 msgid "Municipality"
 msgstr "Gemeinde"
 
 #: ee_status/mastr_data/models.py:14 ee_status/mastr_data/models.py:64
 #: ee_status/templates/mastr_data/energyunits_list.html:34
-#: ee_status/templates/mastr_data/search.html:25
-#: ee_status/templates/mastr_data/search.html:28
+#: ee_status/templates/mastr_data/search.html:26
+#: ee_status/templates/mastr_data/search.html:32
 msgid "County"
 msgstr "Stadt-/Landkreis"
 
@@ -138,11 +138,11 @@ msgstr "installierte Speicherkapazität"
 msgid "total net nominal capacity"
 msgstr "gesamte Erzeugungskapazität"
 
-#: ee_status/mastr_data/views.py:203
+#: ee_status/mastr_data/views.py:218
 msgid "Rank"
 msgstr "Rang"
 
-#: ee_status/mastr_data/views.py:219
+#: ee_status/mastr_data/views.py:234
 msgid "Score"
 msgstr "Verhältnis"
 
@@ -413,8 +413,8 @@ msgstr ""
 #: ee_status/templates/mastr_data/energyunits_list.html:12
 #: ee_status/templates/mastr_data/energyunits_list.html:17
 #: ee_status/templates/mastr_data/municipality.html:9
-#: ee_status/templates/mastr_data/rankings.html:12
-#: ee_status/templates/mastr_data/rankings.html:17
+#: ee_status/templates/mastr_data/rankings.html:13
+#: ee_status/templates/mastr_data/rankings.html:18
 msgid "Filter"
 msgstr "Filter"
 
@@ -449,7 +449,7 @@ msgid "Biomass"
 msgstr ""
 
 #: ee_status/templates/mastr_data/municipality.html:6
-#: ee_status/templates/mastr_data/rankings.html:26
+#: ee_status/templates/mastr_data/rankings.html:27
 msgid "Ranking"
 msgstr "Ranking"
 
@@ -465,41 +465,25 @@ msgstr "Auf geht's!"
 msgid "Did you mean..."
 msgstr "Meintest du..."
 
-#: ee_status/templates/mastr_data/totals.html:12
-msgid "Navigation"
-msgstr ""
-
-#: ee_status/templates/mastr_data/totals.html:16
-msgid "Overview"
-msgstr "Überblick"
-
-#: ee_status/templates/mastr_data/totals.html:17
-msgid "Production"
-msgstr "Erzeugung"
-
-#: ee_status/templates/mastr_data/totals.html:18
-msgid "Storage"
-msgstr "Speicher"
-
-#: ee_status/templates/mastr_data/totals.html:38
-msgid "Development of Renewable Energies"
-msgstr "Entwicklung erneuerbare Energien"
-
-#: ee_status/templates/mastr_data/totals.html:46
+#: ee_status/templates/mastr_data/totals.html:62
 msgid "Production capacity per capita"
 msgstr "Erzeugungskapazität pro Person"
 
-#: ee_status/templates/mastr_data/totals.html:62
-msgid "Rank (of"
-msgstr "Platz (von"
+#: ee_status/templates/mastr_data/totals.html:88
+msgid "of "
+msgstr "von"
 
-#: ee_status/templates/mastr_data/totals.html:73
+#: ee_status/templates/mastr_data/totals.html:98
 msgid "Production capacity per km²"
 msgstr "Erzeugungskapazität pro km²"
 
-#: ee_status/templates/mastr_data/totals.html:79
+#: ee_status/templates/mastr_data/totals.html:103
 msgid "Storage capacity per capita"
 msgstr "Speicherkapazität pro Person"
+
+#: ee_status/templates/mastr_data/totals.html:107
+msgid "Storage capacity per km²"
+msgstr "Speicherkapazität pro km²"
 
 #: ee_status/users/admin.py:18
 msgid "Personal info"

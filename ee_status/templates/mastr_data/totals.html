@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load humanize %}
+{% load l10n %}
 
 {% load crispy_forms_tags %}
 {% block content %}
@@ -8,14 +9,15 @@
 
   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
     <ol class="breadcrumb">
-      {% for realm_type, realm_name, score, rankings in total_net_nominal_capacity_per_capita reversed %}
+      {% for realm in total_net_nominal_capacity_per_capita reversed %}
         {% if not forloop.last %}
           <li class="breadcrumb-item active" aria-current="page">
-            <a href="{% url 'mastr_data:totals' %}?{{ realm_type }}={{ realm_name }}">{{ realm_name }}</a>
+            <a
+              href="{% url 'mastr_data:totals' %}?{{ realm.realm_type }}={{ realm.realm_name }}">{{ realm.realm_name }}</a>
           </li>
         {% else %}
           <li class="breadcrumb-item active" aria-current="page">
-            {{ realm_name }}
+            {{ realm.realm_name }}
           </li>
         {% endif %}
       {% endfor %}
@@ -24,9 +26,9 @@
 
   <div class="row mt-1">
 
-    {% for realm_type, realm_name, score, rankings in total_net_nominal_capacity_per_capita %}
-      {% if forloop.first %}<h1 class="title">{{ realm_name }}</h1>{% endif %}
-    {% endfor %}
+
+    <h1 class="title">{{ basics.realm_name }}</h1>
+
     {{ div_timeline|safe }}
     {{ script| safe }}
   </div>
@@ -41,16 +43,17 @@
       km² Fläche
     </div>
     <div class="col text-center">
-      <h3>{{ basics.total_production_capacity|floatformat:0|intcomma}}</h3>
+      <h3>{{ basics.total_production_capacity|floatformat:0|intcomma }}</h3>
       kW installierte Erzeugungsleistung
     </div>
     <div class="col text-center">
       <h3>{{ basics.total_storage_capacity|floatformat:0|intcomma }}</h3>
       kW Speicherkapazität
     </div>
-  <div class="col text-center">
+    <div class="col text-center">
       <h3>{{ basics.count_of_devices|intcomma }}</h3>
-      erneuerbare Energieanlagen
+      <a href="{% url 'mastr_data:energy_units' %}?{{ basics.realm_type }}={{ basics.realm_name }}">erneuerbare
+        Energieanlagen</a>
     </div>
   </div>
 
@@ -58,23 +61,38 @@
 
   <div class="row mt-5">
   <div class="col">
-    <h2 class="title">{% trans "Production capacity per capita" %}</h2>
+    <h3 class="title">{% trans "Production capacity per capita" %}</h3>
     <table class="table">
       <tbody>
-      {% for realm_type, realm_name, score, rankings in total_net_nominal_capacity_per_capita %}
+      {% for realm in total_net_nominal_capacity_per_capita %}
         {% if forloop.first %}
-          <th>{{ realm_name }} (⌀ {{ score|floatformat:2 }} kW / Person)</th>
+          <th>{{ realm.realm_name }}</th>
+          <th></th>
+          <th>(⌀ {{ realm.score }} kW / Person)</th>
+          <th></th>
         {% endif %}
 
         <tr>
           {% if not forloop.first %}
-            {% for rank, total_ranks in rankings %}
-              <td>
+            <td>
               <svg width="1.2em" height="1.2em">
                 <use href="#bi-arrow-return-right"/>
               </svg>
-              {{ rank }}. {% trans "Rank (of" %} {{ total_ranks }}) {% endfor %}in {{ realm_name }}
-          </td>
+              <a
+                href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                in {{ realm.realm_name }}
+              </a>
+            </td>
+            <td class="text-end">{{ realm.rank }}. {% trans "Rank" %}</td>
+            <td>
+
+              <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
+                     value="{{ realm.rank }}"
+                     id="customRange{{ forloop.counter }}" disabled>
+            </td>
+            <td>
+              {% trans "of " %} {{ realm.total_ranks }}
+            </td>
           {% endif %}
         </tr>
       {% endfor %}
@@ -83,23 +101,38 @@
   </div>
 
   <div class="col">
-    <h2 class="title">{% trans "Production capacity per km²" %}</h2>
+    <h3 class="title">{% trans "Production capacity per km²" %}</h3>
     <table class="table">
       <tbody>
-      {% for realm_type, realm_name, score, rankings in total_net_nominal_capacity_per_sm %}
+      {% for realm in total_net_nominal_capacity_per_area %}
         {% if forloop.first %}
-          <th>{{ realm_name }} (⌀ {{ score|floatformat:2 }} kW / km²)</th>
+          <th>{{ realm.realm_name }}</th>
+          <th></th>
+          <th>(⌀ {{ realm.score }} kW / Person)</th>
+          <th></th>
         {% endif %}
 
         <tr>
           {% if not forloop.first %}
-            {% for rank, total_ranks in rankings %}
-              <td>
+            <td>
               <svg width="1.2em" height="1.2em">
                 <use href="#bi-arrow-return-right"/>
               </svg>
-              {{ rank }}. {% trans "Rank (of" %} {{ total_ranks }}) {% endfor %}in {{ realm_name }}
-          </td>
+              <a
+                href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                in {{ realm.realm_name }}
+              </a>
+            </td>
+            <td class="text-end">{{ realm.rank }}. {% trans "Rank" %}</td>
+            <td>
+
+              <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
+                     value="{{ realm.rank }}"
+                     id="customRange{{ forloop.counter }}" disabled>
+            </td>
+            <td>
+              {% trans "of " %} {{ realm.total_ranks }}
+            </td>
           {% endif %}
         </tr>
       {% endfor %}
@@ -108,29 +141,85 @@
   </div>
 
   <div class="row mt-5">
-  <div class="col">
-    <h2 class="title">{% trans "Storage capacity per capita" %}</h2>
-    <table class="table">
-      <tbody>
-      {% for realm_type, realm_name, score, rankings in storage_capacity_per_capita %}
-        {% if forloop.first %}
-          <th>{{ realm_name }} (⌀ {{ score|floatformat:2 }} kW / Person)</th>
-        {% endif %}
-
-        <tr>
-          {% if not forloop.first %}
-            {% for rank, total_ranks in rankings %}
-              <td>
-              <svg width="1.2em" height="1.2em">
-                <use href="#bi-arrow-return-right"/>
-              </svg>
-              {{ rank }}. {% trans "Rank (of" %} {{ total_ranks }}) {% endfor %}in {{ realm_name }}
-          </td>
+    <div class="col">
+      <h3 class="title">{% trans "Storage capacity per capita" %}</h3>
+      <table class="table">
+        <tbody>
+        {% for realm in storage_capacity_per_capita %}
+          {% if forloop.first %}
+            <th>{{ realm.realm_name }}</th>
+            <th></th>
+            <th>(⌀ {{ realm.score }} kW / Person)</th>
+            <th></th>
           {% endif %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+
+          <tr>
+            {% if not forloop.first %}
+              <td>
+                <svg width="1.2em" height="1.2em">
+                  <use href="#bi-arrow-return-right"/>
+                </svg>
+                <a
+                  href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                  in {{ realm.realm_name }}
+                </a>
+              </td>
+              <td class="text-end">{{ realm.rank }}. {% trans "Rank" %}</td>
+              <td>
+
+                <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
+                       value="{{ realm.rank }}"
+                       id="customRange{{ forloop.counter }}" disabled>
+              </td>
+              <td>
+                {% trans "of " %} {{ realm.total_ranks }}
+              </td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col">
+      <h3 class="title">{% trans "Storage capacity per km²" %}</h3>
+      <table class="table">
+        <tbody>
+        {% for realm in storage_capacity_per_area %}
+          {% if forloop.first %}
+            <th>{{ realm.realm_name }}</th>
+            <th></th>
+            <th>(⌀ {{ realm.score }} kW / Person)</th>
+            <th></th>
+          {% endif %}
+
+          <tr>
+            {% if not forloop.first %}
+              <td>
+                <svg width="1.2em" height="1.2em">
+                  <use href="#bi-arrow-return-right"/>
+                </svg>
+                <a
+                  href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                  in {{ realm.realm_name }}
+                </a>
+              </td>
+              <td class="text-end">{{ realm.rank }}. {% trans "Rank" %}</td>
+              <td>
+
+                <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
+                       value="{{ realm.rank }}"
+                       id="customRange{{ forloop.counter }}" disabled>
+              </td>
+              <td>
+                {% trans "of " %} {{ realm.total_ranks }}
+              </td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="col">

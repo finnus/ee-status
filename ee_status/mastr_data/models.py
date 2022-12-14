@@ -129,7 +129,10 @@ class CurrentTotal(models.Model):
                 0
             ] + 1
 
-        return [(rank, len(ranking))]
+        ranking_without_none = [t for t in ranking if None not in t]
+        max_value = round(max(ranking_without_none, key=itemgetter(1))[1], 1)
+
+        return rank, len(ranking), max_value
 
     def scope_average(self, numerator, denominator, scope):
         scope_dict = {
@@ -142,8 +145,7 @@ class CurrentTotal(models.Model):
         scope_average = CurrentTotal.objects.filter(**scope_dict.get(scope)).aggregate(
             **{scope: Sum(numerator) / Sum(denominator)}
         )
-
-        return scope_average
+        return round(scope_average[scope] or 0, 2)
 
     def get_scope_name(self, scope):
         self_dict = {
@@ -159,21 +161,17 @@ class CurrentTotal(models.Model):
         order = ["municipality", "county", "state", "country"]
         ratio_and_rank = []
         for i in order[order.index(realm_type) : :]:  # noqa: E203
-            ratio_and_rank.append(
-                (
-                    i,
-                    self.get_scope_name(i),
-                    # scope_average can be None
-                    self.scope_average(numerator, denominator, i)[i] or 0,
-                    self.ratio_and_rank_per_scope(
-                        numerator, denominator, realm_type, i
-                    ),
-                )
-            )
-            print(i)
-        # max is needed to calculate width of the css progress bar
-        total_net_nominal_capacity_per_capita_max = max(
-            ratio_and_rank, key=itemgetter(1)
-        )[1]
+            new_scope_dict = {}
+            new_scope_dict["realm_type"] = i
+            new_scope_dict["realm_name"] = self.get_scope_name(i)
+            new_scope_dict["score"] = self.scope_average(numerator, denominator, i)
+            new_scope_dict["unit"] = "kW"
+            new_scope_dict["numerator"] = numerator
+            new_scope_dict["denominator"] = denominator
+            rr = self.ratio_and_rank_per_scope(numerator, denominator, realm_type, i)
+            new_scope_dict["rank"] = rr[0]
+            new_scope_dict["total_ranks"] = rr[1]
+            new_scope_dict["max_score"] = rr[2]
+            ratio_and_rank.append(new_scope_dict)
 
-        return ratio_and_rank, total_net_nominal_capacity_per_capita_max
+        return ratio_and_rank
