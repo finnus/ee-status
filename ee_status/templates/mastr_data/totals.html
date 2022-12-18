@@ -54,7 +54,7 @@
       <div class="card">
         <div class="card-body">
           <h3 class="card-title text-center">{{ basics.total_production_capacity|floatformat:0|intcomma }} kW</h3>
-          <h5 class="card-subtitle mb-2 text-muted text-center">{% trans "production capacity" %}</h5>
+          <h5 class="card-subtitle mb-2 text-muted text-center">{% trans "Production Capacity" %}</h5>
         </div>
         {% for realm in total_net_nominal_capacity_per_capita %}
           {% if forloop.first %}
@@ -63,7 +63,7 @@
             </div>
           {% else %}
             <div class="row">
-              <div class="col-4 ms-4">
+              <div class="col-5 ms-4">
                 <svg width="1.2em" height="1.2em">
                   <use href="#bi-arrow-return-right"/>
                 </svg>
@@ -74,7 +74,7 @@
               <div class="col text-end">
                 {{ realm.rank }}. {% trans "Rank" %}
               </div>
-              <div class="col">
+              <div class="col d-none d-sm-block">
                 <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
                        value="{{ realm.rank }}"
                        id="customRange{{ forloop.counter }}" disabled>
@@ -90,11 +90,11 @@
         {% for realm in total_net_nominal_capacity_per_area %}
           {% if forloop.first %}
             <div class="card-body border-top pb-0">
-              <h6>{% trans "Production capacity per area" %}: {{ realm.score }} kW</h6>
+              <h6>{% trans "Production capacity per km²" %}: {{ realm.score }} kW</h6>
             </div>
           {% else %}
             <div class="row">
-              <div class="col-4 ms-4">
+              <div class="col-5 ms-4">
                 <svg width="1.2em" height="1.2em">
                   <use href="#bi-arrow-return-right"/>
                 </svg>
@@ -105,7 +105,7 @@
               <div class="col text-end">
                 {{ realm.rank }}. {% trans "Rank" %}
               </div>
-              <div class="col">
+              <div class="col d-none d-sm-block">
                 <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
                        value="{{ realm.rank }}"
                        id="customRange{{ forloop.counter }}" disabled>
@@ -126,7 +126,7 @@
       <div class="card">
         <div class="card-body">
           <h3 class="card-title text-center">{{ basics.total_storage_capacity|floatformat:0|intcomma }} kWh</h3>
-          <h5 class="card-subtitle mb-2 text-muted text-center">{% trans "storage capacity" %}</h5>
+          <h5 class="card-subtitle mb-2 text-muted text-center">{% trans "Storage Capacity" %}</h5>
         </div>
         {% for realm in storage_capacity_per_capita %}
           {% if forloop.first %}
@@ -135,7 +135,7 @@
             </div>
           {% else %}
             <div class="row">
-              <div class="col-4 ms-4">
+              <div class="col-5 ms-4">
                 <svg width="1.2em" height="1.2em">
                   <use href="#bi-arrow-return-right"/>
                 </svg>
@@ -146,7 +146,7 @@
               <div class="col text-end">
                 {{ realm.rank }}. {% trans "Rank" %}
               </div>
-              <div class="col">
+              <div class="col d-none d-sm-block">
                 <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
                        value="{{ realm.rank }}"
                        id="customRange{{ forloop.counter }}" disabled>
@@ -162,11 +162,11 @@
         {% for realm in storage_capacity_per_area %}
           {% if forloop.first %}
             <div class="card-body border-top pb-0">
-              <h6>{% trans "Storage capacity per area" %}: {{ realm.score }} kWh</h6>
+              <h6>{% trans "Storage capacity per km²" %}: {{ realm.score }} kWh</h6>
             </div>
           {% else %}
             <div class="row">
-              <div class="col-4 ms-4">
+              <div class="col-5 ms-4">
                 <svg width="1.2em" height="1.2em">
                   <use href="#bi-arrow-return-right"/>
                 </svg>
@@ -177,7 +177,7 @@
               <div class="col text-end">
                 {{ realm.rank }}. {% trans "Rank" %}
               </div>
-              <div class="col">
+              <div class="col d-none d-sm-block">
                 <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
                        value="{{ realm.rank }}"
                        id="customRange{{ forloop.counter }}" disabled>

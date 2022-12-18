@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-18 16:10+0100\n"
+"POT-Creation-Date: 2022-12-18 20:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,10 +31,12 @@ msgid "MaStR Data"
 msgstr ""
 
 #: ee_status/mastr_data/filters.py:55
+#: ee_status/templates/mastr_data/totals.html:57
 msgid "Production Capacity"
-msgstr "Erzeugungskapazität"
+msgstr "installierte Erzeugungsleistung"
 
 #: ee_status/mastr_data/filters.py:56
+#: ee_status/templates/mastr_data/totals.html:129
 msgid "Storage Capacity"
 msgstr "Speicherkapazität"
 
@@ -136,7 +138,7 @@ msgstr "installierte Speicherkapazität"
 
 #: ee_status/mastr_data/models.py:83
 msgid "total net nominal capacity"
-msgstr "gesamte Erzeugungskapazität"
+msgstr "gesamte installatierte Erzeugungsleistung"
 
 #: ee_status/mastr_data/views.py:170
 #, fuzzy
@@ -146,6 +148,7 @@ msgstr "Deutsch"
 
 #: ee_status/mastr_data/views.py:221
 #: ee_status/templates/mastr_data/rankings.html:33
+#: ee_status/templates/mastr_data/totals.html:75
 #: ee_status/templates/mastr_data/totals.html:106
 #: ee_status/templates/mastr_data/totals.html:147
 #: ee_status/templates/mastr_data/totals.html:178
@@ -418,7 +421,7 @@ msgstr "Suche"
 #: ee_status/templates/base.html:59
 #: ee_status/templates/mastr_data/energyunits_list.html:26
 msgid "Energy Units"
-msgstr ""
+msgstr "Installierte Anlagen"
 
 #: ee_status/templates/mastr_data/energyunits_list.html:12
 #: ee_status/templates/mastr_data/energyunits_list.html:17
@@ -430,13 +433,11 @@ msgstr "Filter"
 
 #: ee_status/templates/mastr_data/energyunits_list.html:37
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #: ee_status/templates/mastr_data/energyunits_list.html:38
-#, fuzzy
-#| msgid "Storage Capacity"
 msgid "Capacity"
-msgstr "Speicherkapazität"
+msgstr "Leistung"
 
 #: ee_status/templates/mastr_data/energyunits_list.html:51
 msgid "PV"
@@ -444,19 +445,19 @@ msgstr ""
 
 #: ee_status/templates/mastr_data/energyunits_list.html:52
 msgid "Battery"
-msgstr ""
+msgstr "Batterie"
 
 #: ee_status/templates/mastr_data/energyunits_list.html:53
 msgid "Hydro"
-msgstr ""
+msgstr "Wasser"
 
 #: ee_status/templates/mastr_data/energyunits_list.html:54
 msgid "Wind"
-msgstr ""
+msgstr "Wind"
 
 #: ee_status/templates/mastr_data/energyunits_list.html:55
 msgid "Biomass"
-msgstr ""
+msgstr "Biomasse"
 
 #: ee_status/templates/mastr_data/municipality.html:6
 #: ee_status/templates/mastr_data/rankings.html:27
@@ -475,44 +476,28 @@ msgstr "Auf geht's!"
 msgid "Did you mean..."
 msgstr "Meintest du..."
 
-#: ee_status/templates/mastr_data/totals.html:57
-#, fuzzy
-#| msgid "Production Capacity"
-msgid "production capacity"
-msgstr "Erzeugungskapazität"
-
 #: ee_status/templates/mastr_data/totals.html:62
 msgid "Production capacity per capita"
-msgstr "Erzeugungskapazität pro Person"
+msgstr "Erzeugungsleistung pro Person"
 
 #: ee_status/templates/mastr_data/totals.html:83
 #: ee_status/templates/mastr_data/totals.html:114
 #: ee_status/templates/mastr_data/totals.html:155
 #: ee_status/templates/mastr_data/totals.html:186
 msgid "of "
-msgstr "von"
+msgstr "von "
 
 #: ee_status/templates/mastr_data/totals.html:93
-#, fuzzy
-#| msgid "Production capacity per capita"
-msgid "Production capacity per area"
-msgstr "Erzeugungskapazität pro Person"
-
-#: ee_status/templates/mastr_data/totals.html:129
-#, fuzzy
-#| msgid "Storage Capacity"
-msgid "storage capacity"
-msgstr "Speicherkapazität"
+msgid "Production capacity per km²"
+msgstr "Erzeugungsleistung pro km²"
 
 #: ee_status/templates/mastr_data/totals.html:134
 msgid "Storage capacity per capita"
 msgstr "Speicherkapazität pro Person"
 
 #: ee_status/templates/mastr_data/totals.html:165
-#, fuzzy
-#| msgid "Storage capacity per capita"
-msgid "Storage capacity per area"
-msgstr "Speicherkapazität pro Person"
+msgid "Storage capacity per km²"
+msgstr "Speicherkapazität pro km²"
 
 #: ee_status/users/admin.py:18
 msgid "Personal info"
@@ -541,9 +526,3 @@ msgstr ""
 #: ee_status/users/views.py:25
 msgid "Information successfully updated"
 msgstr ""
-
-#~ msgid "Production capacity per km²"
-#~ msgstr "Erzeugungskapazität pro km²"
-
-#~ msgid "Storage capacity per km²"
-#~ msgstr "Speicherkapazität pro km²"
