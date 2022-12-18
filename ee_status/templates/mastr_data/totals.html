@@ -43,188 +43,180 @@
       km² Fläche
     </div>
     <div class="col text-center">
-      <h3>{{ basics.total_production_capacity|floatformat:0|intcomma }}</h3>
-      kW installierte Erzeugungsleistung
-    </div>
-    <div class="col text-center">
-      <h3>{{ basics.total_storage_capacity|floatformat:0|intcomma }}</h3>
-      kW Speicherkapazität
-    </div>
-    <div class="col text-center">
       <h3>{{ basics.count_of_devices|intcomma }}</h3>
       <a href="{% url 'mastr_data:energy_units' %}?{{ basics.realm_type }}={{ basics.realm_name }}">erneuerbare
         Energieanlagen</a>
     </div>
   </div>
 
-
-
   <div class="row mt-5">
-  <div class="col">
-    <h3 class="title">{% trans "Production capacity per capita" %}</h3>
-    <table class="table">
-      <tbody>
-      {% for realm in total_net_nominal_capacity_per_capita %}
-        {% if forloop.first %}
-          <th>{{ realm.realm_name }}</th>
-          <th></th>
-          <th>(⌀ {{ realm.score }} kW / Person)</th>
-          <th></th>
-        {% endif %}
-
-        <tr>
-          {% if not forloop.first %}
-            <td>
-              <svg width="1.2em" height="1.2em">
-                <use href="#bi-arrow-return-right"/>
-              </svg>
-              <a
-                href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
-                in {{ realm.realm_name }}
-              </a>
-            </td>
-            <td class="text-end">{{ realm.rank }}. {% trans "Rank" %}</td>
-            <td>
-
-              <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
-                     value="{{ realm.rank }}"
-                     id="customRange{{ forloop.counter }}" disabled>
-            </td>
-            <td>
-              {% trans "of " %} {{ realm.total_ranks }}
-            </td>
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title text-center">{{ basics.total_production_capacity|floatformat:0|intcomma }} kW</h3>
+          <h5 class="card-subtitle mb-2 text-muted text-center">{% trans "production capacity" %}</h5>
+        </div>
+        {% for realm in total_net_nominal_capacity_per_capita %}
+          {% if forloop.first %}
+            <div class="card-body border-top pb-0">
+              <h6>{% trans "Production capacity per capita" %}: {{ realm.score }} kW</h6>
+            </div>
+          {% else %}
+            <div class="row">
+              <div class="col-4 ms-4">
+                <svg width="1.2em" height="1.2em">
+                  <use href="#bi-arrow-return-right"/>
+                </svg>
+                <a
+                  href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                  in {{ realm.realm_name }}</a>
+              </div>
+              <div class="col text-end">
+                {{ realm.rank }}. {% trans "Rank" %}
+              </div>
+              <div class="col">
+                <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
+                       value="{{ realm.rank }}"
+                       id="customRange{{ forloop.counter }}" disabled>
+              </div>
+              <div class="col text-start">
+                {% trans "of " %} {{ realm.total_ranks }}
+              </div>
+            </div>
           {% endif %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        {% endfor %}
 
-  <div class="col">
-    <h3 class="title">{% trans "Production capacity per km²" %}</h3>
-    <table class="table">
-      <tbody>
-      {% for realm in total_net_nominal_capacity_per_area %}
-        {% if forloop.first %}
-          <th>{{ realm.realm_name }}</th>
-          <th></th>
-          <th>(⌀ {{ realm.score }} kW / Person)</th>
-          <th></th>
-        {% endif %}
 
-        <tr>
-          {% if not forloop.first %}
-            <td>
-              <svg width="1.2em" height="1.2em">
-                <use href="#bi-arrow-return-right"/>
-              </svg>
-              <a
-                href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
-                in {{ realm.realm_name }}
-              </a>
-            </td>
-            <td class="text-end">{{ realm.rank }}. {% trans "Rank" %}</td>
-            <td>
-
-              <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
-                     value="{{ realm.rank }}"
-                     id="customRange{{ forloop.counter }}" disabled>
-            </td>
-            <td>
-              {% trans "of " %} {{ realm.total_ranks }}
-            </td>
+        {% for realm in total_net_nominal_capacity_per_area %}
+          {% if forloop.first %}
+            <div class="card-body border-top pb-0">
+              <h6>{% trans "Production capacity per area" %}: {{ realm.score }} kW</h6>
+            </div>
+          {% else %}
+            <div class="row">
+              <div class="col-4 ms-4">
+                <svg width="1.2em" height="1.2em">
+                  <use href="#bi-arrow-return-right"/>
+                </svg>
+                <a
+                  href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                  in {{ realm.realm_name }}</a>
+              </div>
+              <div class="col text-end">
+                {{ realm.rank }}. {% trans "Rank" %}
+              </div>
+              <div class="col">
+                <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
+                       value="{{ realm.rank }}"
+                       id="customRange{{ forloop.counter }}" disabled>
+              </div>
+              <div class="col text-start">
+                {% trans "of " %} {{ realm.total_ranks }}
+              </div>
+            </div>
           {% endif %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+        {% endfor %}
+
+      </div>
+    </div>
   </div>
 
   <div class="row mt-5">
     <div class="col">
-      <h3 class="title">{% trans "Storage capacity per capita" %}</h3>
-      <table class="table">
-        <tbody>
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title text-center">{{ basics.total_storage_capacity|floatformat:0|intcomma }} kWh</h3>
+          <h5 class="card-subtitle mb-2 text-muted text-center">{% trans "storage capacity" %}</h5>
+        </div>
         {% for realm in storage_capacity_per_capita %}
           {% if forloop.first %}
-            <th>{{ realm.realm_name }}</th>
-            <th></th>
-            <th>(⌀ {{ realm.score }} kW / Person)</th>
-            <th></th>
-          {% endif %}
-
-          <tr>
-            {% if not forloop.first %}
-              <td>
+            <div class="card-body border-top pb-0">
+              <h6>{% trans "Storage capacity per capita" %}: {{ realm.score }} kW</h6>
+            </div>
+          {% else %}
+            <div class="row">
+              <div class="col-4 ms-4">
                 <svg width="1.2em" height="1.2em">
                   <use href="#bi-arrow-return-right"/>
                 </svg>
                 <a
                   href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
-                  in {{ realm.realm_name }}
-                </a>
-              </td>
-              <td class="text-end">{{ realm.rank }}. {% trans "Rank" %}</td>
-              <td>
-
+                  in {{ realm.realm_name }}</a>
+              </div>
+              <div class="col text-end">
+                {{ realm.rank }}. {% trans "Rank" %}
+              </div>
+              <div class="col">
                 <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
                        value="{{ realm.rank }}"
                        id="customRange{{ forloop.counter }}" disabled>
-              </td>
-              <td>
+              </div>
+              <div class="col text-start">
                 {% trans "of " %} {{ realm.total_ranks }}
-              </td>
-            {% endif %}
-          </tr>
+              </div>
+            </div>
+          {% endif %}
         {% endfor %}
-        </tbody>
-      </table>
-    </div>
 
-    <div class="col">
-      <h3 class="title">{% trans "Storage capacity per km²" %}</h3>
-      <table class="table">
-        <tbody>
+
         {% for realm in storage_capacity_per_area %}
           {% if forloop.first %}
-            <th>{{ realm.realm_name }}</th>
-            <th></th>
-            <th>(⌀ {{ realm.score }} kW / Person)</th>
-            <th></th>
-          {% endif %}
-
-          <tr>
-            {% if not forloop.first %}
-              <td>
+            <div class="card-body border-top pb-0">
+              <h6>{% trans "Storage capacity per area" %}: {{ realm.score }} kWh</h6>
+            </div>
+          {% else %}
+            <div class="row">
+              <div class="col-4 ms-4">
                 <svg width="1.2em" height="1.2em">
                   <use href="#bi-arrow-return-right"/>
                 </svg>
                 <a
                   href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
-                  in {{ realm.realm_name }}
-                </a>
-              </td>
-              <td class="text-end">{{ realm.rank }}. {% trans "Rank" %}</td>
-              <td>
-
+                  in {{ realm.realm_name }}</a>
+              </div>
+              <div class="col text-end">
+                {{ realm.rank }}. {% trans "Rank" %}
+              </div>
+              <div class="col">
                 <input type="range" class="ranking" min="0" max="{{ realm.total_ranks }}" step="1"
                        value="{{ realm.rank }}"
                        id="customRange{{ forloop.counter }}" disabled>
-              </td>
-              <td>
+              </div>
+              <div class="col text-start">
                 {% trans "of " %} {{ realm.total_ranks }}
-              </td>
-            {% endif %}
-          </tr>
+              </div>
+            </div>
+          {% endif %}
         {% endfor %}
-        </tbody>
-      </table>
+
+      </div>
     </div>
   </div>
 
-  <div class="col">
+  <div class="row">
+    <div>
+      <svg width="1.2em" height="1.2em">
+        <use href="#bi-emoji-dizzy"/>
+      </svg>
+      <svg width="1.2em" height="1.2em">
+        <use href="#bi-emoji-frown"/>
+      </svg>
+      <svg width="1.2em" height="1.2em">
+        <use href="#bi-emoji-neutral"/>
+      </svg>
+      <svg width="1.2em" height="1.2em">
+        <use href="#bi-emoji-smile"/>
+      </svg>
+      <svg width="1.2em" height="1.2em">
+        <use href="#bi-emoji-sunglasses"/>
+      </svg>
 
+    </div>
   </div>
+
+
+
+
 
 
 

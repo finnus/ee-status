@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-14 17:23+0100\n"
+"POT-Creation-Date: 2022-12-18 16:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -138,11 +138,21 @@ msgstr "installierte Speicherkapazität"
 msgid "total net nominal capacity"
 msgstr "gesamte Erzeugungskapazität"
 
-#: ee_status/mastr_data/views.py:218
-msgid "Rank"
-msgstr "Rang"
+#: ee_status/mastr_data/views.py:170
+#, fuzzy
+#| msgid "German"
+msgid "Germany"
+msgstr "Deutsch"
 
-#: ee_status/mastr_data/views.py:234
+#: ee_status/mastr_data/views.py:221
+#: ee_status/templates/mastr_data/rankings.html:33
+#: ee_status/templates/mastr_data/totals.html:106
+#: ee_status/templates/mastr_data/totals.html:147
+#: ee_status/templates/mastr_data/totals.html:178
+msgid "Rank"
+msgstr "Platz"
+
+#: ee_status/mastr_data/views.py:237
 msgid "Score"
 msgstr "Verhältnis"
 
@@ -465,25 +475,44 @@ msgstr "Auf geht's!"
 msgid "Did you mean..."
 msgstr "Meintest du..."
 
+#: ee_status/templates/mastr_data/totals.html:57
+#, fuzzy
+#| msgid "Production Capacity"
+msgid "production capacity"
+msgstr "Erzeugungskapazität"
+
 #: ee_status/templates/mastr_data/totals.html:62
 msgid "Production capacity per capita"
 msgstr "Erzeugungskapazität pro Person"
 
-#: ee_status/templates/mastr_data/totals.html:88
+#: ee_status/templates/mastr_data/totals.html:83
+#: ee_status/templates/mastr_data/totals.html:114
+#: ee_status/templates/mastr_data/totals.html:155
+#: ee_status/templates/mastr_data/totals.html:186
 msgid "of "
 msgstr "von"
 
-#: ee_status/templates/mastr_data/totals.html:98
-msgid "Production capacity per km²"
-msgstr "Erzeugungskapazität pro km²"
+#: ee_status/templates/mastr_data/totals.html:93
+#, fuzzy
+#| msgid "Production capacity per capita"
+msgid "Production capacity per area"
+msgstr "Erzeugungskapazität pro Person"
 
-#: ee_status/templates/mastr_data/totals.html:103
+#: ee_status/templates/mastr_data/totals.html:129
+#, fuzzy
+#| msgid "Storage Capacity"
+msgid "storage capacity"
+msgstr "Speicherkapazität"
+
+#: ee_status/templates/mastr_data/totals.html:134
 msgid "Storage capacity per capita"
 msgstr "Speicherkapazität pro Person"
 
-#: ee_status/templates/mastr_data/totals.html:107
-msgid "Storage capacity per km²"
-msgstr "Speicherkapazität pro km²"
+#: ee_status/templates/mastr_data/totals.html:165
+#, fuzzy
+#| msgid "Storage capacity per capita"
+msgid "Storage capacity per area"
+msgstr "Speicherkapazität pro Person"
 
 #: ee_status/users/admin.py:18
 msgid "Personal info"
@@ -512,3 +541,9 @@ msgstr ""
 #: ee_status/users/views.py:25
 msgid "Information successfully updated"
 msgstr ""
+
+#~ msgid "Production capacity per km²"
+#~ msgstr "Erzeugungskapazität pro km²"
+
+#~ msgid "Storage capacity per km²"
+#~ msgstr "Speicherkapazität pro km²"
