@@ -122,7 +122,7 @@ def totals_view(request):
     )
     current_object = f_current_totals.qs.first()
 
-    # Determine which realm_type we are about to handle
+    # Determine which realm type we are about to handle
     if municipality or municipality_key:
         realm_type = "municipality"
     elif county:
@@ -134,22 +134,30 @@ def totals_view(request):
 
     # GET TOTAL NET NOMINAL CAPACITY PER CAPITA
     total_net_nominal_capacity_per_capita = current_object.ratio_and_rank(
-        "total_net_nominal_capacity", "population", realm_type
+        numerator="total_net_nominal_capacity",
+        denominator="population",
+        realm_type=realm_type,
     )
     print(total_net_nominal_capacity_per_capita)
     # GET TOTAL NET NOMINAL CAPACITY PER SQUARE METERS
     total_net_nominal_capacity_per_area = current_object.ratio_and_rank(
-        "total_net_nominal_capacity", "area", realm_type
+        numerator="total_net_nominal_capacity",
+        denominator="area",
+        realm_type=realm_type,
     )
 
     # GET Storage Capacity per capita
     storage_capacity_per_capita = current_object.ratio_and_rank(
-        "storage_net_nominal_capacity", "population", realm_type
+        numerator="storage_net_nominal_capacity",
+        denominator="population",
+        realm_type=realm_type,
     )
 
-    # GET Storage Capacity per capita
+    # GET Storage Capacity per are
     storage_capacity_per_area = current_object.ratio_and_rank(
-        "storage_net_nominal_capacity", "area", realm_type
+        numerator="storage_net_nominal_capacity",
+        denominator="area",
+        realm_type=realm_type,
     )
 
     count_of_devices = CurrentTotalFilter(
@@ -267,11 +275,34 @@ def rankings_view(request):
 
 
 def search_view(request):
+    # if its get request, we get the search term via the "q" (specified in the form template)
     if request.method == "GET":
         query = request.GET.get("q")
+        # if there is no search keyword, we return the search page again
         if not query:
             return render(request, "mastr_data/search.html")
 
+    # Search logic
+    # search for aliases of Germany
+    # 0 results = nothing found
+    # 1 result = single municipality or a municipality which is a county at the same time ("kreisfreie Stadt")
+    # > 1 results:
+    #   as many municipalities as the county counts -> county or municipality which contain the name of the county
+    #   as many municipalities as the state -> state
+    #   more results: return list of results for user
+
+    names_for_germany = [
+        "Germany",
+        "Deutschland",
+        "Bundesrepublik",
+        "Schland",
+        "alles",
+        "BRD",
+    ]
+    if query in names_for_germany:
+        return redirect(reverse("mastr_data:totals"))
+
+    # we filter the CurrentTotal table by looking in all relevant columns
     qs_filtered = CurrentTotal.objects.filter(
         Q(municipality__icontains=query)
         | Q(county__icontains=query)
@@ -280,15 +311,23 @@ def search_view(request):
         | Q(zip_code__icontains=query)
     )
 
-    # no results
+    # get the number of results
+    number_of_results = len(qs_filtered)
+
+    # No matches (no results found)
     if not qs_filtered:
-        messages.add_message(request, messages.INFO, "no result")
+        messages.add_message(
+            request,
+            messages.WARNING,
+            _("We couldn't find anything. Try again with another keyword!"),
+        )
         return render(request, "mastr_data/search.html")
 
     # if there is only one result, it's a single municipality or a county with only one municipality
-    elif len(qs_filtered) == 1:
-        # County with the same name and no other municipalities.
+    elif number_of_results == 1:
+        # County with the same name and no other municipalities ("kreisfreie Stadt", e.g, "Freiburg im Breisgau")
         if qs_filtered[0].county == qs_filtered[0].municipality:
+            # we return the county as the comparisons make more sense then
             return redirect(
                 reverse("mastr_data:totals") + "?county=" + qs_filtered[0].county
             )
@@ -301,19 +340,24 @@ def search_view(request):
             )
 
     # if we have multiple results, it can be...
-    elif len(qs_filtered) > 1:
+    elif number_of_results > 1:
+        # we count the total numer of municipalities in the county
         municipalities_in_county = CurrentTotal.objects.filter(
             county=qs_filtered[0].county
         ).count()
+        # we count the total numer of municpalities in the state
         municipalities_in_state = CurrentTotal.objects.filter(
             state=qs_filtered[0].state
         ).count()
-        if municipalities_in_county == len(qs_filtered):
-            # if there are less results than municiaplities in the county, the user has to chose what s/he meant
+        # if there are as many municipalities in the county as in the number of search results it probably the county
+        if municipalities_in_county == number_of_results:
+            # but there might be municipalities which include the name of the county (e.g. "Freising")
+            # SEARCH RESULT IS A COUNTY AND ONE/MULTIPLE MUNICIPALITIES
             if CurrentTotal.objects.filter(municipality=qs_filtered[0].county).exists():
                 result_list = qs_filtered.filter(
                     municipality__icontains=qs_filtered[0].county
                 )
+                # return the list of concerned municipalities and of the county itself (the user has to chose)
                 return render(
                     request,
                     "mastr_data/search.html",
@@ -322,17 +366,20 @@ def search_view(request):
                         "county_results": qs_filtered[0],
                     },
                 )
-            # or - if there are as many results as municipalities in the county it's probably the county itself
+            # SEARCH RESULT IS A COUNTY
             else:
                 return redirect(
                     reverse("mastr_data:totals") + "?county=" + qs_filtered[0].county
                 )
-        elif municipalities_in_state == len(qs_filtered):
-            messages.add_message(request, messages.INFO, "a federal state")
+        # SEARCH RESULT IS A FEDERAL STATE
+        # if there are as many results as municipalities in the county it's the state itself
+        elif municipalities_in_state == number_of_results:
             return redirect(
                 reverse("mastr_data:totals") + "?state=" + qs_filtered[0].state
             )
+        # if it's something undefined we return the results list of municipalites, counties and states
         else:
+
             return render(
                 request, "mastr_data/search.html", {"municipality_results": qs_filtered}
             )

@@ -72,13 +72,12 @@ See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-djan
      * db.download()
 
 ### Import data wit pgloader
- * run pgloader transform data from open-MaStR: pgloader sql_scripts/01_import_from_open-mastr
+ * import the population and area data (from another source, saved inside sql_scripts/municipality_key_import_file.csv)
+   * run pgloader: pgloader sql_scripts/01_import_municipality_keys
+ * run pgloader transform data from open-MaStR: pgloader sql_scripts/02_import_from_open-mastr
    * adapt path to open_MaStR to your needs; data usually gets downloaded to /home/$USER
- * pgloader will also run the script 03_unite_tables.sql
- * run pgloader a second time to import "population" and "area" from csv:
- * pgloader will also run the script 04_timescaledb_hypertable.sql
+   * pgloader will also run the script 03_unite_tables.sql
 
-### Transform the table into a TimescaleDB hypertable
- * run sql_scripts/04_timescaledb_hypertable.sql to create the hypertable and the view for monthly data
- * import the newly created materialized view 'monthly_energy_source' into django
- * run Django as usual "python manage.py runserver" and browse to /energy_sources/timeline
+### Import the newly created tables into your django postgres database
+ * import the tables 'current_totals', 'energy_units' and 'monthly_timeline'
+ * run Django as usual "python manage.py runserver"
