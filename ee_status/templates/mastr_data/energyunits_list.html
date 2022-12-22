@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load my_tags %}
 
 {% load crispy_forms_tags %}
 {% block content %}
@@ -64,7 +65,7 @@
   <nav aria-label="Page navigation example">
     <ul class="pagination">
         {% if page_obj.has_previous %}
-          <li class="page-item"><a class="page-link" href="?page=1"><span aria-hidden="true">&laquo;</span></a></li>
+          <li class="page-item"><a class="page-link" href="?{% param_replace page=1 %}"><span aria-hidden="true">&laquo;</span></a></li>
           <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}"><span aria-hidden="true">&lsaquo;</span></a></li>
         {% endif %}
       <li class="page-item disabled"><a class="page-link">
@@ -73,8 +74,8 @@
         </span></a>
       </li>
         {% if page_obj.has_next %}
-          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&rsaquo;</a></li>
-          <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+          <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.next_page_number %}">&rsaquo;</a></li>
+          <li class="page-item"><a class="page-link" href="?{% param_replace page=paginator.num_pages %}">&raquo;</a></li>
         {% endif %}
     </ul>
   </nav>
