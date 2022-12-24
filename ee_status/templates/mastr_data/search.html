@@ -17,15 +17,25 @@
           <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">{% trans "Let's go!" %}</button>
         </div>
       </form>
-      {% if municipality_results %}
+      {% if municipality_results or state_results or county_results %}
         <div class="alert alert-success mt-lg-5 text-start" role="alert">
           <h4 class="alert-heading">{% trans "Did you mean..." %}</h4>
           <ul>
-            {% if county_results %}
-              <li><a href="{% url 'mastr_data:totals' %}?county={{ county_results.county }}"
-                     class="alert-link">{% trans "County" %} {{ county_results.county }}</a> ({{ county_results.state }})
+          {% if state_results %}
+            {% for result in state_results %}
+              <li><a href="{% url 'mastr_data:totals' %}?state={{ result.state }}"
+                     class="alert-link">{% trans "State" %} {{ result.state }}</a> ({{ result.state }})
               </li>
+            {% endfor %}
             {% endif %}
+            {% if county_results %}
+              {% for result in county_results %}
+              <li><a href="{% url 'mastr_data:totals' %}?county={{ result.county }}"
+                     class="alert-link">{% trans "County" %} {{ result.county }}</a> ({{ result.state }})
+              </li>
+              {%  endfor %}
+            {% endif %}
+
             {% for result in municipality_results %}
               <li><a href="{% url 'mastr_data:totals' %}?municipality={{ result.municipality }}"
                      class="alert-link">{% trans "Municipality" %} {{ result.municipality }}</a>
