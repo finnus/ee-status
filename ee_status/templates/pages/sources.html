@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+
+  <div class="container mt-5">
+    <div class="row mt-1">
+      <h1 class="title">{% trans "Sources" %}</h1>
+      <p>
+        {% blocktranslate %}
+          Die angezeigten Daten kommen aus zwei Quellen:
+          <ol>
+          <li>
+            Dem Markstammdatenregister der 2023 Bundesnetzagentur für Elektrizität, Gas, Telekommunikation, Post und Eisenbahnen<br>
+            Datenlizenz Deutschland – Namensnennung – Version 2.0  (dl-de/by-2-0):  www.govdata.de/dl-de/by-2-0<br>
+            https://www.marktstammdatenregister.de<br>
+            Wir haben dabei https://github.com/OpenEnergyPlatform/open-MaStR genutzt, um die Daten herunterzuladen.
+            Der derzeitige Datensatz stammt vom 2022-07-24 und wurde mehrfach transformiert.
+          </li>
+          <li>
+            Der Regionalstatistik von den Statistischen Ämtern des Bundes und der Länder<br>
+            Datenlizenz Deutschland – Namensnennung – Version 2.0  (dl-de/by-2-0):  www.govdata.de/dl-de/by-2-0<br>
+            https://www.regionalstatistik.de
+          </li>
+          </ol>
+        {% endblocktranslate %}
+
+      </p>
+    </div>
+  </div>
+
+{% endblock content %}
