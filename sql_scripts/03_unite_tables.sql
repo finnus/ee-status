@@ -227,6 +227,10 @@ UPDATE current_totals
 SET total_net_nominal_capacity = coalesce(pv_net_nominal_capacity, 0) + coalesce(wind_net_nominal_capacity, 0) +
                                  coalesce(biomass_net_nominal_capacity, 0) + coalesce(hydro_net_nominal_capacity, 0);
 
+INSERT INTO current_totals
+  (SELECT * FROM municipality_keys
+   WHERE municipality_key NOT IN
+       (SELECT municipality_key FROM current_totals));
 
 -- remove duplicate zip_code
 UPDATE current_totals

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-18 20:10+0100\n"
+"POT-Creation-Date: 2023-01-02 08:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgid "per"
 msgstr "pro"
 
 #: ee_status/mastr_data/models.py:9
-#: ee_status/templates/mastr_data/energyunits_list.html:32
+#: ee_status/templates/mastr_data/energyunits_list.html:33
 msgid "Unit Nr."
 msgstr ""
 
@@ -82,19 +82,20 @@ msgid "Municipality Key"
 msgstr "Gemeindeschlüssel"
 
 #: ee_status/mastr_data/models.py:13 ee_status/mastr_data/models.py:63
-#: ee_status/templates/mastr_data/energyunits_list.html:33
-#: ee_status/templates/mastr_data/search.html:31
+#: ee_status/templates/mastr_data/energyunits_list.html:34
+#: ee_status/templates/mastr_data/search.html:41
 msgid "Municipality"
 msgstr "Gemeinde"
 
 #: ee_status/mastr_data/models.py:14 ee_status/mastr_data/models.py:64
-#: ee_status/templates/mastr_data/energyunits_list.html:34
-#: ee_status/templates/mastr_data/search.html:26
-#: ee_status/templates/mastr_data/search.html:32
+#: ee_status/templates/mastr_data/energyunits_list.html:35
+#: ee_status/templates/mastr_data/search.html:34
+#: ee_status/templates/mastr_data/search.html:42
 msgid "County"
 msgstr "Stadt-/Landkreis"
 
 #: ee_status/mastr_data/models.py:15 ee_status/mastr_data/models.py:65
+#: ee_status/templates/mastr_data/search.html:27
 msgid "State"
 msgstr "Bundesland"
 
@@ -103,12 +104,12 @@ msgid "Zip-Code"
 msgstr "PLZ"
 
 #: ee_status/mastr_data/models.py:17
-#: ee_status/templates/mastr_data/energyunits_list.html:35
+#: ee_status/templates/mastr_data/energyunits_list.html:36
 msgid "Start Up Date"
 msgstr ""
 
 #: ee_status/mastr_data/models.py:19
-#: ee_status/templates/mastr_data/energyunits_list.html:36
+#: ee_status/templates/mastr_data/energyunits_list.html:37
 msgid "Close Down Date"
 msgstr ""
 
@@ -140,13 +141,13 @@ msgstr "installierte Speicherkapazität"
 msgid "total net nominal capacity"
 msgstr "gesamte installatierte Erzeugungsleistung"
 
-#: ee_status/mastr_data/views.py:170
+#: ee_status/mastr_data/views.py:178
 #, fuzzy
 #| msgid "German"
 msgid "Germany"
 msgstr "Deutsch"
 
-#: ee_status/mastr_data/views.py:221
+#: ee_status/mastr_data/views.py:229
 #: ee_status/templates/mastr_data/rankings.html:33
 #: ee_status/templates/mastr_data/totals.html:75
 #: ee_status/templates/mastr_data/totals.html:106
@@ -155,9 +156,13 @@ msgstr "Deutsch"
 msgid "Rank"
 msgstr "Platz"
 
-#: ee_status/mastr_data/views.py:237
+#: ee_status/mastr_data/views.py:245
 msgid "Score"
 msgstr "Verhältnis"
+
+#: ee_status/mastr_data/views.py:335
+msgid "We couldn't find anything. Try again with another keyword!"
+msgstr ""
 
 #: ee_status/templates/account/account_inactive.html:5
 #: ee_status/templates/account/account_inactive.html:8
@@ -419,43 +424,55 @@ msgid "Search"
 msgstr "Suche"
 
 #: ee_status/templates/base.html:59
-#: ee_status/templates/mastr_data/energyunits_list.html:26
+#: ee_status/templates/mastr_data/energyunits_list.html:27
 msgid "Energy Units"
 msgstr "Installierte Anlagen"
 
-#: ee_status/templates/mastr_data/energyunits_list.html:12
-#: ee_status/templates/mastr_data/energyunits_list.html:17
+#: ee_status/templates/base.html:89 ee_status/templates/pages/imprint.html:9
+msgid "Imprint and data policy"
+msgstr "Impressum und Datenschutzhinweise"
+
+#: ee_status/templates/base.html:90 ee_status/templates/pages/sources.html:9
+msgid "Sources"
+msgstr "Quellenangaben"
+
+#: ee_status/templates/base.html:91 ee_status/templates/pages/about.html:9
+msgid "About us"
+msgstr "Über uns"
+
+#: ee_status/templates/mastr_data/energyunits_list.html:13
+#: ee_status/templates/mastr_data/energyunits_list.html:18
 #: ee_status/templates/mastr_data/municipality.html:9
 #: ee_status/templates/mastr_data/rankings.html:13
 #: ee_status/templates/mastr_data/rankings.html:18
 msgid "Filter"
 msgstr "Filter"
 
-#: ee_status/templates/mastr_data/energyunits_list.html:37
+#: ee_status/templates/mastr_data/energyunits_list.html:38
 msgid "Type"
 msgstr "Typ"
 
-#: ee_status/templates/mastr_data/energyunits_list.html:38
+#: ee_status/templates/mastr_data/energyunits_list.html:39
 msgid "Capacity"
 msgstr "Leistung"
 
-#: ee_status/templates/mastr_data/energyunits_list.html:51
+#: ee_status/templates/mastr_data/energyunits_list.html:52
 msgid "PV"
 msgstr ""
 
-#: ee_status/templates/mastr_data/energyunits_list.html:52
+#: ee_status/templates/mastr_data/energyunits_list.html:53
 msgid "Battery"
 msgstr "Batterie"
 
-#: ee_status/templates/mastr_data/energyunits_list.html:53
+#: ee_status/templates/mastr_data/energyunits_list.html:54
 msgid "Hydro"
 msgstr "Wasser"
 
-#: ee_status/templates/mastr_data/energyunits_list.html:54
+#: ee_status/templates/mastr_data/energyunits_list.html:55
 msgid "Wind"
 msgstr "Wind"
 
-#: ee_status/templates/mastr_data/energyunits_list.html:55
+#: ee_status/templates/mastr_data/energyunits_list.html:56
 msgid "Biomass"
 msgstr "Biomasse"
 
@@ -498,6 +515,33 @@ msgstr "Speicherkapazität pro Person"
 #: ee_status/templates/mastr_data/totals.html:165
 msgid "Storage capacity per km²"
 msgstr "Speicherkapazität pro km²"
+
+#: ee_status/templates/pages/sources.html:11
+msgid ""
+"\n"
+"          Die angezeigten Daten kommen aus zwei Quellen:\n"
+"          <ol>\n"
+"          <li>\n"
+"            Dem Markstammdatenregister der Bundesnetzagentur für "
+"Elektrizität, Gas, Telekommunikation, Post und Eisenbahnen<br>\n"
+"            Datenlizenz Deutschland – Namensnennung – Version 2.0  (dl-de/"
+"by-2-0):  www.govdata.de/dl-de/by-2-0<br>\n"
+"            https://www.marktstammdatenregister.de<br>\n"
+"            Wir haben dabei https://github.com/OpenEnergyPlatform/open-MaStR "
+"genutzt, um die Daten herunterzuladen.\n"
+"            Der derzeitige Datensatz stammt vom 2022-07-24 und wurde "
+"mehrfach transformiert.\n"
+"          </li>\n"
+"          <li>\n"
+"            Der Regionalstatistik von den Statistischen Ämtern des Bundes "
+"und der Länder<br>\n"
+"            Datenlizenz Deutschland – Namensnennung – Version 2.0  (dl-de/"
+"by-2-0):  www.govdata.de/dl-de/by-2-0<br>\n"
+"            https://www.regionalstatistik.de\n"
+"          </li>\n"
+"          </ol>\n"
+"        "
+msgstr ""
 
 #: ee_status/users/admin.py:18
 msgid "Personal info"
