@@ -41,8 +41,6 @@ energyunits_list_view = EnergyUnitListView.as_view()
 
 def totals_view(request):
     tempdict = request.GET
-    # some municipalities have the same name - currently, we just combine all municipalities with the same name
-    # TODO: if multiple municipalities with same name but different municipality_keys, we first need the user to chose
     municipality_key = tempdict.get("municipality_key")
     municipality = tempdict.get("municipality")
     county = tempdict.get("county")

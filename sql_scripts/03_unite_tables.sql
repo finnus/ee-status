@@ -146,6 +146,7 @@ SET date = '2000-01-01'
 WHERE date < '2000-01-01';
 
 ALTER TABLE energy_units ALTER COLUMN date SET NOT NULL;
+ALTER TABLE energy_units ADD COLUMN id SERIAL PRIMARY KEY;
 
 DROP TABLE IF EXISTS monthly_timeline;
 
@@ -226,11 +227,6 @@ SET area = (SELECT area FROM municipality_keys WHERE municipality_key = current_
 UPDATE current_totals
 SET total_net_nominal_capacity = coalesce(pv_net_nominal_capacity, 0) + coalesce(wind_net_nominal_capacity, 0) +
                                  coalesce(biomass_net_nominal_capacity, 0) + coalesce(hydro_net_nominal_capacity, 0);
-
-INSERT INTO current_totals
-  (SELECT * FROM municipality_keys
-   WHERE municipality_key NOT IN
-       (SELECT municipality_key FROM current_totals));
 
 -- remove duplicate zip_code
 UPDATE current_totals

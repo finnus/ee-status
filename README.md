@@ -1,7 +1,7 @@
 # EE-Status
 
-Displaying Data from the "Marktstammdatenregister".
-
+Displaying Data from the "Marktstammdatenregister". You can currently explore it at https://ee-status.herokuapp.com/ .
+This project is currently a (technical) "Proof of concept". It lacks tests, proper documentation and a good structure.
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
 [![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
@@ -12,54 +12,6 @@ License: GPLv3
 Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
 
 ## Basic Commands
-
-### Setting Up Your Users
-
--   To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
-
--   To create a **superuser account**, use this command:
-
-        $ python manage.py createsuperuser
-
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
-
-### Type checks
-
-Running type checks with mypy:
-
-    $ mypy ee_status
-
-### Test coverage
-
-To run the tests, check your test coverage, and generate an HTML coverage report:
-
-    $ coverage run -m pytest
-    $ coverage html
-    $ open htmlcov/index.html
-
-#### Running tests with pytest
-
-    $ pytest
-
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html#sass-compilation-live-reloading).
-
-### Sentry
-
-Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
-The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
-
-You must set the DSN url in production.
-
-## Deployment
-
-The following details how to deploy this application.
-
-### Heroku
-
-See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-on-heroku.html).
-
 
 ### Get the data
  * thank open-MaStR for their great efforts which make this project here possible in the first place
@@ -79,5 +31,43 @@ See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-djan
    * pgloader will also run the script 03_unite_tables.sql
 
 ### Import the newly created tables into your django postgres database
- * import the tables 'current_totals', 'energy_units' and 'monthly_timeline'
+ * import the tables 'current_totals', 'energy_units' and 'monthly_timeline' into your Django project
  * run Django as usual "python manage.py runserver"
+
+### Setting Up Your Users
+-   To create a **superuser account**, use this command:
+
+        $ python manage.py createsuperuser
+-
+### Type checks
+
+Running type checks with mypy:
+
+    $ mypy ee_status
+
+### Test coverage
+
+To run the tests, check your test coverage, and generate an HTML coverage report:
+
+    $ coverage run -m pytest
+    $ coverage html
+    $ open htmlcov/index.html
+
+#### Running tests with pytest
+
+    $ pytest
+
+### Sentry
+
+Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
+The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
+
+You must set the DSN url in production.
+
+## Deployment
+
+The following details how to deploy this application.
+
+### Heroku
+
+See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-on-heroku.html).
