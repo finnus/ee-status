@@ -125,9 +125,10 @@ class CurrentTotal(models.Model):
         if realm_type == scope:
             rank = "n.a"
         else:
-            rank = [i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d][
-                0
-            ] + 1
+            rank = str(
+                [i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d][0]
+                + 1
+            )
 
         ranking_without_none = [t for t in ranking if None not in t]
         max_value = round(max(ranking_without_none, key=itemgetter(1))[1], 1)

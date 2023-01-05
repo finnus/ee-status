@@ -5,7 +5,8 @@ from bokeh.plotting import figure
 from django.contrib import messages
 from django.db.models import F, Q, Sum, Window
 from django.db.models.functions import Coalesce, Round
-from django.shortcuts import redirect, render, reverse
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
 
@@ -50,16 +51,19 @@ def totals_view(request):
     data = (
         f.qs.annotate(
             pv_net_sum=Window(
-                expression=Sum(F("pv_net_nominal_capacity")), order_by=("date",)
+                expression=Sum(F("pv_net_nominal_capacity")), order_by=[F("date").asc()]
             ),
             wind_net_sum=Window(
-                expression=Sum(F("wind_net_nominal_capacity")), order_by=("date",)
+                expression=Sum(F("wind_net_nominal_capacity")),
+                order_by=[F("date").asc()],
             ),
             biomass_net_sum=Window(
-                expression=Sum(F("biomass_net_nominal_capacity")), order_by=("date",)
+                expression=Sum(F("biomass_net_nominal_capacity")),
+                order_by=[F("date").asc()],
             ),
             hydro_net_sum=Window(
-                expression=Sum(F("hydro_net_nominal_capacity")), order_by=("date",)
+                expression=Sum(F("hydro_net_nominal_capacity")),
+                order_by=[F("date").asc()],
             ),
         )
         .distinct("date")
@@ -251,7 +255,7 @@ def rankings_view(request):
         denominator_filter_kwargs = {}
         denominator_annotate = {}
         score_expression = {}
-        order_by_expression = ()
+        order_by_expression = ("id",)
 
     ranking = (
         CurrentTotal.objects.filter(**filter_dict.get(realm_type))
@@ -263,7 +267,6 @@ def rankings_view(request):
         .order_by(*order_by_expression)
         .distinct()
     )
-    print(ranking)
 
     return render(
         request,
