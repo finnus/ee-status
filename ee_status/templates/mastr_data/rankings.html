@@ -4,40 +4,72 @@
 
 {% load crispy_forms_tags %}
 {% block content %}
-  <div class="row">
-  <div class="col-md-2 mb-5">
-    <div class="sticky-top pr-3 pt-1 sticky-offset">
 
-      <div class="card">
-        <div class="card-header">
-          <strong>{% trans "Filter" %}</strong>
-        </div>
-        <div class="card-body">
-          <form method="get">
-            {{ filter.form|crispy }} <input type="hidden"/>
-            <button class="btn btn-outline-primary btn-block" type="submit">{% trans "Filter" %}</button>
-          </form>
-        </div>
-      </div>
-    </div>
+  <div class="container mt-3">
+
+  <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      {% for realm_type, realm_name in hierarchy.items reversed %}
+        {% if not forloop.last %}
+          <li class="breadcrumb-item active" aria-current="page">
+            <a
+              href="{% url 'mastr_data:totals' %}?{{ realm_type }}={{ realm_name }}">{{ realm_name }}</a>
+          </li>
+        {% else %}
+          <li class="breadcrumb-item active" aria-current="page">
+            {{ realm_name }}
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ol>
+  </nav>
+
+  <div class="row mt-1">
+    <h1 class="title">{{ basics.realm_name }}</h1>
+  </div>
+  <div class="row mt-3">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" aria-current="page"
+           href="{% url 'mastr_data:totals' %}?{{ basics.realm_type }}={{ basics.realm_name }}">Overview</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="#">Rankings</a>
+      </li>
+    </ul>
   </div>
 
-  <div class="col-md-10 pr-5">
 
-  <h1 class="title">{% trans "Ranking" %}</h1>
+  <form method="get">
+    <div class="row mt-3 align-items-end">
 
-  <div class="row">
+      <!-- hide fields that should not be used but needed for django-filters to work correctly -->
+      <div class="fieldWrapper col d-none">
+        {{ filter.form.municipality |as_crispy_field }}
+        {{ filter.form.county |as_crispy_field }}
+        {{ filter.form.state |as_crispy_field }}
+        {{ filter.form.scope |as_crispy_field }}
+      </div>
+      <div class="fieldWrapper col">
+        {{ filter.form.numerator |as_crispy_field }}
+      </div>
+      <div class="fieldWrapper col">
+        {{ filter.form.denominator |as_crispy_field }}
+      </div>
+      <input type="hidden"/>
+      <div class="mb-3 col-auto">
+        <button class="btn btn-outline-primary btn-block" type="submit">{% trans "Filter" %}</button>
+      </div>
+    </div>
+  </form>
   <table class="table table-striped sortable">
     <thead>
     <tr>
-    <th scope="col">{% trans "Rank" %}</th>
-      {% for captions in rankings %}
-        {% if forloop.first %}
-          {% for key, value in captions.items %}
-            <th scope="col">{{ key }}</th>
-          {% endfor %}
-        {% endif %}
+
+      {% for key in table_captions %}
+        <th scope="col">{% trans key %}</th>
       {% endfor %}
+
     </tr>
 
     </thead>

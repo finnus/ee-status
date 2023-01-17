@@ -115,6 +115,7 @@ class CurrentTotal(models.Model):
             .annotate(score=Sum(numerator) / Sum(denominator))
             .order_by("-score")
         )
+        print(ranking)
 
         self_dict = {
             "municipality": self.municipality,

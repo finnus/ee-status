@@ -54,7 +54,7 @@ msgstr "Gemeinden"
 
 #: ee_status/mastr_data/filters.py:62
 msgid "Counties"
-msgstr "Stadt-/Landkreise"
+msgstr "Kreise"
 
 #: ee_status/mastr_data/filters.py:63
 msgid "States"
@@ -87,12 +87,21 @@ msgstr "Gemeindeschlüssel"
 msgid "Municipality"
 msgstr "Gemeinde"
 
+msgid "municipality"
+msgstr "Gemeinde"
+
+msgid "state"
+msgstr "Bundesland"
+
+msgid "county"
+msgstr "Kreis"
+
 #: ee_status/mastr_data/models.py:14 ee_status/mastr_data/models.py:64
 #: ee_status/templates/mastr_data/energyunits_list.html:35
 #: ee_status/templates/mastr_data/search.html:34
 #: ee_status/templates/mastr_data/search.html:42
 msgid "County"
-msgstr "Stadt-/Landkreis"
+msgstr "Kreis"
 
 #: ee_status/mastr_data/models.py:15 ee_status/mastr_data/models.py:65
 #: ee_status/templates/mastr_data/search.html:27
@@ -139,13 +148,11 @@ msgstr "installierte Speicherkapazität"
 
 #: ee_status/mastr_data/models.py:83
 msgid "total net nominal capacity"
-msgstr "gesamte installatierte Erzeugungsleistung"
+msgstr "installierte Erzeugungsleistung"
 
 #: ee_status/mastr_data/views.py:178
-#, fuzzy
-#| msgid "German"
 msgid "Germany"
-msgstr "Deutsch"
+msgstr "Deutschland"
 
 #: ee_status/mastr_data/views.py:229
 #: ee_status/templates/mastr_data/rankings.html:33

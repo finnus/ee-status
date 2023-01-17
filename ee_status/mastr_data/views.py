@@ -140,7 +140,6 @@ def totals_view(request):
         denominator="population",
         realm_type=realm_type,
     )
-    print(total_net_nominal_capacity_per_capita)
     # GET TOTAL NET NOMINAL CAPACITY PER SQUARE METERS
     total_net_nominal_capacity_per_area = current_object.ratio_and_rank(
         numerator="total_net_nominal_capacity",
@@ -162,24 +161,32 @@ def totals_view(request):
         realm_type=realm_type,
     )
 
+    # GET basic information for display
     count_of_devices = CurrentTotalFilter(
         request.GET, queryset=EnergyUnit.objects.all()
     )
     count = count_of_devices.qs.filter(close_down_date__isnull=True).count()
+
     basics = f_current_totals.qs.aggregate(
         total_population=Sum("population"),
         total_area=Sum("area"),
         total_production_capacity=Sum("total_net_nominal_capacity"),
         total_storage_capacity=Sum("storage_net_nominal_capacity"),
-        count_of_devices=Sum(count),
     )
-
+    basics["count_of_devices"] = count
     basics["realm_type"] = realm_type
 
     if realm_type == "country":
         basics["realm_name"] = _("Germany")
     else:
         basics["realm_name"] = getattr(current_object, realm_type)
+
+    order = ["municipality", "county", "state"]
+    hierarchy = {}
+    if realm_type != "country":
+        for i in order[order.index(realm_type) : :]:  # noqa: E203
+            hierarchy[i] = getattr(current_object, i)
+    hierarchy["country"] = _("Germany")
 
     return render(
         request,
@@ -194,6 +201,7 @@ def totals_view(request):
             "storage_capacity_per_capita": storage_capacity_per_capita,
             "storage_capacity_per_area": storage_capacity_per_area,
             "basics": basics,
+            "hierarchy": hierarchy,
             "realm_type": realm_type,
         },
     )
@@ -201,38 +209,51 @@ def totals_view(request):
 
 def rankings_view(request):
     tempdict = request.GET
+    municipality = tempdict.get("municipality")
     county = tempdict.get("county")
     state = tempdict.get("state")
-    scope = tempdict.get("scope")
     numerator = tempdict.get("numerator")
     denominator = tempdict.get("denominator")
+    scope = tempdict.get("scope")
 
-    if not scope:
-        scope = "state"
     if not numerator and not denominator:
         numerator = "total_net_nominal_capacity"
         denominator = "population"
 
     f = RankingsFilter(tempdict, queryset=CurrentTotal.objects.all())
 
-    if county:
+    if municipality:
+        realm_type = "municipality"
+    elif county:
         realm_type = "county"
     elif state:
         realm_type = "state"
     else:
-        realm_type = "country"
+        # when looking at germany, it should still display the different states
+        realm_type = "state"
 
-    filter_dict = {
-        "county": {"county": county},
-        "state": {"state": state},
-        "country": {},
-    }
+    hierarchy = {}
 
-    table_captions = [_("Rank"), scope]
+    if municipality:
+        hierarchy["municipality"] = municipality
+    if county:
+        hierarchy["county"] = county
+    if state:
+        hierarchy["state"] = state
+
+    hierarchy["country"] = _("Germany")
+
+    basics = {"realm_type": realm_type, "realm_name": next(iter(hierarchy.values()))}
+
+    table_captions = [_("Rank"), realm_type]
 
     if numerator:
         numerator_annotate = {"numerator": Sum(numerator)}
         table_captions.append(CurrentTotal._meta.get_field(numerator).verbose_name)
+        numerator_filter_kwargs = {
+            "{}__{}".format(numerator, "isnull"): False,
+            "{}__{}".format(numerator, "gt"): 0,
+        }
         if denominator:
             denominator_filter_kwargs = {
                 "{}__{}".format(denominator, "isnull"): False,
@@ -255,12 +276,31 @@ def rankings_view(request):
         denominator_filter_kwargs = {}
         denominator_annotate = {}
         score_expression = {}
-        order_by_expression = ("id",)
+        order_by_expression = ()
+        numerator_filter_kwargs = {
+            "{}__{}".format(numerator, "isnull"): False,
+            "{}__{}".format(numerator, "gt"): 0,
+        }
+
+    filter_dict = {
+        "municipality": {"municipality": municipality},
+        "county": {"county": county},
+        "state": {"state": state},
+        "country": {},
+    }
+
+    if not scope:
+        temp = list(filter_dict)
+        try:
+            scope = temp[temp.index(realm_type) + 1]
+        except (ValueError, IndexError):
+            scope = realm_type
 
     ranking = (
-        CurrentTotal.objects.filter(**filter_dict.get(realm_type))
+        CurrentTotal.objects.filter(**filter_dict.get(scope))
         .filter(**denominator_filter_kwargs)
-        .values(scope)
+        .filter(**numerator_filter_kwargs)
+        .values(realm_type)
         .annotate(**numerator_annotate)
         .annotate(**denominator_annotate)
         .annotate(**score_expression)
@@ -271,7 +311,13 @@ def rankings_view(request):
     return render(
         request,
         "mastr_data/rankings.html",
-        {"filter": f, "rankings": ranking, "table_captions": table_captions},
+        {
+            "filter": f,
+            "rankings": ranking,
+            "table_captions": table_captions,
+            "hierarchy": hierarchy,
+            "basics": basics,
+        },
     )
 
 

@@ -70,6 +70,7 @@ class RankingsFilter(django_filters.FilterSet):
     class Meta:
         model = CurrentTotal
         fields = [
+            "municipality",
             "county",
             "state",
             "scope",

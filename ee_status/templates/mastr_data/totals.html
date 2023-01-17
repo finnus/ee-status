@@ -3,21 +3,20 @@
 {% load humanize %}
 {% load l10n %}
 
-{% load crispy_forms_tags %}
 {% block content %}
-  <div class="container mt-5">
+  <div class="container mt-3">
 
   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
     <ol class="breadcrumb">
-      {% for realm in total_net_nominal_capacity_per_capita reversed %}
+      {% for realm_type, realm_name in hierarchy.items reversed %}
         {% if not forloop.last %}
           <li class="breadcrumb-item active" aria-current="page">
             <a
-              href="{% url 'mastr_data:totals' %}?{{ realm.realm_type }}={{ realm.realm_name }}">{{ realm.realm_name }}</a>
+              href="{% url 'mastr_data:totals' %}?{{ realm_type }}={{ realm_name }}">{{ realm_name }}</a>
           </li>
         {% else %}
           <li class="breadcrumb-item active" aria-current="page">
-            {{ realm.realm_name }}
+            {{ realm_name }}
           </li>
         {% endif %}
       {% endfor %}
@@ -26,6 +25,24 @@
 
   <div class="row mt-1">
     <h1 class="title">{{ basics.realm_name }}</h1>
+  </div>
+   <div class="row mt-3">
+    <ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="#">Overview</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'mastr_data:rankings' %}?numerator=total_net_nominal_capacity&denominator=population
+{% for realm_type, realm_name in hierarchy.items %}&{{ realm_type }}={{ realm_name }}{% endfor %}
+&scope=">
+      Rankings
+    </a>
+  </li>
+</ul>
+  </div>
+
+  <div class="row mt-3">
+
     {{ div_timeline|safe }}
     {{ script| safe }}
   </div>
@@ -65,7 +82,7 @@
                   <use href="#bi-arrow-return-right"/>
                 </svg>
                 <a
-                  href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                  href="{% url 'mastr_data:rankings' %}?{{ basics.realm_type }}={{ basics.realm_name }}&scope={{ realm.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
                   in {{ realm.realm_name }}</a>
               </div>
               <div class="col text-end">
@@ -96,7 +113,7 @@
                   <use href="#bi-arrow-return-right"/>
                 </svg>
                 <a
-                  href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                  href="{% url 'mastr_data:rankings' %}?{{ basics.realm_type }}={{ basics.realm_name }}&scope={{ realm.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
                   in {{ realm.realm_name }}</a>
               </div>
               <div class="col text-end">
@@ -137,7 +154,7 @@
                   <use href="#bi-arrow-return-right"/>
                 </svg>
                 <a
-                  href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                  href="{% url 'mastr_data:rankings' %}?{{ basics.realm_type }}={{ basics.realm_name }}&scope={{ realm.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
                   in {{ realm.realm_name }}</a>
               </div>
               <div class="col text-end">
@@ -168,7 +185,7 @@
                   <use href="#bi-arrow-return-right"/>
                 </svg>
                 <a
-                  href="{% url 'mastr_data:rankings' %}?scope={{ basics.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
+                  href="{% url 'mastr_data:rankings' %}?{{ basics.realm_type }}={{ basics.realm_name }}&scope={{ realm.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">
                   in {{ realm.realm_name }}</a>
               </div>
               <div class="col text-end">
