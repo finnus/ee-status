@@ -194,7 +194,8 @@ CREATE TABLE current_totals
     total_net_nominal_capacity   NUMERIC(20, 2),
     storage_net_nominal_capacity NUMERIC(20, 2),
     population                   INTEGER,
-    area                         NUMERIC(20, 2)
+    area                         NUMERIC(20, 2),
+    energy_units                 INTEGER
 );
 
 INSERT INTO current_totals (municipality_key, municipality, county, state, zip_code, pv_net_nominal_capacity,
@@ -227,6 +228,24 @@ SET area = (SELECT area FROM municipality_keys WHERE municipality_key = current_
 UPDATE current_totals
 SET total_net_nominal_capacity = coalesce(pv_net_nominal_capacity, 0) + coalesce(wind_net_nominal_capacity, 0) +
                                  coalesce(biomass_net_nominal_capacity, 0) + coalesce(hydro_net_nominal_capacity, 0);
+
+-- Count energy units per municipality key
+WITH subquery AS (
+    SELECT municipality_key, COUNT(municipality_key) AS NB_UNITS
+    FROM  energy_units
+    WHERE close_down_date IS NULL
+    GROUP BY municipality_key
+)
+UPDATE current_totals
+SET energy_units = subquery.NB_UNITS
+FROM subquery
+WHERE current_totals.municipality_key = subquery.municipality_key;
+
+/*SELECT energy_units.municipality_key, count(*) AS NB_UNITS
+FROM energy_units JOIN current_totals ON (energy_units.municipality_key = current_totals.municipality_key)
+GROUP BY energy_units.municipality_key;*/
+
+
 
 -- remove duplicate zip_code
 UPDATE current_totals

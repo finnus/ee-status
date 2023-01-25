@@ -84,6 +84,7 @@ class CurrentTotal(models.Model):
     )
     population = models.IntegerField(verbose_name=_("Population"))
     area = models.FloatField(verbose_name="Area")
+    energy_units = models.IntegerField(verbose_name=_("Energy Units"))
 
     class Meta:
         managed = False
