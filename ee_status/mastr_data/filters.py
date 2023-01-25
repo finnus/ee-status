@@ -80,8 +80,6 @@ class RankingsFilter(django_filters.FilterSet):
 
 
 class EnergyUnitFilter(django_filters.FilterSet):
-    state = django_filters.ChoiceFilter(choices=STATES)
-
     class Meta:
         model = EnergyUnit
-        fields = ["municipality_key", "municipality", "county", "state", "zip_code"]
+        fields = ["municipality", "county", "state"]

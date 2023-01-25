@@ -8,36 +8,82 @@ from django.db.models.functions import Coalesce, Round
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django_filters.views import FilterView
 
-from .filters import (
-    CurrentTotalFilter,
-    EnergyUnitFilter,
-    MonthlyTimelineFilter,
-    RankingsFilter,
-)
+from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
 from .models import CurrentTotal, EnergyUnit, MonthlyTimeline
 
 
-class EnergyUnitListView(FilterView):
-    model = EnergyUnit
-    context_object_name = "units_list"
-    filterset_class = EnergyUnitFilter
-    queryset = EnergyUnit.objects.order_by("-start_up_date").annotate(
-        net_capacity=Coalesce(
+def energy_units_view(request):
+    tempdict = request.GET
+    municipality = tempdict.get("municipality")
+    county = tempdict.get("county")
+    state = tempdict.get("state")
+
+    qs = (
+        EnergyUnit.objects.order_by("-start_up_date")
+        .annotate(
+            net_capacity=Coalesce(
+                "pv_net_nominal_capacity",
+                "wind_net_nominal_capacity",
+                "hydro_net_nominal_capacity",
+                "biomass_net_nominal_capacity",
+                "storage_net_nominal_capacity",
+            )
+        )
+        .filter(net_capacity__gt=0)
+        .values(
+            "net_capacity",
+            "unit_nr",
+            "start_up_date",
+            "close_down_date",
             "pv_net_nominal_capacity",
-            "wind_net_nominal_capacity",
-            "hydro_net_nominal_capacity",
-            "biomass_net_nominal_capacity",
             "storage_net_nominal_capacity",
+            "hydro_net_nominal_capacity",
+            "wind_net_nominal_capacity",
+            "biomass_net_nominal_capacity",
         )
     )
-    paginate_by = 50
 
-    template_name = "mastr_data/energyunits_list.html"
+    f = RankingsFilter(tempdict, queryset=qs)
+    energy_units = f.qs
+    # paginator = Paginator(energy_units, 500)
 
+    # page_obj = paginator.get_page(page_number)
 
-energyunits_list_view = EnergyUnitListView.as_view()
+    if municipality:
+        realm_type = "municipality"
+    elif county:
+        realm_type = "county"
+    elif state:
+        realm_type = "state"
+    else:
+        # when looking at germany, it should still display the different states
+        realm_type = "state"
+
+    hierarchy = {}
+
+    if municipality:
+        hierarchy["municipality"] = municipality
+    if county:
+        hierarchy["county"] = county
+    if state:
+        hierarchy["state"] = state
+
+    hierarchy["country"] = _("Germany")
+
+    basics = {"realm_type": realm_type, "realm_name": next(iter(hierarchy.values()))}
+
+    return render(
+        request,
+        "mastr_data/energyunits_list.html",
+        {
+            "filter": f,
+            "energy_units": energy_units,
+            "hierarchy": hierarchy,
+            "basics": basics,
+            # "page_obj": page_obj
+        },
+    )
 
 
 def totals_view(request):
@@ -140,6 +186,7 @@ def totals_view(request):
         denominator="population",
         realm_type=realm_type,
     )
+
     # GET TOTAL NET NOMINAL CAPACITY PER SQUARE METERS
     total_net_nominal_capacity_per_area = current_object.ratio_and_rank(
         numerator="total_net_nominal_capacity",

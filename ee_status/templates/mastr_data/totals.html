@@ -38,6 +38,11 @@
       Rankings
     </a>
   </li>
+    <li class="nav-item">
+    <a class="nav-link" href="{% url 'mastr_data:energy_units' %}?{% for realm_type, realm_name in hierarchy.items %}{{ realm_type }}={{ realm_name }}&{% endfor %}">
+      {% trans "Energy Units" %}
+    </a>
+  </li>
 </ul>
   </div>
 
