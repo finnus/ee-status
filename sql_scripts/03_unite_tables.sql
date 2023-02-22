@@ -241,9 +241,6 @@ SET energy_units = subquery.NB_UNITS
 FROM subquery
 WHERE current_totals.municipality_key = subquery.municipality_key;
 
-/*SELECT energy_units.municipality_key, count(*) AS NB_UNITS
-FROM energy_units JOIN current_totals ON (energy_units.municipality_key = current_totals.municipality_key)
-GROUP BY energy_units.municipality_key;*/
 
 
 

@@ -21,7 +21,7 @@ Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings
    * or just do in python console:
      * from open_mastr import Mastr
      * db = Mastr()
-     * db.download()
+     * db.download(data=["solar","wind","biomass","hydro","storage"]) # we don't need all data
 
 ### Import data wit pgloader
  * import the population and area data (from another source, saved inside sql_scripts/municipality_key_import_file.csv)
