@@ -1,13 +1,13 @@
+import numpy as np
 import pandas as pd
-from bokeh.embed import components
-from bokeh.models import DatetimeTickFormatter, HoverTool, NumeralTickFormatter
-from bokeh.plotting import figure
+import plotly.express as px
 from django.contrib import messages
 from django.db.models import F, Q, Sum, Window
 from django.db.models.functions import Coalesce, Round
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from plotly.offline import plot
 
 from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
 from .models import CurrentTotal, EnergyUnit, MonthlyTimeline
@@ -120,50 +120,31 @@ def totals_view(request):
 
     # transform QuerySet to list
     data = list(data)
-    # get only dates from list
-    date_list = [e[0] for e in data]
-    # transform dates to correct datetime
-    date_list = pd.to_datetime(date_list)
-    # get net_sums from list
-    pv_net_sum_list = [e[1] for e in data]
-    wind_net_sum_list = [e[2] for e in data]
-    biomass_net_sum_list = [e[3] for e in data]
-    hydro_net_sum_list = [e[4] for e in data]
-
-    p = figure(
-        max_width=1200,
-        plot_height=350,
-        y_axis_type="datetime",
-        y_axis_label="kW",
-        x_axis_label="year",
-        sizing_mode="stretch_width",
+    # transform to pandas DataFrame
+    df = pd.DataFrame(
+        data,
+        columns=[
+            "date",
+            "pv_net_sum",
+            "wind_net_sum",
+            "biomass_net_sum",
+            "hydro_net_sum",
+        ],
     )
-
-    p.line(date_list, pv_net_sum_list, color="#F9A825", alpha=0.5, line_width=3)
-    p.line(date_list, wind_net_sum_list, color="#424242", alpha=0.5, line_width=3)
-    p.line(date_list, biomass_net_sum_list, color="#2E7D32", alpha=0.5, line_width=3)
-    p.line(date_list, hydro_net_sum_list, color="#1565C0", alpha=0.5, line_width=3)
-    p.yaxis[0].formatter = NumeralTickFormatter(format="0")
-    p.xaxis[0].formatter = DatetimeTickFormatter(months="%m %Y")
-
-    p.add_tools(
-        HoverTool(
-            tooltips=[
-                ("date", "@date_list"),
-                ("PV", "@pv_net_sum_list"),
-                ("Wind", "@wind_net_sum_list"),
-                ("Biomasse", "@biomass_net_sum_list"),
-                ("Wasserkraft", "@hydro_net_sum_list"),
-            ]
-            # display a tooltip whenever the cursor is vertically in line with a glyph
-        )
+    # replace "None" by NaN
+    df = df.fillna(value=np.nan)
+    print(df)
+    #  Build Graph
+    fig = px.line(
+        df,
+        x="date",
+        y=["pv_net_sum", "wind_net_sum", "biomass_net_sum", "hydro_net_sum"],
+        hover_data={"date": "|%B %Y"},
+        template="plotly_white",
+        labels={"date": "Date", "pv_net_sum": "Photovoltaic", "hydro_net_sum": "Hydro"},
     )
-    # define plots for bokeh
-    plots = {
-        "Timeline": p,
-    }
-    script, div = components(plots)
-    div_timeline = div["Timeline"]
+    fig.update_layout(legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01))
+    plt_div = plot(fig, output_type="div", include_plotlyjs=False)
 
     f_current_totals = CurrentTotalFilter(
         request.GET, queryset=CurrentTotal.objects.all()
@@ -233,10 +214,7 @@ def totals_view(request):
         request,
         "mastr_data/totals.html",
         {
-            "script": script,
-            "div": div,
             "filter": f_current_totals,
-            "div_timeline": div_timeline,
             "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita,
             "total_net_nominal_capacity_per_area": total_net_nominal_capacity_per_area,
             "storage_capacity_per_capita": storage_capacity_per_capita,
@@ -244,6 +222,7 @@ def totals_view(request):
             "basics": basics,
             "hierarchy": hierarchy,
             "realm_type": realm_type,
+            "plt_div": plt_div,
         },
     )
 
