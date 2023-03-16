@@ -55,7 +55,6 @@ DATABASES = {
         default="postgres:///ee_status",
     ),
 }
-DATABASES["default"]["ENGINE"] = "timescale.db.backends.postgresql"
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
