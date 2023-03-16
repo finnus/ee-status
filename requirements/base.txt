@@ -17,7 +17,6 @@ django-allauth==0.51.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.14.0  # https://github.com/django-crispy-forms/django-crispy-forms
 crispy-bootstrap5==0.6  # https://github.com/django-crispy-forms/crispy-bootstrap5
 django-redis==5.2.0  # https://github.com/jazzband/django-redis
-django-timescaledb==0.2.12 # https://github.com/schlunsen/django-timescaledb
 django-debug-toolbar==3.4.0
 pytest==7.1.2
 django-filter==22.1
