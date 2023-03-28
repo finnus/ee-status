@@ -91,7 +91,6 @@ class CurrentTotal(models.Model):
         db_table = "current_totals"
 
     def ratio_and_rank_per_scope(self, numerator, denominator, realm_type, scope):
-
         scope_dict = {
             "municipality": {"municipality": self.municipality},
             "county": {"county": self.county},
