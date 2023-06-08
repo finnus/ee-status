@@ -45,10 +45,6 @@ def energy_units_view(request):
     )
 
     f = RankingsFilter(tempdict, queryset=qs)
-    energy_units = f.qs
-    # paginator = Paginator(energy_units, 500)
-
-    # page_obj = paginator.get_page(page_number)
 
     if municipality:
         realm_type = "municipality"
@@ -78,10 +74,9 @@ def energy_units_view(request):
         "mastr_data/energyunits_list.html",
         {
             "filter": f,
-            "energy_units": energy_units,
+            "energy_units": f.qs,
             "hierarchy": hierarchy,
             "basics": basics,
-            # "page_obj": page_obj
         },
     )
 
