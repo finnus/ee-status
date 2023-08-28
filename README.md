@@ -13,12 +13,12 @@ Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings
 
 ## Basic Commands
 
-### Get the data
+### Get the data locally
  * thank open-MaStR for their great efforts which make this project here possible in the first place
  * get the data with help from open-MaStR
-   * get open-MaStR: https://github.com/OpenEnergyPlatform/open-MaStR via pip (use conda or virtualenv): pip install open-mastr
+   * open-MaStR should already be installed locally via pip
    * RTD: https://open-mastr.readthedocs.io/en/latest/getting_started.html#
-   * or just do in python console:
+   * start a python console (e.g. python manage.py shell_plus)
      * from open_mastr import Mastr
      * db = Mastr()
      * db.download(data=["solar","wind","biomass","hydro","storage"]) # we don't need all data
