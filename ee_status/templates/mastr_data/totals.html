@@ -56,9 +56,7 @@
       km² Fläche
     </div>
     <div class="col text-center">
-      <h3>{{ basics.count_of_devices|intcomma }}</h3>
-      <a href="{% url 'mastr_data:energy_units' %}?{{ basics.realm_type }}={{ basics.realm_name }}">erneuerbare
-        Energieanlagen</a>
+      <h3>{{ basics.count_of_devices|intcomma }}</h3>erneuerbare Energieanlagen</a>
     </div>
   </div>
 
@@ -144,7 +142,7 @@
         {% for realm in storage_capacity_per_capita %}
           {% if forloop.first %}
             <div class="card-body border-top pb-0">
-              <h6>{% trans "Storage capacity per capita" %}: {{ realm.score }} kW</h6>
+              <h6>{% trans "Storage capacity per capita" %}: {{ realm.score }} kWh</h6>
             </div>
           {% else %}
             <div class="row">

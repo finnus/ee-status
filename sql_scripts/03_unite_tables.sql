@@ -145,6 +145,11 @@ UPDATE energy_units
 SET date = '2000-01-01'
 WHERE date < '2000-01-01';
 
+-- drop units without a date
+DELETE
+FROM energy_units
+WHERE date is null;
+
 ALTER TABLE energy_units ALTER COLUMN date SET NOT NULL;
 ALTER TABLE energy_units ADD COLUMN id SERIAL PRIMARY KEY;
 
