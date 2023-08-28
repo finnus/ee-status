@@ -128,7 +128,6 @@ def totals_view(request):
     )
     # replace "None" by NaN
     df = df.fillna(value=np.nan)
-    print(df)
     #  Build Graph
     fig = px.line(
         df,
@@ -136,9 +135,27 @@ def totals_view(request):
         y=["pv_net_sum", "wind_net_sum", "biomass_net_sum", "hydro_net_sum"],
         hover_data={"date": "|%B %Y"},
         template="plotly_white",
-        labels={"date": "Date", "pv_net_sum": "Photovoltaic", "hydro_net_sum": "Hydro"},
+        labels={"date": "Datum", "value": "Wert"},
     )
-    fig.update_layout(legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01))
+
+    new = {
+        "pv_net_sum": "Photovoltaik",
+        "wind_net_sum": "Windkraft",
+        "biomass_net_sum": "Biomasse",
+        "hydro_net_sum": "Wasserkraft",
+    }
+    fig.for_each_trace(
+        lambda t: t.update(
+            name=new[t.name],
+            legendgroup=new[t.name],
+            hovertemplate=t.hovertemplate.replace(t.name, new[t.name]),
+        )
+    )
+
+    fig.update_layout(
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        legend_title_text="Erzeugungsart",
+    )
     plt_div = plot(fig, output_type="div", include_plotlyjs=False)
 
     f_current_totals = CurrentTotalFilter(
