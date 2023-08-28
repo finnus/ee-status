@@ -6,7 +6,7 @@
   <div class="px-4 py-5 my-5 text-center">
     <h1 class="display-5 fw-bold">E<span class="h4">rneuerbare</span> E<span class="h4">nergien</span> S<span
       class="h4">tatus</span></h1>
-    <div class="col-lg-6 mx-auto">
+    <div class="col-lg-9 mx-auto">
       <form method="get">
         <div class="form-group">
 
@@ -46,138 +46,6 @@
         </div>
       {% endif %}
     </div>
-  </div>
-
-
-  <div class="row justify-content-center">
-    <div class="col-3 d-none d-lg-block">
-      <div id="total_production"></div>
-    </div>
-    <div class="col-3 d-none d-lg-block">
-      <div id="total_production_per_capita">xcx</div>
-    </div>
-    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
-    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
-    <script>
-      (async () => {
-
-        const topology = await fetch(
-          'https://code.highcharts.com/mapdata/countries/de/de-all.topo.json'
-        ).then(response => response.json());
-
-        // Prepare demo data. The data is joined to map using value of 'hc-key'
-        // property by default. See API docs for 'joinBy' for more info on linking
-        // data and map.
-        const data = [
-          ['de-ni', 17335327], ['de-sh', 9149710], ['de-be', 181415], ['de-mv', 6060574],
-          ['de-hb', 272460], ['de-sl', 1054353], ['de-by', 20290934], ['de-th', 2518440],
-          ['de-st', 8181959], ['de-sn', 1054353], ['de-bb', 11527532], ['de-nw', 12444260],
-          ['de-bw', 9456247], ['de-he', 4584923], ['de-hh', 208325], ['de-rp', 6222251]
-        ];
-
-        // Create the chart
-        Highcharts.mapChart('total_production', {
-          chart: {
-            map: topology
-          },
-
-          title: {
-            text: 'installierte Erzeugungsleistung'
-          },
-
-          subtitle: {
-            text: ''
-          },
-
-          mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-              verticalAlign: 'bottom'
-            }
-          },
-
-          colorAxis: {
-            min: 0
-          },
-
-          series: [{
-            data: data,
-            name: 'installierte Erzeugungsleistung',
-            states: {
-              hover: {
-                color: '#BADA55'
-              }
-            },
-            dataLabels: {
-              enabled: true,
-              format: '{point.name}'
-            }
-          }]
-        });
-
-      })();
-    </script>
-    <script>
-      (async () => {
-
-        const topology = await fetch(
-          'https://code.highcharts.com/mapdata/countries/de/de-all.topo.json'
-        ).then(response => response.json());
-
-        // Prepare demo data. The data is joined to map using value of 'hc-key'
-        // property by default. See API docs for 'joinBy' for more info on linking
-        // data and map.
-        const data = [
-          ['de-ni', 1.96], ['de-sh', 3.77], ['de-be', 0.05], ['de-mv', 3.67],
-          ['de-hb', 0.40], ['de-sl', 1.07], ['de-by', 1.54], ['de-th', 0.95],
-          ['de-st', 0.95], ['de-sn', 0.84], ['de-bb', 4.53], ['de-nw', 0.69],
-          ['de-bw', 0.84], ['de-he', 0.72], ['de-hh', 0.11], ['de-rp', 1.51]
-        ];
-
-        // Create the chart
-        Highcharts.mapChart('total_production_per_capita', {
-          chart: {
-            map: topology
-          },
-
-          title: {
-            text: 'installierte Erzeugungsleistung pro Einwohner:innen'
-          },
-
-          subtitle: {
-            text: ''
-          },
-
-          mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-              verticalAlign: 'bottom'
-            }
-          },
-
-          colorAxis: {
-            min: 0
-          },
-
-          series: [{
-            data: data,
-            name: 'installierte Erzeugungsleistung',
-            states: {
-              hover: {
-                color: '#BADA55'
-              }
-            },
-            dataLabels: {
-              enabled: true,
-              format: '{point.name}'
-            }
-          }]
-        });
-
-      })();
-    </script>
-
-
   </div>
 
 {% endblock content %}
