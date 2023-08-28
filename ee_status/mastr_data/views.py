@@ -6,7 +6,7 @@ from django.db.models import F, Q, Sum, Window
 from django.db.models.functions import Coalesce, Round
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 from plotly.offline import plot
 
 from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
@@ -135,14 +135,14 @@ def totals_view(request):
         y=["pv_net_sum", "wind_net_sum", "biomass_net_sum", "hydro_net_sum"],
         hover_data={"date": "|%B %Y"},
         template="plotly_white",
-        labels={"date": "Datum", "value": "Wert"},
+        labels={"date": _("date"), "value": _("installed capacity (kW)")},
     )
 
     new = {
-        "pv_net_sum": "Photovoltaik",
-        "wind_net_sum": "Windkraft",
-        "biomass_net_sum": "Biomasse",
-        "hydro_net_sum": "Wasserkraft",
+        "pv_net_sum": _("Photovoltaics"),
+        "wind_net_sum": _("Wind power"),
+        "biomass_net_sum": _("Biomass"),
+        "hydro_net_sum": _("Hydropower"),
     }
     fig.for_each_trace(
         lambda t: t.update(
@@ -154,7 +154,7 @@ def totals_view(request):
 
     fig.update_layout(
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-        legend_title_text="Erzeugungsart",
+        legend_title_text=_("Power generation"),
     )
     plt_div = plot(fig, output_type="div", include_plotlyjs=False)
 
