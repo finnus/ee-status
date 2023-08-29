@@ -3,82 +3,14 @@ import pandas as pd
 import plotly.express as px
 from django.contrib import messages
 from django.db.models import F, Q, Sum, Window
-from django.db.models.functions import Coalesce, Round
+from django.db.models.functions import Round
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from plotly.offline import plot
 
 from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
-from .models import CurrentTotal, EnergyUnit, MonthlyTimeline
-
-
-def energy_units_view(request):
-    tempdict = request.GET
-    municipality = tempdict.get("municipality")
-    county = tempdict.get("county")
-    state = tempdict.get("state")
-
-    qs = (
-        EnergyUnit.objects.order_by("-start_up_date")
-        .annotate(
-            net_capacity=Coalesce(
-                "pv_net_nominal_capacity",
-                "wind_net_nominal_capacity",
-                "hydro_net_nominal_capacity",
-                "biomass_net_nominal_capacity",
-                "storage_net_nominal_capacity",
-            )
-        )
-        .filter(net_capacity__gt=0)
-        .values(
-            "net_capacity",
-            "unit_nr",
-            "start_up_date",
-            "close_down_date",
-            "pv_net_nominal_capacity",
-            "storage_net_nominal_capacity",
-            "hydro_net_nominal_capacity",
-            "wind_net_nominal_capacity",
-            "biomass_net_nominal_capacity",
-        )
-    )
-
-    f = RankingsFilter(tempdict, queryset=qs)
-
-    if municipality:
-        realm_type = "municipality"
-    elif county:
-        realm_type = "county"
-    elif state:
-        realm_type = "state"
-    else:
-        # when looking at germany, it should still display the different states
-        realm_type = "state"
-
-    hierarchy = {}
-
-    if municipality:
-        hierarchy["municipality"] = municipality
-    if county:
-        hierarchy["county"] = county
-    if state:
-        hierarchy["state"] = state
-
-    hierarchy["country"] = _("Germany")
-
-    basics = {"realm_type": realm_type, "realm_name": next(iter(hierarchy.values()))}
-
-    return render(
-        request,
-        "mastr_data/energyunits_list.html",
-        {
-            "filter": f,
-            "energy_units": f.qs,
-            "hierarchy": hierarchy,
-            "basics": basics,
-        },
-    )
+from .models import CurrentTotal, MonthlyTimeline
 
 
 def totals_view(request):
