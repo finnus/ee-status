@@ -2,4 +2,4 @@
 
 python manage.py collectstatic --noinput
 python manage.py migrate
-gunicorn config.wsgi:application\ --bind=0.0.0.0:80
+gunicorn config.wsgi --bind=0.0.0.0:80
