@@ -11,6 +11,6 @@
                         "EXPOSE 80",
                         "CMD [ \"python\", \"manage.py\", \"collectstatic\", \"--no-input\" ]",
                         "CMD [ \"python\", \"manage.py\", \"migrate\" ]",
-                        "CMD [ \"gunicorn\", \"config.wsgi\", \"--bind=0.0.0.0:80\" ]"
+                        "CMD [ \"gunicorn\", \"config.wsgi:application\", \"--bind=0.0.0.0:80\" ]"
   ]
  }
