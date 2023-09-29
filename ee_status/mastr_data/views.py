@@ -1,6 +1,4 @@
-import numpy as np
-import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 from django.contrib import messages
 from django.db.models import F, Q, Sum, Window
 from django.db.models.functions import Round
@@ -47,47 +45,41 @@ def totals_view(request):
 
     # transform QuerySet to list
     data = list(data)
-    # transform to pandas DataFrame
-    df = pd.DataFrame(
-        data,
-        columns=[
-            "date",
-            "pv_net_sum",
-            "wind_net_sum",
-            "biomass_net_sum",
-            "hydro_net_sum",
-        ],
-    )
-    # replace "None" by NaN
-    df = df.fillna(value=np.nan)
+
     #  Build Graph
-    fig = px.line(
-        df,
-        x="date",
-        y=["pv_net_sum", "wind_net_sum", "biomass_net_sum", "hydro_net_sum"],
-        hover_data={"date": "|%B %Y"},
+    # Extract data for each category (pv, wind, hydro, biomass)
+    dates = [item[0] for item in data]
+    pv_data = [item[1] if item[1] is not None else 0 for item in data]
+    wind_data = [item[2] if item[2] is not None else 0 for item in data]
+    hydro_data = [item[3] if item[3] is not None else 0 for item in data]
+    biomass_data = [item[4] if item[4] is not None else 0 for item in data]
+
+    # Create traces for each category
+    trace_pv = go.Scatter(x=dates, y=pv_data, mode="lines", name=_("Photovoltaics"))
+    trace_wind = go.Scatter(x=dates, y=wind_data, mode="lines", name=_("Wind power"))
+    trace_hydro = go.Scatter(x=dates, y=hydro_data, mode="lines", name=_("Hydropower"))
+    trace_biomass = go.Scatter(
+        x=dates,
+        y=biomass_data,
+        mode="lines",
+        name=_("Biomass"),
+    )
+
+    # Create the layout for the timeline graph
+    layout = go.Layout(
+        xaxis=dict(title=_("Date")),
+        yaxis=dict(
+            title=_("Power generation"),
+        ),
+        hovermode="x unified",
         template="plotly_white",
-        labels={"date": _("date"), "value": _("installed capacity (kW)")},
     )
 
-    new = {
-        "pv_net_sum": _("Photovoltaics"),
-        "wind_net_sum": _("Wind power"),
-        "biomass_net_sum": _("Biomass"),
-        "hydro_net_sum": _("Hydropower"),
-    }
-    fig.for_each_trace(
-        lambda t: t.update(
-            name=new[t.name],
-            legendgroup=new[t.name],
-            hovertemplate=t.hovertemplate.replace(t.name, new[t.name]),
-        )
+    # Create a figure and add traces to it
+    fig = go.Figure(
+        data=[trace_pv, trace_wind, trace_hydro, trace_biomass], layout=layout
     )
 
-    fig.update_layout(
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-        legend_title_text=_("Power generation"),
-    )
     plt_div = plot(fig, output_type="div", include_plotlyjs=False)
 
     f_current_totals = CurrentTotalFilter(
