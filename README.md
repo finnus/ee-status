@@ -1,6 +1,6 @@
 # EE-Status
 
-Displaying Data from the "Marktstammdatenregister". You can currently explore it at https://ee-status.herokuapp.com/ .
+Displaying Data from the "Marktstammdatenregister". You can currently explore it at https://ee-status.de/ .
 This project is currently a (technical) "Proof of concept". It lacks tests, proper documentation and a good structure.
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
 [![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
@@ -66,8 +66,4 @@ You must set the DSN url in production.
 
 ## Deployment
 
-The following details how to deploy this application.
-
-### Heroku
-
-See detailed [cookiecutter-django Heroku documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-on-heroku.html).
+This repo is ready to be deployed via [caprover - the free and open source PaaS](https://caprover.com/).
