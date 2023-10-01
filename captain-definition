@@ -2,16 +2,16 @@
   "schemaVersion": 2,
   "dockerfileLines": [
                        "FROM library/python:3.9.15-alpine",
-                        "RUN apk update && apk upgrade &&     apk add --no-cache make g++ bash git openssh postgresql-dev curl",
-                        "RUN mkdir -p /usr/src/app",
-                        "WORKDIR /usr/src/app",
-                        "COPY ./requirements/base.txt /usr/src/app/",
-                        "COPY ./requirements/production.txt /usr/src/app/",
-                        "RUN pip install --no-cache-dir -r base.txt",
-                        "RUN pip install --no-cache-dir -r production.txt",
-                        "COPY ./ /usr/src/app",
-                        "COPY ./utility/ /usr/src/utility",
-                        "EXPOSE 80",
-                        "CMD sh /usr/src/utility/caprover.sh"
+                       "RUN apk update && apk upgrade && apk add --no-cache make g++ bash git openssh postgresql-dev curl gettext",
+                       "RUN mkdir -p /usr/src/app",
+                       "WORKDIR /usr/src/app",
+                       "COPY ./requirements/base.txt /usr/src/app/",
+                       "COPY ./requirements/production.txt /usr/src/app/",
+                       "RUN pip install --no-cache-dir -r base.txt",
+                       "RUN pip install --no-cache-dir -r production.txt",
+                       "COPY ./ /usr/src/app",
+                       "COPY ./utility/ /usr/src/utility",
+                       "EXPOSE 80",
+                       "CMD sh /usr/src/utility/caprover.sh"
   ]
  }

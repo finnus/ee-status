@@ -146,7 +146,7 @@ msgstr "Datum"
 
 #: ee_status/mastr_data/views.py:66
 msgid "Power generation"
-msgstr "Erzeugungsart"
+msgstr "Erzeugungsleistung (kW)"
 
 #: ee_status/mastr_data/views.py:136 ee_status/mastr_data/views.py:145
 #: ee_status/mastr_data/views.py:198
