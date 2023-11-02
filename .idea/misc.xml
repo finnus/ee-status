@@ -2,7 +2,7 @@
 <project version="4">
   <component name="Black">
     <option name="enabledOnReformat" value="true" />
-    <option name="sdkUUID" value="14e593d0-1cba-4103-bff3-b0e6970f1e16" />
+    <option name="sdkName" value="Python 3.9 (ee_status)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (ee_status)" project-jdk-type="Python SDK" />
 </project>
