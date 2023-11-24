@@ -34,19 +34,25 @@ def multi_polygon_map(request):
         "pv_net_nominal_capacity",
     )
     df = pd.DataFrame.from_records(data)
+    df["pv_net_nominal_capacity"] = df["pv_net_nominal_capacity"].astype(int)
+
     geojson = json.loads(geojson_data)
     fig = px.choropleth_mapbox(
         df,
         geojson=geojson,
-        color="pv_net_nominal_capacity",
         locations="pk",
+        color="pv_net_nominal_capacity",
         featureidkey="properties.pk",
+        color_continuous_scale="Viridis",
         center={"lat": 47.9828, "lon": 7.8161},
         mapbox_style="carto-positron",
-        color_continuous_scale="Viridis",
-        range_color=(0, 15000),
         opacity=0.5,
         zoom=9,
+        labels={"pv_net_nominal_capacity": "PV"},
+        custom_data=["municipality"],
+    )
+    fig.update_traces(
+        hovertemplate="<b>%{customdata[0]}</b><br>PV: %{z} kW<extra></extra>",
     )
 
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})

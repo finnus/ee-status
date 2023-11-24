@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% load humanize %}
 {% load l10n %}
 
@@ -42,7 +42,7 @@
   </div>
 
   <div class="row mt-3">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="{% static 'vendors/plotly/plotly-2.27.0.min.js' %}"></script>
     {{ plt_div|safe }}
   </div>
 
