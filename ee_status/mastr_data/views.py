@@ -1,5 +1,10 @@
+import json
+
+import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
 from django.contrib import messages
+from django.core.serializers import serialize
 from django.db.models import F, Q, Sum, Window
 from django.db.models.functions import Round
 from django.shortcuts import redirect, render
@@ -9,6 +14,49 @@ from plotly.offline import plot
 
 from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
 from .models import CurrentTotal, MonthlyTimeline
+
+
+def multi_polygon_map(request):
+    queryset = CurrentTotal.objects.filter(geom__isnull=False).filter(
+        county__exact="Breisgau-Hochschwarzwald"
+    )
+    geojson_data = serialize(
+        "geojson",
+        queryset,
+        geometry_field="geom",
+        fields=["pk"],
+    )
+    data = queryset.values(
+        "pk",
+        "municipality",
+        "municipality_key",
+        "population",
+        "pv_net_nominal_capacity",
+    )
+    df = pd.DataFrame.from_records(data)
+    geojson = json.loads(geojson_data)
+    fig = px.choropleth_mapbox(
+        df,
+        geojson=geojson,
+        color="pv_net_nominal_capacity",
+        locations="pk",
+        featureidkey="properties.pk",
+        center={"lat": 47.9828, "lon": 7.8161},
+        mapbox_style="carto-positron",
+        color_continuous_scale="Viridis",
+        range_color=(0, 15000),
+        opacity=0.5,
+        zoom=9,
+    )
+
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    plt_div = plot(fig, output_type="div", include_plotlyjs=False)
+
+    return render(
+        request,
+        "mastr_data/map_template.html",
+        {"plt_div": plt_div},
+    )
 
 
 def totals_view(request):

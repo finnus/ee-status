@@ -6,7 +6,7 @@ These commands transform the data to only contain the needed values and prepare 
 4. Prepare data for easier time-series-analysis by duplicating rows that are no longer active and set the value to negative and the new timestamp
 5. Set min date to 2000-01-01 as this project is only interested in the development from 2000 on.
 */
-
+CREATE EXTENSION postgis;
 DROP TABLE IF EXISTS energy_units;
 
 
@@ -187,6 +187,7 @@ DROP TABLE IF EXISTS current_totals;
 CREATE TABLE current_totals
 (
     id                           SERIAL PRIMARY KEY,
+    geom                         GEOMETRY,
     municipality_key             VARCHAR(8),
     municipality                 VARCHAR(200),
     county                       VARCHAR(200),
@@ -224,15 +225,13 @@ CREATE INDEX totals_county_idx ON current_totals (county);
 CREATE INDEX totals_municipality_idx ON current_totals (municipality);
 CREATE INDEX totals_municipality_key_idx ON current_totals (municipality_key);
 
-UPDATE current_totals
-SET population = (SELECT population FROM municipality_keys WHERE municipality_key = current_totals.municipality_key);
 
-UPDATE current_totals
-SET area = (SELECT area FROM municipality_keys WHERE municipality_key = current_totals.municipality_key);
 
 UPDATE current_totals
 SET total_net_nominal_capacity = coalesce(pv_net_nominal_capacity, 0) + coalesce(wind_net_nominal_capacity, 0) +
                                  coalesce(biomass_net_nominal_capacity, 0) + coalesce(hydro_net_nominal_capacity, 0);
+
+
 
 -- Count energy units per municipality key
 WITH subquery AS (

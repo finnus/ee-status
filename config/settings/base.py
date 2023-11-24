@@ -50,10 +50,14 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db(
-        "DATABASE_URL",
-        default="postgres:///ee_status",
-    ),
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",  # Use 'postgis' for PostgreSQL
+        "NAME": "ee_status",
+        "USER": "postgres",
+        "PASSWORD": "password",
+        "HOST": "localhost",  # Or your database host
+        "PORT": "5432",  # Or your database port
+    }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
@@ -78,6 +82,7 @@ DJANGO_APPS = [
     "django.contrib.humanize",  # Handy template tags
     "django.contrib.admin",
     "django.forms",
+    "django.contrib.gis",
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",

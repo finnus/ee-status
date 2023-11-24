@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load humanize %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+
+  <div class="row mt-3">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    {{ plt_div|safe }}
+  </div>
+
+
+
+
+
+
+{% endblock content %}

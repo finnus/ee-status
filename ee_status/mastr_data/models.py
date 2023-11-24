@@ -1,6 +1,6 @@
 from operator import itemgetter
 
-from django.db import models
+from django.contrib.gis.db import models
 from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 
@@ -25,6 +25,7 @@ class CurrentTotal(models.Model):
     municipality_key = models.CharField(
         verbose_name=_("Municipality Key"), max_length=200
     )
+    geom = models.MultiPolygonField(srid=25832)
     municipality = models.CharField(verbose_name=_("Municipality"), max_length=200)
     county = models.CharField(verbose_name=_("County"), max_length=200)
     state = models.CharField(verbose_name=_("State"), max_length=200, blank=True)
