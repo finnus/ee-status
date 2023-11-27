@@ -4,7 +4,7 @@
                        "FROM library/python:3.9.15-alpine",
                        "RUN mkdir -p /usr/src/app",
                        "WORKDIR /usr/src/app",
-                       "RUN apk update && apk upgrade && apk add --no-cache make g++ bash git openssh postgresql-dev curl gettext binutils geos-dev libproj-dev gdal-bin",
+                       "RUN apk update && apk upgrade && apk add --no-cache make g++ bash git openssh postgresql-dev curl gettext binutils geos libproj gdal",
                        "RUN ln -s /usr/lib/libproj.so.15 /usr/lib/libproj.so && ln -s /usr/lib/libgdal.so.20 /usr/lib/libgdal.so && ln -s /usr/lib/libgeos_c.so.1 /usr/lib/libgeos_c.so",
                        "COPY ./requirements/base.txt /usr/src/app/",
                        "COPY ./requirements/production.txt /usr/src/app/",
