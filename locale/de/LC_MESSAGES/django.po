@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-29 16:58+0200\n"
+"POT-Creation-Date: 2023-11-27 09:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,22 +31,20 @@ msgid "MaStR Data"
 msgstr ""
 
 #: ee_status/mastr_data/filters.py:55
-#: ee_status/templates/mastr_data/totals.html:68
-msgid "Production Capacity"
-msgstr "installierte Erzeugungsleistung"
+msgid "Production Capacity (kW)"
+msgstr "installierte Erzeugungsleistung (kW)"
 
 #: ee_status/mastr_data/filters.py:56
-#: ee_status/templates/mastr_data/totals.html:140
-msgid "Storage Capacity"
-msgstr "Speicherkapazität"
+msgid "Storage Capacity (kWh)"
+msgstr "Speicherkapazität (kWh)"
 
-#: ee_status/mastr_data/filters.py:57 ee_status/mastr_data/models.py:50
+#: ee_status/mastr_data/filters.py:57 ee_status/mastr_data/models.py:51
 msgid "Population"
 msgstr "Einwohner"
 
-#: ee_status/mastr_data/filters.py:58
-msgid "Area"
-msgstr "Fläche"
+#: ee_status/mastr_data/filters.py:58 ee_status/mastr_data/models.py:52
+msgid "Area (km²)"
+msgstr "Fläche (km²)"
 
 #: ee_status/mastr_data/filters.py:61
 msgid "Municipalities"
@@ -76,84 +74,94 @@ msgstr "pro"
 msgid "Municipality Key"
 msgstr "Gemeindeschlüssel"
 
-#: ee_status/mastr_data/models.py:28
+#: ee_status/mastr_data/models.py:29
 #: ee_status/templates/mastr_data/search.html:41
 msgid "Municipality"
 msgstr "Gemeinde"
 
-#: ee_status/mastr_data/models.py:29
+#: ee_status/mastr_data/models.py:30
 #: ee_status/templates/mastr_data/search.html:34
 #: ee_status/templates/mastr_data/search.html:42
 msgid "County"
 msgstr "Kreis"
 
-#: ee_status/mastr_data/models.py:30
+#: ee_status/mastr_data/models.py:31
 #: ee_status/templates/mastr_data/search.html:27
 msgid "State"
 msgstr "Bundesland"
 
-#: ee_status/mastr_data/models.py:31
+#: ee_status/mastr_data/models.py:32
 msgid "Zip-Code"
 msgstr "PLZ"
 
-#: ee_status/mastr_data/models.py:33
-msgid "PV net nominal capacity"
-msgstr "installierte PV-Leistung"
+#: ee_status/mastr_data/models.py:34
+#, fuzzy
+#| msgid "PV net nominal capacity"
+msgid "PV net nominal capacity (kW)"
+msgstr "installierte PV-Leistung (kW)"
 
-#: ee_status/mastr_data/models.py:36
-msgid "Wind net nominal capacity"
-msgstr "installierte Windkraft-Leistung"
+#: ee_status/mastr_data/models.py:37
+#, fuzzy
+#| msgid "Wind net nominal capacity"
+msgid "Wind net nominal capacity (kW)"
+msgstr "installierte Windkraft-Leistung (kW)"
 
-#: ee_status/mastr_data/models.py:39
-msgid "Biomass net nominal capacity"
-msgstr "installierte Biomasse-Leistung"
+#: ee_status/mastr_data/models.py:40
+#, fuzzy
+#| msgid "Biomass net nominal capacity"
+msgid "Biomass net nominal capacity (kW)"
+msgstr "installierte Biomasse-Leistung (kW)"
 
-#: ee_status/mastr_data/models.py:42
-msgid "Hydro net nominal capacity"
-msgstr "installierte Wasserkraft-Leistung"
+#: ee_status/mastr_data/models.py:43
+#, fuzzy
+#| msgid "Hydro net nominal capacity"
+msgid "Hydro net nominal capacity (kW)"
+msgstr "installierte Wasserkraft-Leistung (kW)"
 
-#: ee_status/mastr_data/models.py:45
-msgid "Storage net nominal capacity"
-msgstr "installierte Speicherkapazität"
+#: ee_status/mastr_data/models.py:46
+#, fuzzy
+#| msgid "Storage net nominal capacity"
+msgid "Storage net nominal capacity (kWh)"
+msgstr "installierte Speicherkapazität (kWh)"
 
-#: ee_status/mastr_data/models.py:48
-msgid "total net nominal capacity"
-msgstr "installierte Erzeugungsleistung"
+#: ee_status/mastr_data/models.py:49
+msgid "total net nominal capacity (kW)"
+msgstr "installierte Erzeugungsleistung (kW)"
 
-#: ee_status/mastr_data/models.py:52
+#: ee_status/mastr_data/models.py:53
 msgid "Energy Units"
 msgstr "Installierte Anlagen"
 
-#: ee_status/mastr_data/views.py:58 ee_status/mastr_data/views.py:75
+#: ee_status/mastr_data/views.py:116
 msgid "Photovoltaics"
 msgstr "Photovoltaik"
 
-#: ee_status/mastr_data/views.py:59 ee_status/mastr_data/views.py:76
+#: ee_status/mastr_data/views.py:117
 msgid "Wind power"
 msgstr "Windkraft"
 
-#: ee_status/mastr_data/views.py:60 ee_status/mastr_data/views.py:78
+#: ee_status/mastr_data/views.py:118
 msgid "Hydropower"
 msgstr "Wasserkraft"
 
-#: ee_status/mastr_data/views.py:61 ee_status/mastr_data/views.py:77
+#: ee_status/mastr_data/views.py:123
 msgid "Biomass"
 msgstr "Biomasse"
 
-#: ee_status/mastr_data/views.py:65
+#: ee_status/mastr_data/views.py:128
 msgid "Date"
 msgstr "Datum"
 
-#: ee_status/mastr_data/views.py:66
+#: ee_status/mastr_data/views.py:130
 msgid "Power generation"
 msgstr "Erzeugungsleistung (kW)"
 
-#: ee_status/mastr_data/views.py:136 ee_status/mastr_data/views.py:145
-#: ee_status/mastr_data/views.py:198
+#: ee_status/mastr_data/views.py:196 ee_status/mastr_data/views.py:205
+#: ee_status/mastr_data/views.py:258
 msgid "Germany"
 msgstr "Deutschland"
 
-#: ee_status/mastr_data/views.py:202
+#: ee_status/mastr_data/views.py:262
 #: ee_status/templates/mastr_data/totals.html:86
 #: ee_status/templates/mastr_data/totals.html:117
 #: ee_status/templates/mastr_data/totals.html:158
@@ -161,11 +169,11 @@ msgstr "Deutschland"
 msgid "Rank"
 msgstr "Platz"
 
-#: ee_status/mastr_data/views.py:222
+#: ee_status/mastr_data/views.py:282
 msgid "Score"
 msgstr "Verhältnis"
 
-#: ee_status/mastr_data/views.py:336
+#: ee_status/mastr_data/views.py:446
 msgid "We couldn't find anything. Try again with another keyword!"
 msgstr ""
 
@@ -255,8 +263,8 @@ msgstr ""
 #: ee_status/templates/account/email_confirm.html:27
 #, python-format
 msgid ""
-"This e-mail confirmation link expired or is invalid. Please <a href="
-"\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+"This e-mail confirmation link expired or is invalid. Please <a "
+"href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
 msgstr ""
 
 #: ee_status/templates/account/login.html:7
@@ -283,8 +291,8 @@ msgstr ""
 #: ee_status/templates/account/login.html:41
 #, python-format
 msgid ""
-"If you have not created an account yet, then please <a href=\"%(signup_url)s"
-"\">sign up</a> first."
+"If you have not created an account yet, then please <a "
+"href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
 #: ee_status/templates/account/login.html:55
@@ -452,6 +460,10 @@ msgstr "Auf geht's!"
 msgid "Did you mean..."
 msgstr "Meintest du..."
 
+#: ee_status/templates/mastr_data/totals.html:68
+msgid "Production Capacity"
+msgstr "installierte Erzeugungsleistung"
+
 #: ee_status/templates/mastr_data/totals.html:73
 msgid "Production capacity per capita"
 msgstr "Erzeugungsleistung pro Person"
@@ -466,6 +478,10 @@ msgstr "von "
 #: ee_status/templates/mastr_data/totals.html:104
 msgid "Production capacity per km²"
 msgstr "Erzeugungsleistung pro km²"
+
+#: ee_status/templates/mastr_data/totals.html:140
+msgid "Storage Capacity"
+msgstr "Speicherkapazität"
 
 #: ee_status/templates/mastr_data/totals.html:145
 msgid "Storage capacity per capita"
@@ -488,10 +504,9 @@ msgid ""
 "            https://www.marktstammdatenregister.de<br>\n"
 "            Wir haben dabei https://github.com/OpenEnergyPlatform/open-MaStR "
 "genutzt, um die Daten herunterzuladen.\n"
-"            Der derzeitige Datensatz stammt vom 2023-06-14 und wurde <a href="
-"\"https://github.com/finnus/ee-status/"
-"blob/85a0240093692d145b21fa61484733b94976c67d/sql_scripts/03_unite_tables.sql"
-"\">mehrfach transformiert</a>.\n"
+"            Der derzeitige Datensatz stammt vom 2023-10-25 und wurde <a "
+"href=\"https://github.com/finnus/ee-status/blob/main/"
+"sql_scripts/03_unite_tables.sql\">mehrfach transformiert</a>.\n"
 "          </li>\n"
 "          <li>\n"
 "            Der Regionalstatistik von den Statistischen Ämtern des Bundes "
@@ -532,6 +547,9 @@ msgstr ""
 msgid "Information successfully updated"
 msgstr ""
 
+#~ msgid "Area"
+#~ msgstr "Fläche"
+
 #~ msgid "date"
 #~ msgstr "Datum"
 
@@ -557,9 +575,6 @@ msgstr ""
 #~| msgid "Biomass"
 #~ msgid "Biomasse"
 #~ msgstr "Biomass"
-
-#~ msgid "municipality"
-#~ msgstr "Gemeinde"
 
 #~ msgid "state"
 #~ msgstr "Bundesland"
