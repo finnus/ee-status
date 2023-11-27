@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "dockerfileLines": [
                        "FROM library/python:3.9.15-alpine",
-                       "RUN apk update && apk upgrade && apk add --no-cache make g++ bash git openssh postgresql-dev curl gettext",
+                       "RUN apk update && apk upgrade && apk add --no-cache make g++ bash git openssh postgresql-dev curl gettext binutils libproj-dev gdal-bin",
                        "RUN mkdir -p /usr/src/app",
                        "WORKDIR /usr/src/app",
                        "COPY ./requirements/base.txt /usr/src/app/",
