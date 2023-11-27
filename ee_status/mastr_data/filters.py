@@ -52,10 +52,10 @@ class CurrentTotalFilter(django_filters.FilterSet):
 
 class RankingsFilter(django_filters.FilterSet):
     VALUES = (
-        ("total_net_nominal_capacity", _("Production Capacity")),
-        ("storage_net_nominal_capacity", _("Storage Capacity")),
+        ("total_net_nominal_capacity", _("Production Capacity (kW)")),
+        ("storage_net_nominal_capacity", _("Storage Capacity (kWh)")),
         ("population", _("Population")),
-        ("area", _("Area")),
+        ("area", _("Area (km²)")),
     )
     SCOPES = (
         ("municipality", _("Municipalities")),

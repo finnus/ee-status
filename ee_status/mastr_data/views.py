@@ -258,7 +258,7 @@ def rankings_view(request):
 
     basics = {"realm_type": realm_type, "realm_name": next(iter(hierarchy.values()))}
 
-    table_captions = [_("Rank"), realm_type]
+    table_captions = [_("Rank"), _(realm_type.capitalize())]
 
     if numerator:
         numerator_annotate = {"numerator": Sum(numerator)}
@@ -321,6 +321,54 @@ def rankings_view(request):
         .distinct()
     )
 
+    if municipality:
+        plot_qs = CurrentTotal.objects.filter(county__exact=county)
+
+        geojson_data = serialize(
+            "geojson",
+            plot_qs,
+            geometry_field="geom",
+            fields=["pk"],
+        )
+        if denominator:
+            data = plot_qs.values("pk", "municipality", numerator, denominator)
+            df = pd.DataFrame.from_records(data)
+            df[numerator] = (df[numerator] / df[denominator]).astype(float).round(2)
+        else:
+            data = plot_qs.values("pk", "municipality", numerator)
+            df = pd.DataFrame.from_records(data)
+            df[numerator] = df[numerator].astype(float).round(2)
+
+        geojson = json.loads(geojson_data)
+        fig = px.choropleth_mapbox(
+            df,
+            geojson=geojson,
+            locations="pk",
+            color=numerator,
+            featureidkey="properties.pk",
+            color_continuous_scale="greens",
+            center={"lat": 47.9828, "lon": 7.8161},
+            opacity=0.5,
+            zoom=9,
+            labels={},
+            custom_data=["municipality"],
+            mapbox_style="carto-positron",
+        )
+
+        fig.update_traces(
+            hovertemplate="<b>%{customdata[0]}</b><br> %{z}",
+        )
+        fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+        fig.update_layout(
+            coloraxis_colorbar=dict(
+                title="",  # Customize the legend title
+                x=0,  # Adjust the x position of the color legend
+                xanchor="left",  # Anchor the legend to the left side
+            ),
+        )
+        plt_div = plot(fig, output_type="div", include_plotlyjs=False)
+    else:
+        plt_div = ""
     return render(
         request,
         "mastr_data/rankings.html",
@@ -330,6 +378,7 @@ def rankings_view(request):
             "table_captions": table_captions,
             "hierarchy": hierarchy,
             "basics": basics,
+            "plt_div": plt_div,
         },
     )
 

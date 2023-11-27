@@ -31,25 +31,25 @@ class CurrentTotal(models.Model):
     state = models.CharField(verbose_name=_("State"), max_length=200, blank=True)
     zip_code = models.CharField(verbose_name=_("Zip-Code"), max_length=500, blank=True)
     pv_net_nominal_capacity = models.FloatField(
-        verbose_name=_("PV net nominal capacity")
+        verbose_name=_("PV net nominal capacity (kW)")
     )
     wind_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Wind net nominal capacity")
+        verbose_name=_("Wind net nominal capacity (kW)")
     )
     biomass_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Biomass net nominal capacity")
+        verbose_name=_("Biomass net nominal capacity (kW)")
     )
     hydro_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Hydro net nominal capacity")
+        verbose_name=_("Hydro net nominal capacity (kW)")
     )
     storage_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Storage net nominal capacity")
+        verbose_name=_("Storage net nominal capacity (kWh)")
     )
     total_net_nominal_capacity = models.FloatField(
-        verbose_name=_("total net nominal capacity")
+        verbose_name=_("total net nominal capacity (kW)")
     )
     population = models.IntegerField(verbose_name=_("Population"))
-    area = models.FloatField(verbose_name="Area")
+    area = models.FloatField(verbose_name=_("Area (km²)"))
     energy_units = models.IntegerField(verbose_name=_("Energy Units"))
 
     class Meta:
