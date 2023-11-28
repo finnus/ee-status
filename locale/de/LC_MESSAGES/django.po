@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-27 09:35+0100\n"
+"POT-Creation-Date: 2023-11-28 17:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,32 +95,22 @@ msgid "Zip-Code"
 msgstr "PLZ"
 
 #: ee_status/mastr_data/models.py:34
-#, fuzzy
-#| msgid "PV net nominal capacity"
 msgid "PV net nominal capacity (kW)"
 msgstr "installierte PV-Leistung (kW)"
 
 #: ee_status/mastr_data/models.py:37
-#, fuzzy
-#| msgid "Wind net nominal capacity"
 msgid "Wind net nominal capacity (kW)"
 msgstr "installierte Windkraft-Leistung (kW)"
 
 #: ee_status/mastr_data/models.py:40
-#, fuzzy
-#| msgid "Biomass net nominal capacity"
 msgid "Biomass net nominal capacity (kW)"
 msgstr "installierte Biomasse-Leistung (kW)"
 
 #: ee_status/mastr_data/models.py:43
-#, fuzzy
-#| msgid "Hydro net nominal capacity"
 msgid "Hydro net nominal capacity (kW)"
 msgstr "installierte Wasserkraft-Leistung (kW)"
 
 #: ee_status/mastr_data/models.py:46
-#, fuzzy
-#| msgid "Storage net nominal capacity"
 msgid "Storage net nominal capacity (kWh)"
 msgstr "installierte Speicherkapazität (kWh)"
 
@@ -132,36 +122,36 @@ msgstr "installierte Erzeugungsleistung (kW)"
 msgid "Energy Units"
 msgstr "Installierte Anlagen"
 
-#: ee_status/mastr_data/views.py:116
+#: ee_status/mastr_data/views.py:115
 msgid "Photovoltaics"
 msgstr "Photovoltaik"
 
-#: ee_status/mastr_data/views.py:117
+#: ee_status/mastr_data/views.py:116
 msgid "Wind power"
 msgstr "Windkraft"
 
-#: ee_status/mastr_data/views.py:118
+#: ee_status/mastr_data/views.py:117
 msgid "Hydropower"
 msgstr "Wasserkraft"
 
-#: ee_status/mastr_data/views.py:123
+#: ee_status/mastr_data/views.py:122
 msgid "Biomass"
 msgstr "Biomasse"
 
-#: ee_status/mastr_data/views.py:128
+#: ee_status/mastr_data/views.py:127
 msgid "Date"
 msgstr "Datum"
 
-#: ee_status/mastr_data/views.py:130
+#: ee_status/mastr_data/views.py:129
 msgid "Power generation"
 msgstr "Erzeugungsleistung (kW)"
 
-#: ee_status/mastr_data/views.py:196 ee_status/mastr_data/views.py:205
-#: ee_status/mastr_data/views.py:258
+#: ee_status/mastr_data/views.py:195 ee_status/mastr_data/views.py:204
+#: ee_status/mastr_data/views.py:257
 msgid "Germany"
 msgstr "Deutschland"
 
-#: ee_status/mastr_data/views.py:262
+#: ee_status/mastr_data/views.py:261
 #: ee_status/templates/mastr_data/totals.html:86
 #: ee_status/templates/mastr_data/totals.html:117
 #: ee_status/templates/mastr_data/totals.html:158
@@ -169,13 +159,13 @@ msgstr "Deutschland"
 msgid "Rank"
 msgstr "Platz"
 
-#: ee_status/mastr_data/views.py:282
+#: ee_status/mastr_data/views.py:281
 msgid "Score"
 msgstr "Verhältnis"
 
-#: ee_status/mastr_data/views.py:446
+#: ee_status/mastr_data/views.py:448
 msgid "We couldn't find anything. Try again with another keyword!"
-msgstr ""
+msgstr "Wie konntren leider nichts finden. Probiere es mit einem anderen Suchbegriff!"
 
 #: ee_status/templates/account/account_inactive.html:5
 #: ee_status/templates/account/account_inactive.html:8
@@ -432,15 +422,24 @@ msgid ""
 "mail address</a>."
 msgstr ""
 
-#: ee_status/templates/base.html:73 ee_status/templates/pages/imprint.html:9
+#: ee_status/templates/base.html:48
+msgid "Search for Municipality,..."
+msgstr "Suche nach Gemeinde,..."
+
+#: ee_status/templates/base.html:49
+#: ee_status/templates/mastr_data/search.html:17
+msgid "Let's go!"
+msgstr "Auf geht's!"
+
+#: ee_status/templates/base.html:88 ee_status/templates/pages/imprint.html:9
 msgid "Imprint and data policy"
 msgstr "Impressum und Datenschutzhinweise"
 
-#: ee_status/templates/base.html:74 ee_status/templates/pages/sources.html:9
+#: ee_status/templates/base.html:89 ee_status/templates/pages/sources.html:9
 msgid "Sources"
 msgstr "Quellenangaben"
 
-#: ee_status/templates/base.html:75 ee_status/templates/pages/about.html:9
+#: ee_status/templates/base.html:90 ee_status/templates/pages/about.html:9
 msgid "About us"
 msgstr "Über uns"
 
@@ -451,10 +450,6 @@ msgstr "Filter"
 #: ee_status/templates/mastr_data/search.html:15
 msgid "Search for Municipality, County, State, Zip-Code, Germany..."
 msgstr "Suche nach Gemeinde, Kreis, Bundesland, PLZ, Deutschland..."
-
-#: ee_status/templates/mastr_data/search.html:17
-msgid "Let's go!"
-msgstr "Auf geht's!"
 
 #: ee_status/templates/mastr_data/search.html:22
 msgid "Did you mean..."

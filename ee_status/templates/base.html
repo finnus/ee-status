@@ -40,6 +40,21 @@
   <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" href="{% url 'mastr_data:search' %}">EE-Status</a>
+      {% if request.resolver_match.url_name != 'search' %}
+      <form class="d-flex" role="search" method="GET" action="{% url 'mastr_data:search' %}">
+        <div class="input-group">
+           <input type="text" class="form-control search-form" name="q" id="searchtext"
+                 aria-describedby="searchfield"
+                 placeholder="{% trans "Search for Municipality,..." %}">
+          <button type="submit" class="btn btn-outline-secondary" type="button" id="button-addon2">{% trans "Let's go!" %}</button>
+        </div>
+      </form>
+      {% endif %}
+      <button class="navbar-toggler navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
   </nav>
 
@@ -57,10 +72,10 @@
 {% endif %}
 
 <div class="container mt-3 pb-5">
-{% block content %}
+  {% block content %}
 
 
-{% endblock content %}
+  {% endblock content %}
 </div>
 
 <div class="fixed-bottom bg-light border-top">
