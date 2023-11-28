@@ -340,7 +340,6 @@ def rankings_view(request):
             df[numerator] = df[numerator].astype(float).round(2)
 
         geojson = json.loads(geojson_data)
-        print(geojson)
 
         first_feature = geojson["features"][0]
         coordinates = first_feature["geometry"]["coordinates"]
