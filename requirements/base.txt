@@ -19,3 +19,4 @@ django-redis==5.2.0  # https://github.com/jazzband/django-redis
 django-debug-toolbar==3.4.0
 pytest==7.1.2
 django-filter==22.1
+pandas
