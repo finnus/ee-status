@@ -258,7 +258,7 @@ def rankings_view(request):
 
     basics = {"realm_type": realm_type, "realm_name": next(iter(hierarchy.values()))}
 
-    table_captions = [_("Rank"), realm_type.capitalize()]
+    table_captions = [_("Rank"), realm_type]
 
     if numerator:
         numerator_annotate = {"numerator": Sum(numerator)}
@@ -340,6 +340,11 @@ def rankings_view(request):
             df[numerator] = df[numerator].astype(float).round(2)
 
         geojson = json.loads(geojson_data)
+        print(geojson)
+
+        first_feature = geojson["features"][0]
+        coordinates = first_feature["geometry"]["coordinates"]
+
         fig = px.choropleth_mapbox(
             df,
             geojson=geojson,
@@ -347,12 +352,13 @@ def rankings_view(request):
             color=numerator,
             featureidkey="properties.pk",
             color_continuous_scale="greens",
+            center={"lat": coordinates[0][0][0][1], "lon": coordinates[0][0][0][0]},
+            zoom=8,
             opacity=0.5,
             labels={},
             custom_data=["municipality"],
             mapbox_style="carto-positron",
         )
-        fig.update_geos(fitbounds="locations")
 
         fig.update_traces(
             hovertemplate="<b>%{customdata[0]}</b><br> %{z}",
