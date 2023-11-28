@@ -258,7 +258,7 @@ def rankings_view(request):
 
     basics = {"realm_type": realm_type, "realm_name": next(iter(hierarchy.values()))}
 
-    table_captions = [_("Rank"), _(realm_type.capitalize())]
+    table_captions = [_("Rank"), realm_type.capitalize()]
 
     if numerator:
         numerator_annotate = {"numerator": Sum(numerator)}
@@ -347,13 +347,12 @@ def rankings_view(request):
             color=numerator,
             featureidkey="properties.pk",
             color_continuous_scale="greens",
-            center={"lat": 47.9828, "lon": 7.8161},
             opacity=0.5,
-            zoom=9,
             labels={},
             custom_data=["municipality"],
             mapbox_style="carto-positron",
         )
+        fig.update_geos(fitbounds="locations")
 
         fig.update_traces(
             hovertemplate="<b>%{customdata[0]}</b><br> %{z}",
