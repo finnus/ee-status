@@ -39,9 +39,10 @@
 <div class="mb-1">
   <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'mastr_data:search' %}">EE-Status</a>
+      <a class="navbar-brand" href="{% url 'mastr_data:search' %}">
+              <img src="{% static 'images/logo/ee_status_logo_no_text_square.png' %}" alt="Logo" width="50" height="50" class="d-inline-block align-text-center"> EE-Status</a>
       {% if request.resolver_match.url_name != 'search' %}
-      <form class="d-flex" role="search" method="GET" action="{% url 'mastr_data:search' %}">
+      <form class="d-none d-md-block d-lg-flex" role="search" method="GET" action="{% url 'mastr_data:search' %}">
         <div class="input-group">
            <input type="text" class="form-control search-form" name="q" id="searchtext"
                  aria-describedby="searchfield"
