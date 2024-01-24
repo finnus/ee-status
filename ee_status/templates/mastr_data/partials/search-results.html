@@ -4,22 +4,22 @@
           <ul class="list-group">
           {% if state_results %}
             {% for result in state_results %}
-              <li class="list-group-item d-flex justify-content-between align-items-center text-truncate"><a href="{% url 'mastr_data:totals' %}?state={{ result.state }}"
-                     class="alert-link">{% trans "State" %} {{ result.state }}</a> ({{ result.state }})
+              <li class="list-group-item d-inline-block text-truncate text-start"><a href="{% url 'mastr_data:totals' %}?state={{ result.state }}">
+                {% trans "State" %} {{ result.state }} </a>({{ result.state }})
               </li>
             {% endfor %}
             {% endif %}
             {% if county_results %}
               {% for result in county_results %}
-              <li class="list-group-item d-flex justify-content-between align-items-center"><a href="{% url 'mastr_data:totals' %}?county={{ result.county }}"
-                     class="alert-link">{% trans "County" %} {{ result.county }}</a> ({{ result.state }})
+              <li class="list-group-item d-inline-block text-start"><a href="{% url 'mastr_data:totals' %}?county={{ result.county }}">
+                {% trans "County" %} {{ result.county }}&nbsp;</a>({{ result.state }})
               </li>
               {%  endfor %}
             {% endif %}
 
             {% for result in municipality_results %}
-              <li class="list-group-item d-flex justify-content-between align-items-center"><a href="{% url 'mastr_data:totals' %}?municipality={{ result.municipality }}"
-                     class="alert-link">{% trans "Municipality" %} {{ result.municipality }}</a>
+              <li class="list-group-item d-inline-block text-start"><a href="{% url 'mastr_data:totals' %}?municipality={{ result.municipality }}">
+                {% trans "Municipality" %} {{ result.municipality }} &nbsp;</a>
                 ({% trans "County" %} {{ result.county }}, {{ result.state }})
               </li>
             {% endfor %}
