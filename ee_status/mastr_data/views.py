@@ -3,7 +3,6 @@ import json
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from django.contrib import messages
 from django.core.serializers import serialize
 from django.db.models import F, Q, Sum, Window
 from django.db.models.functions import Round
@@ -14,6 +13,65 @@ from plotly.offline import plot
 
 from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
 from .models import CurrentTotal, MonthlyTimeline
+
+
+def search_municipality(request):
+    query = request.POST.get("search")
+    # look up all municipalities that contain the text
+    # Search logic
+    # search for aliases of Germany
+    # 0 results = nothing found
+    # 1 result = single municipality or a municipality which is a county at the same time ("kreisfreie Stadt")
+    # > 1 results:
+    #   as many municipalities as the county counts -> county or municipality which contain the name of the county
+    #   as many municipalities as the state -> state
+    #   more results: return list of results for user
+
+    names_for_germany = [
+        "Germany",
+        "Deutschland",
+        "Bundesrepublik",
+        "Schland",
+        "alles",
+        "BRD",
+    ]
+    if query in names_for_germany:
+        return redirect(reverse("mastr_data:totals"))
+
+    municipality_results = (
+        CurrentTotal.objects.filter(
+            Q(municipality__icontains=query)
+            | Q(municipality_key__icontains=query)
+            | Q(zip_code__icontains=query)
+        )
+        # we exclude municipalities that are their own counties ("kreisfreie Städte")
+        # their municipality keys ends with "000"
+        .exclude(municipality_key__endswith="000").values(
+            "municipality", "county", "state"
+        )
+    )
+
+    county_results = (
+        CurrentTotal.objects.filter(county__icontains=query)
+        .values("county", "state")
+        # we exclude counties that are their own states ("echte Stadtstaaten": Hamburg, Berlin)
+        # their municipality keys ends with "000000"
+        .exclude(municipality_key__endswith="000000")
+        .distinct()
+    )
+    state_results = (
+        CurrentTotal.objects.filter(state__icontains=query).values("state").distinct()
+    )
+
+    return render(
+        request,
+        "mastr_data/partials/search-results.html",
+        {
+            "municipality_results": municipality_results,
+            "county_results": county_results,
+            "state_results": state_results,
+        },
+    )
 
 
 def multi_polygon_map(request):
@@ -388,84 +446,4 @@ def rankings_view(request):
 
 
 def search_view(request):
-    # if its get request, we get the search term via the "q" (specified in the form template)
-    if request.method == "GET":
-        query = request.GET.get("q")
-        # if there is no search keyword, we return the search page again
-        if not query:
-            return render(request, "mastr_data/search.html")
-
-    # Search logic
-    # search for aliases of Germany
-    # 0 results = nothing found
-    # 1 result = single municipality or a municipality which is a county at the same time ("kreisfreie Stadt")
-    # > 1 results:
-    #   as many municipalities as the county counts -> county or municipality which contain the name of the county
-    #   as many municipalities as the state -> state
-    #   more results: return list of results for user
-
-    names_for_germany = [
-        "Germany",
-        "Deutschland",
-        "Bundesrepublik",
-        "Schland",
-        "alles",
-        "BRD",
-    ]
-    if query in names_for_germany:
-        return redirect(reverse("mastr_data:totals"))
-
-    municipality_results = (
-        CurrentTotal.objects.filter(
-            Q(municipality__icontains=query)
-            | Q(municipality_key__icontains=query)
-            | Q(zip_code__icontains=query)
-        )
-        # we exclude municipalities that are their own counties ("kreisfreie Städte")
-        # their municipality keys ends with "000"
-        .exclude(municipality_key__endswith="000").values(
-            "municipality", "county", "state"
-        )
-    )
-
-    county_results = (
-        CurrentTotal.objects.filter(county__icontains=query)
-        .values("county", "state")
-        # we exclude counties that are their own states ("echte Stadtstaaten": Hamburg, Berlin)
-        # their municipality keys ends with "000000"
-        .exclude(municipality_key__endswith="000000")
-        .distinct()
-    )
-    state_results = (
-        CurrentTotal.objects.filter(state__icontains=query).values("state").distinct()
-    )
-    total_results = len(municipality_results) + len(county_results) + len(state_results)
-
-    if total_results == 0:
-        messages.add_message(
-            request,
-            messages.WARNING,
-            _("We couldn't find anything. Try again with another keyword!"),
-        )
-        return render(request, "mastr_data/search.html")
-
-    elif total_results == 1:
-        if municipality_results:
-            url_param = "?municipality=" + municipality_results[0]["municipality"]
-        elif county_results:
-            url_param = "?county=" + county_results[0]["county"]
-        else:
-            url_param = "?state=" + state_results[0]["state"]
-        return redirect(reverse("mastr_data:totals") + url_param)
-    else:
-        return render(
-            request,
-            "mastr_data/search.html",
-            {
-                "municipality_results": municipality_results,
-                "county_results": county_results,
-                "state_results": state_results,
-            },
-        )
-
     return render(request, "mastr_data/search.html")

@@ -8,44 +8,21 @@
     <h1 class="display-5 fw-bold">E<span class="h4">rneuerbare</span> E<span class="h4">nergien</span> S<span
       class="h4">tatus</span></h1>
     <div class="col-lg-9 mx-auto">
-      <form method="get">
+      <form autocomplete="off">
         <div class="form-group">
 
-          <input type="text" class="form-control form-control-lg mb-4 search-form" name="q" id="searchtext"
+          <input type="text"
+                 class="form-control form-control-lg mb-4 search-form"
+                 hx-post="{% url 'mastr_data:search-municipality' %}"
+                 hx-target='#results'
+                 hx-trigger="keyup changed delay:500ms"
+                 name="search" id="searchtext"
                  aria-describedby="searchfield"
                  placeholder="{% trans "Search for Municipality, County, State, Zip-Code, Germany..." %}">
-
-          <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">{% trans "Let's go!" %}</button>
         </div>
       </form>
-      {% if municipality_results or state_results or county_results %}
-        <div class="alert alert-success mt-lg-5 text-start" role="alert">
-          <h4 class="alert-heading">{% trans "Did you mean..." %}</h4>
-          <ul>
-          {% if state_results %}
-            {% for result in state_results %}
-              <li><a href="{% url 'mastr_data:totals' %}?state={{ result.state }}"
-                     class="alert-link">{% trans "State" %} {{ result.state }}</a> ({{ result.state }})
-              </li>
-            {% endfor %}
-            {% endif %}
-            {% if county_results %}
-              {% for result in county_results %}
-              <li><a href="{% url 'mastr_data:totals' %}?county={{ result.county }}"
-                     class="alert-link">{% trans "County" %} {{ result.county }}</a> ({{ result.state }})
-              </li>
-              {%  endfor %}
-            {% endif %}
+        <div id="results"></div>
 
-            {% for result in municipality_results %}
-              <li><a href="{% url 'mastr_data:totals' %}?municipality={{ result.municipality }}"
-                     class="alert-link">{% trans "Municipality" %} {{ result.municipality }}</a>
-                ( {% trans "County" %} {{ result.county }}, {{ result.state }})
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
     </div>
   </div>
 

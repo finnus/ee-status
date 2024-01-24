@@ -29,12 +29,14 @@
 
     <!-- place project specific Javascript in this file -->
     <script defer src="{% static 'js/project.js' %}"></script>
+    <!-- HTMX -->
+        <script defer src="{% static 'vendors/htmx/htmx_1.9.10.min.js.js' %}"></script>
 
   {% endblock javascript %}
 
 </head>
 
-<body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
 <div class="mb-1">
   <nav class="navbar navbar-light bg-light">
@@ -42,14 +44,7 @@
       <a class="navbar-brand" href="{% url 'mastr_data:search' %}">
               <img src="{% static 'images/logo/ee_status_logo_no_text_square.png' %}" alt="Logo" width="50" height="50" class="d-inline-block align-text-center"> EE-Status</a>
       {% if request.resolver_match.url_name != 'search' %}
-      <form class="d-none d-md-block d-lg-flex" role="search" method="GET" action="{% url 'mastr_data:search' %}">
-        <div class="input-group">
-           <input type="text" class="form-control search-form" name="q" id="searchtext"
-                 aria-describedby="searchfield"
-                 placeholder="{% trans "Search for Municipality,..." %}">
-          <button type="submit" class="btn btn-outline-secondary" type="button" id="button-addon2">{% trans "Let's go!" %}</button>
-        </div>
-      </form>
+
       {% endif %}
       <button class="navbar-toggler navbar-toggler" type="button" data-bs-toggle="collapse"
               data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
