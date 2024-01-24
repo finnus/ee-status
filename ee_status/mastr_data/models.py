@@ -141,3 +141,36 @@ class CurrentTotal(models.Model):
             ratio_and_rank.append(new_scope_dict)
 
         return ratio_and_rank
+
+
+class EnergyUnit(models.Model):
+    unit_nr = models.CharField(verbose_name=_("Unit Nr."), max_length=200)
+    municipality_key = models.CharField(
+        verbose_name=_("Municipality Key"), max_length=200
+    )
+    municipality = models.CharField(verbose_name=_("Municipality"), max_length=200)
+    county = models.CharField(verbose_name=_("County"), max_length=200)
+    state = models.CharField(verbose_name=_("State"), max_length=200, blank=True)
+    zip_code = models.CharField(verbose_name=_("Zip-Code"), max_length=7, blank=True)
+    start_up_date = models.DateTimeField(verbose_name=_("Start Up Date"), default=None)
+    date = models.DateTimeField(verbose_name=_("Corrected Date"), default=None)
+    pv_net_nominal_capacity = models.FloatField(
+        verbose_name=_("PV net nominal capacity")
+    )
+    wind_net_nominal_capacity = models.FloatField(
+        verbose_name=_("Wind net nominal capacity")
+    )
+    biomass_net_nominal_capacity = models.FloatField(
+        verbose_name=_("Biomass net nominal capacity")
+    )
+    hydro_net_nominal_capacity = models.FloatField(
+        verbose_name=_("Hydro net nominal capacity")
+    )
+    storage_net_nominal_capacity = models.FloatField(
+        verbose_name=_("Storage net nominal capacity")
+    )
+    geolocation = models.PointField(verbose_name="Location")
+
+    class Meta:
+        managed = False
+        db_table = "energy_units"

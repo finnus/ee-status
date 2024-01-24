@@ -26,12 +26,13 @@ CREATE TABLE energy_units
     wind_net_nominal_capacity    NUMERIC(20, 2),
     biomass_net_nominal_capacity NUMERIC(20, 2),
     hydro_net_nominal_capacity   NUMERIC(20, 2),
-    storage_net_nominal_capacity NUMERIC(20, 2)
+    storage_net_nominal_capacity NUMERIC(20, 2),
+    geolocation                  GEOMETRY
 );
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, zip_code, start_up_date,
-                          close_down_date, date, hydro_net_nominal_capacity)
+                          close_down_date, date, hydro_net_nominal_capacity, geolocation)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
        gemeindeschluessel,
@@ -42,12 +43,13 @@ SELECT einheitmastrnummer,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
-       nettonennleistung
+       nettonennleistung,
+       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
 FROM hydro_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, zip_code, start_up_date,
-                          close_down_date, date, wind_net_nominal_capacity)
+                          close_down_date, date, wind_net_nominal_capacity, geolocation)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
        gemeindeschluessel,
@@ -58,12 +60,13 @@ SELECT einheitmastrnummer,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
-       nettonennleistung
+       nettonennleistung,
+       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
 FROM wind_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, zip_code, start_up_date,
-                          close_down_date, date, biomass_net_nominal_capacity)
+                          close_down_date, date, biomass_net_nominal_capacity, geolocation)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
        gemeindeschluessel,
@@ -74,12 +77,13 @@ SELECT einheitmastrnummer,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
-       nettonennleistung
+       nettonennleistung,
+       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
 FROM biomass_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, zip_code, start_up_date,
-                          close_down_date, date, pv_net_nominal_capacity)
+                          close_down_date, date, pv_net_nominal_capacity, geolocation)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
        gemeindeschluessel,
@@ -90,12 +94,13 @@ SELECT einheitmastrnummer,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
-       nettonennleistung
+       nettonennleistung,
+       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
 FROM solar_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
                           state, zip_code, start_up_date,
-                          close_down_date, date, storage_net_nominal_capacity)
+                          close_down_date, date, storage_net_nominal_capacity, geolocation)
 SELECT einheitmastrnummer,
        netzbetreiberpruefungstatus,
        gemeindeschluessel,
@@ -106,7 +111,8 @@ SELECT einheitmastrnummer,
        inbetriebnahmedatum,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
-       nettonennleistung
+       nettonennleistung,
+       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
 FROM storage_extended;
 
 -- Drop units that are not approved or disapproved
@@ -251,3 +257,10 @@ WHERE current_totals.municipality_key = subquery.municipality_key;
 -- remove duplicate zip_code
 UPDATE current_totals
 set zip_code = array_to_string(array(SELECT DISTINCT unnest(string_to_array(zip_code, ','))), ',');
+
+
+
+-- prepare energy_units to only contain units that have a location and are still active
+DELETE FROM energy_units WHERE geolocation IS NULL;
+DELETE FROM energy_units WHERE close_down_date is not null;
+ALTER TABLE energy_units DROP COLUMN close_down_date;
