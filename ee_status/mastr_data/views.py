@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from django.contrib.gis.db.models.functions import AsGeoJSON
 from django.core.serializers import serialize
 from django.db.models import F, Q, Sum, Window
 from django.db.models.functions import Round
@@ -75,54 +76,19 @@ def search_municipality(request):
 
 
 def multi_polygon_map(request):
-    queryset = CurrentTotal.objects.filter(geom__isnull=False).filter(
-        county__exact="Breisgau-Hochschwarzwald"
-    )
-    geojson_data = serialize(
-        "geojson",
-        queryset,
-        geometry_field="geom",
-        fields=["pk"],
-    )
-    data = queryset.values(
-        "pk",
-        "municipality",
-        "municipality_key",
-        "population",
-        "total_net_nominal_capacity",
-    )
-    df = pd.DataFrame.from_records(data)
-
-    df["total_net_nominal_capacity"] = (
-        df["total_net_nominal_capacity"] / df["population"] * 1000
-    ).astype(int)
-
-    geojson = json.loads(geojson_data)
-    fig = px.choropleth_mapbox(
-        df,
-        geojson=geojson,
-        locations="pk",
-        color="total_net_nominal_capacity",
-        featureidkey="properties.pk",
-        color_continuous_scale="greens",
-        center={"lat": 47.9828, "lon": 7.8161},
-        opacity=0.5,
-        zoom=9,
-        labels={"total_net_nominal_capacity": "Watt / Person"},
-        custom_data=["municipality"],
-        mapbox_style="carto-positron",
-    )
-    fig.update_traces(
-        hovertemplate="<b>%{customdata[0]}</b><br>Erzeugungsleistung: %{z} W/Person<extra></extra>",
+    qs = (
+        CurrentTotal.objects.filter(geom__isnull=False)
+        .annotate(json=AsGeoJSON("geom", precision=4))
+        .values("id", "json")
     )
 
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-    plt_div = plot(fig, output_type="div", include_plotlyjs=False)
+    # Prepare the GeoJSON object
+    json_object = json.loads(qs)
 
     return render(
         request,
         "mastr_data/map_template.html",
-        {"plt_div": plt_div},
+        {"geojson": json_object},
     )
 
 

@@ -4,13 +4,38 @@
 
 {% load crispy_forms_tags %}
 {% block content %}
+  <style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.leaflet-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 
+  <div id="map" style="height: 500px;"></div>
 
-  <div class="row mt-3">
-    <script src="{% static 'vendors/plotly/plotly-2.27.0.min.js' %}"></script>
-    {{ plt_div|safe }}
-  </div>
+<script type="text/javascript">
+  const map = L.map('map').setView([37.8, 7.4], 4);
+
+  const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	  }).addTo(map);
+
+/* global statesData */
+
+  const geojson = L.geoJson({{ geojson|safe }}).addTo(map);
+
+</script>
 
 
 
