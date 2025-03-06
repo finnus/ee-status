@@ -345,7 +345,7 @@ def rankings_view(request):
         .distinct()
     )
 
-    if municipality:
+    if False:
         plot_qs = CurrentTotal.objects.filter(county__exact=county)
 
         geojson_data = serialize(

@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS energy_units;
 CREATE TABLE energy_units
 (
     unit_nr                      VARCHAR(50),
-    grid_operator_status         VARCHAR(3),
+    grid_operator_status         VARCHAR(20),
     municipality_key             VARCHAR(8),
     municipality                 VARCHAR(200),
     county                       VARCHAR(200),
