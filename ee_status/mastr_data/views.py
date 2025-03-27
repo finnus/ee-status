@@ -58,6 +58,7 @@ def search_municipality(request):
         # we exclude counties that are their own states ("echte Stadtstaaten": Hamburg, Berlin)
         # their municipality keys ends with "000000"
         .exclude(municipality_key__endswith="000000")
+        .exclude(municipality_key="04011000")
         .distinct()
     )
     state_results = (
