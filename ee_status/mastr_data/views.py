@@ -5,10 +5,12 @@ from django.db.models import Sum
 from django.db.models import Window
 from django.db.models.functions import Round
 from django.http import Http404
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 from plotly.offline import plot
 
 from .filters import CurrentTotalFilter
@@ -19,6 +21,9 @@ from .models import MonthlyTimeline
 
 DEFAULT_NUMERATOR = "total_net_nominal_capacity"
 DEFAULT_DENOMINATOR = "population"
+# Upper bound per result group in the search dropdown. A one or two letter query
+# matches thousands of rows, which are of no use to the person typing.
+SEARCH_RESULT_LIMIT = 50
 # The fields a ranking may be built from, taken from the filter form so the
 # form and the view cannot drift apart.
 RANKING_VALUES = frozenset(value for value, _label in RankingsFilter.VALUES)
@@ -29,8 +34,15 @@ RANKING_SCOPES = frozenset(
 )
 
 
+@require_POST
 def search_municipality(request):
-    query = request.POST.get("search")
+    query = request.POST.get("search", "").strip()
+    # An empty box clears the result list. Without this an empty query reaches
+    # icontains="", which matches every row and renders the whole country
+    # (11,615 list items) on the keystroke that empties the field.
+    if not query:
+        return HttpResponse("")
+
     # look up all municipalities that contain the text
     # Search logic
     # search for aliases of Germany
@@ -67,7 +79,7 @@ def search_municipality(request):
             "municipality",
             "county",
             "state",
-        )
+        )[:SEARCH_RESULT_LIMIT]
     )
 
     county_results = (
@@ -78,10 +90,12 @@ def search_municipality(request):
         # their municipality keys ends with "000000"
         .exclude(municipality_key__endswith="000000")
         .exclude(municipality_key="04011000")
-        .distinct()
+        .distinct()[:SEARCH_RESULT_LIMIT]
     )
     state_results = (
-        CurrentTotal.objects.filter(state__icontains=query).values("state").distinct()
+        CurrentTotal.objects.filter(state__icontains=query)
+        .values("state")
+        .distinct()[:SEARCH_RESULT_LIMIT]
     )
 
     return render(
