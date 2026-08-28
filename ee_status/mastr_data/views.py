@@ -124,12 +124,13 @@ def totals_view(request):
     data = list(data)
 
     #  Build Graph
-    # Extract data for each category (pv, wind, hydro, biomass)
+    # Extract data for each category. The indices must line up with the field
+    # order of the values_list() call above: date, pv, wind, biomass, hydro.
     dates = [item[0] for item in data]
     pv_data = [item[1] if item[1] is not None else 0 for item in data]
     wind_data = [item[2] if item[2] is not None else 0 for item in data]
-    hydro_data = [item[3] if item[3] is not None else 0 for item in data]
-    biomass_data = [item[4] if item[4] is not None else 0 for item in data]
+    biomass_data = [item[3] if item[3] is not None else 0 for item in data]
+    hydro_data = [item[4] if item[4] is not None else 0 for item in data]
 
     # Create traces for each category
     trace_pv = go.Scatter(x=dates, y=pv_data, mode="lines", name=_("Photovoltaics"))
