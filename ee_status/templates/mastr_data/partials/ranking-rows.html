@@ -1,0 +1,36 @@
+{% load i18n %}
+{# One metric: a heading with the score, then one row per enclosing area.
+   Expects `rows` (from CurrentTotal.ratio_and_rank), `label` and `unit`. #}
+{% for realm in rows %}
+  {% if forloop.first %}
+    <div class="card-body border-top pb-0">
+      <h6>{{ label }}: {{ realm.score }} {{ unit }}</h6>
+    </div>
+  {% else %}
+    <div class="row align-items-center rank-row">
+      <div class="col-sm-4 ms-4 text-truncate">
+        <svg width="1.2em" height="1.2em">
+          <use href="#bi-arrow-return-right" />
+        </svg>
+        <a href="{% url 'mastr_data:rankings' %}?{{ basics.realm_type }}={{ basics.realm_name }}&scope={{ realm.realm_type }}&{{ realm.realm_type }}={{ realm.realm_name }}&numerator={{ realm.numerator }}&denominator={{ realm.denominator }}">in {{ realm.realm_name }}</a>
+      </div>
+      <div class="col text-end">
+        {% if realm.rank %}
+          {{ realm.rank }}. {% trans "Rank" %}
+        {% else %}
+          {# Not in the ranking: its own population or area is zero or unknown. #}
+          <span class="text-body-secondary" title="{% trans "Not ranked" %}">&mdash;</span>
+        {% endif %}
+      </div>
+      <div class="col d-none d-md-block">
+        {% if realm.percentile is not None %}
+          {# Decorative: the rank and the total are already stated either side. #}
+          <div class="rank-bar" aria-hidden="true">
+            <div class="rank-bar-fill" style="width: {{ realm.percentile }}%"></div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col text-start">{% trans "of " %} {{ realm.total_ranks }}</div>
+    </div>
+  {% endif %}
+{% endfor %}

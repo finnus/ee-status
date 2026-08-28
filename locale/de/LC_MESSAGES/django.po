@@ -470,6 +470,11 @@ msgstr "Erzeugungsleistung pro Person"
 msgid "of "
 msgstr "von "
 
+#: ee_status/templates/mastr_data/partials/ranking-rows.html
+msgid "Not ranked"
+msgstr "Nicht bewertet"
+
+
 #: ee_status/templates/mastr_data/totals.html:104
 msgid "Production capacity per km²"
 msgstr "Erzeugungsleistung pro km²"
