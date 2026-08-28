@@ -88,7 +88,8 @@ class CurrentTotal(models.Model):
         }
 
         if realm_type == scope:
-            rank = "n.a"
+            # An area is not ranked against itself.
+            rank = None
         else:
             # The ranking only contains areas with a usable denominator, so the
             # area being displayed is absent from it whenever its own population
@@ -97,7 +98,7 @@ class CurrentTotal(models.Model):
                 (i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d),
                 None,
             )
-            rank = "n.a" if position is None else str(position + 1)
+            rank = None if position is None else str(position + 1)
 
         ranking_without_none = [t for t in ranking if None not in t]
         max_value = (
@@ -129,6 +130,18 @@ class CurrentTotal(models.Model):
         )
         return round(scope_average[scope] or 0, 2)
 
+    @staticmethod
+    def rank_percentile(rank, total_ranks):
+        """Share of the areas in scope that this one ranks ahead of, in percent.
+
+        Rank 1 of 50 beats all 49 others and gives 100; the last place gives 0.
+        Returns None where there is nothing to show: an unranked area
+        (rank None) or a scope holding a single area.
+        """
+        if not str(rank).isdigit() or total_ranks < 2:  # noqa: PLR2004
+            return None
+        return round((total_ranks - int(rank)) / (total_ranks - 1) * 100)
+
     def get_scope_name(self, scope):
         self_dict = {
             "municipality": self.municipality,
@@ -154,6 +167,7 @@ class CurrentTotal(models.Model):
             new_scope_dict["rank"] = rr[0]
             new_scope_dict["total_ranks"] = rr[1]
             new_scope_dict["max_score"] = rr[2]
+            new_scope_dict["percentile"] = self.rank_percentile(rr[0], rr[1])
             ratio_and_rank.append(new_scope_dict)
 
         return ratio_and_rank
