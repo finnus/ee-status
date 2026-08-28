@@ -17,6 +17,17 @@ from .filters import RankingsFilter
 from .models import CurrentTotal
 from .models import MonthlyTimeline
 
+DEFAULT_NUMERATOR = "total_net_nominal_capacity"
+DEFAULT_DENOMINATOR = "population"
+# The fields a ranking may be built from, taken from the filter form so the
+# form and the view cannot drift apart.
+RANKING_VALUES = frozenset(value for value, _label in RankingsFilter.VALUES)
+# The scopes a ranking may be restricted to. "country" is not offered by the
+# filter form, but the totals page links to it, so it is accepted here.
+RANKING_SCOPES = frozenset(
+    {value for value, _label in RankingsFilter.SCOPES} | {"country"},
+)
+
 
 def search_municipality(request):
     query = request.POST.get("search")
@@ -264,9 +275,25 @@ def rankings_view(request):
     denominator = tempdict.get("denominator")
     scope = tempdict.get("scope")
 
-    if not numerator and not denominator:
-        numerator = "total_net_nominal_capacity"
-        denominator = "population"
+    if not numerator:
+        # A denominator on its own still needs something to rank by, so the
+        # default numerator applies whether or not one was supplied.
+        numerator = DEFAULT_NUMERATOR
+        if not denominator:
+            denominator = DEFAULT_DENOMINATOR
+
+    # numerator/denominator are interpolated into Sum() and _meta.get_field()
+    # below, and scope selects a queryset filter, so anything not offered by the
+    # filter form is rejected rather than allowed to raise FieldError,
+    # FieldDoesNotExist or TypeError deeper in the view.
+    if numerator not in RANKING_VALUES or (
+        denominator and denominator not in RANKING_VALUES
+    ):
+        msg = _("Unknown value to rank by.")
+        raise Http404(msg)
+    if scope and scope not in RANKING_SCOPES:
+        msg = _("Unknown scope requested.")
+        raise Http404(msg)
 
     f = RankingsFilter(tempdict, queryset=CurrentTotal.objects.all())
 
@@ -295,40 +322,29 @@ def rankings_view(request):
 
     table_captions = [_("Rank"), realm_type]
 
-    if numerator:
-        numerator_annotate = {"numerator": Sum(numerator)}
-        table_captions.append(CurrentTotal._meta.get_field(numerator).verbose_name)  # noqa: SLF001
-        numerator_filter_kwargs = {
-            f"{numerator}__isnull": False,
-            f"{numerator}__gt": 0,
+    numerator_annotate = {"numerator": Sum(numerator)}
+    table_captions.append(CurrentTotal._meta.get_field(numerator).verbose_name)  # noqa: SLF001
+    numerator_filter_kwargs = {
+        f"{numerator}__isnull": False,
+        f"{numerator}__gt": 0,
+    }
+    if denominator:
+        denominator_filter_kwargs = {
+            f"{denominator}__isnull": False,
+            f"{denominator}__gt": 0,
         }
-        if denominator:
-            denominator_filter_kwargs = {
-                f"{denominator}__isnull": False,
-                f"{denominator}__gt": 0,
-            }
-            denominator_annotate = {"denominator": Round(Sum(denominator))}
-            score_expression = {"score": Sum(numerator) / Sum(denominator)}
-            order_by_expression = ("-score",)
-            table_captions.append(
-                CurrentTotal._meta.get_field(denominator).verbose_name,  # noqa: SLF001
-            )
-            table_captions.append(_("Score"))
-        else:
-            denominator_filter_kwargs = {}
-            denominator_annotate = {}
-            score_expression = {}
-            order_by_expression = ("-numerator",)
+        denominator_annotate = {"denominator": Round(Sum(denominator))}
+        score_expression = {"score": Sum(numerator) / Sum(denominator)}
+        order_by_expression = ("-score",)
+        table_captions.append(
+            CurrentTotal._meta.get_field(denominator).verbose_name,  # noqa: SLF001
+        )
+        table_captions.append(_("Score"))
     else:
-        numerator_annotate = {}
         denominator_filter_kwargs = {}
         denominator_annotate = {}
         score_expression = {}
-        order_by_expression = ()
-        numerator_filter_kwargs = {
-            f"{numerator}__isnull": False,
-            f"{numerator}__gt": 0,
-        }
+        order_by_expression = ("-numerator",)
 
     filter_dict = {
         "municipality": {"municipality": municipality},

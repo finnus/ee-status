@@ -158,6 +158,8 @@ lint.isort.force-single-line = true
   "RUF015", # Prefer `next(...)` over single element slice
 ]
 "ee_status/mastr_data/views.py" = [
+  # rankings_view builds its queryset from a pile of conditional kwargs and
+  # wants splitting up; that refactor is deliberately not part of the bug fixes.
   "C901",    # `rankings_view` is too complex
   "PLR0912", # too many branches
   "PLR0915", # too many statements
