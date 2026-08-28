@@ -128,7 +128,12 @@ ALTER TABLE energy_units
     DROP COLUMN grid_operator_status;
 
 
--- Duplicate rows with units not longer being active and make their values negative
+-- Duplicate rows with units not longer being active and make their values negative.
+-- The negative twin has to be dated at the close down date, not at the start up
+-- date the original carries: dating it at the start up date puts both rows in the
+-- same month and municipality, where the GROUP BY below cancels them out, so the
+-- unit never contributes to the timeline at all instead of contributing from its
+-- commissioning until its shutdown.
 INSERT INTO energy_units (unit_nr, municipality_key, municipality, county,
                           state, zip_code, start_up_date,
                           close_down_date, date, pv_net_nominal_capacity, wind_net_nominal_capacity,
@@ -141,7 +146,7 @@ SELECT unit_nr,
        zip_code,
        start_up_date,
        close_down_date,
-       date,
+       close_down_date,
        -pv_net_nominal_capacity,
        -wind_net_nominal_capacity,
        -biomass_net_nominal_capacity,
