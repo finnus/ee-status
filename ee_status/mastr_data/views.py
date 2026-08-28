@@ -153,6 +153,11 @@ def totals_view(request):
                 order_by=[F("date").asc()],
             ),
         )
+        # DISTINCT ON requires a matching leading ORDER BY to pick a defined row
+        # per date and to emit them in date order; without it both are left to
+        # the query plan, and the chart draws its points in whatever order it
+        # gets them.
+        .order_by("date")
         .distinct("date")
         .values_list(
             "date",
