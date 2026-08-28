@@ -1,7 +1,10 @@
 from operator import itemgetter
 
 from django.db import models
+from django.db.models import ExpressionWrapper
+from django.db.models import FloatField
 from django.db.models import Sum
+from django.db.models.functions import NullIf
 from django.utils.translation import gettext_lazy as _
 
 
@@ -87,13 +90,21 @@ class CurrentTotal(models.Model):
         if realm_type == scope:
             rank = "n.a"
         else:
-            rank = str(
-                [i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d][0]
-                + 1,
+            # The ranking only contains areas with a usable denominator, so the
+            # area being displayed is absent from it whenever its own population
+            # or area is zero or unknown. It then has no rank rather than rank 1.
+            position = next(
+                (i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d),
+                None,
             )
+            rank = "n.a" if position is None else str(position + 1)
 
         ranking_without_none = [t for t in ranking if None not in t]
-        max_value = round(max(ranking_without_none, key=itemgetter(1))[1], 1)
+        max_value = (
+            round(max(ranking_without_none, key=itemgetter(1))[1], 1)
+            if ranking_without_none
+            else 0
+        )
 
         return rank, len(ranking), max_value
 
@@ -105,8 +116,16 @@ class CurrentTotal(models.Model):
             "country": {},
         }
 
+        # NullIf keeps Postgres from raising "division by zero" for areas whose
+        # population or area sums to zero, of which there are real examples
+        # (Starnberger See, Sachsenwald). Those come back as None and read as 0.
         scope_average = CurrentTotal.objects.filter(**scope_dict.get(scope)).aggregate(
-            **{scope: Sum(numerator) / Sum(denominator)},
+            **{
+                scope: ExpressionWrapper(
+                    Sum(numerator) / NullIf(Sum(denominator), 0),
+                    output_field=FloatField(),
+                ),
+            },
         )
         return round(scope_average[scope] or 0, 2)
 
