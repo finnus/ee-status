@@ -1,6 +1,10 @@
 {% load i18n %}
-{# One metric: a heading with the score, then one row per enclosing area.
-   Expects `rows` (from CurrentTotal.ratio_and_rank), `label` and `unit`. #}
+
+{% comment %}
+  One metric: a heading with the score, then one row per enclosing area.
+  Expects `rows` (from CurrentTotal.ratio_and_rank), `label` and `unit`.
+  Note: {# #} cannot span lines, so a multi-line note has to use this tag.
+{% endcomment %}
 {% for realm in rows %}
   {% if forloop.first %}
     <div class="card-body border-top pb-0">
@@ -19,7 +23,7 @@
           {{ realm.rank }}. {% trans "Rank" %}
         {% else %}
           {# Not in the ranking: its own population or area is zero or unknown. #}
-          <span class="text-body-secondary" title="{% trans "Not ranked" %}">&mdash;</span>
+          <span class="text-body-secondary" title="{% trans "Not ranked" %}">—</span>
         {% endif %}
       </div>
       <div class="col d-none d-md-block">
