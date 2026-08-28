@@ -17,9 +17,15 @@ services:
     depends_on:
       - postgres
       - redis
+    # Coolify injects the configuration as environment variables, and
+    # .envs/.production/ is gitignored so it is absent from its checkout.
+    # These stay declared, marked optional, for a deploy by hand that does
+    # create the files; a missing env_file is otherwise a hard error.
     env_file:
-      - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
+      - path: ./.envs/.production/.django
+        required: false
+      - path: ./.envs/.production/.postgres
+        required: false
     # Coolify's proxy connects to this port; it is not published on the host.
     expose:
       - '5000'
@@ -34,7 +40,8 @@ services:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.production/.postgres
+      - path: ./.envs/.production/.postgres
+        required: false
 
   redis:
     image: docker.io/redis:7.2
