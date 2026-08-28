@@ -1,7 +1,8 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
 
-from ee_status.mastr_data.models import CurrentTotal, MonthlyTimeline
+from ee_status.mastr_data.models import CurrentTotal
+from ee_status.mastr_data.models import MonthlyTimeline
 
 STATES = (
     ("Baden-Württemberg", "Baden-Württemberg"),

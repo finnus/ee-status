@@ -1,0 +1,18 @@
+services:
+  docs:
+    image: ee_status_local_docs
+    container_name: ee_status_local_docs
+    build:
+      context: .
+      dockerfile: ./compose/local/docs/Dockerfile
+    env_file:
+      - path: ./.envs/.local/.django
+        required: false
+    volumes:
+      - /app/.venv
+      - ./docs:/docs:z
+      - ./config:/app/config:z
+      - ./ee_status:/app/ee_status:z
+    ports:
+      - '9000:9000'
+    command: /start-docs

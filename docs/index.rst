@@ -1,9 +1,9 @@
-.. EE-Status documentation master file, created by
+.. EE Status documentation master file, created by
    sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to EE-Status's documentation!
+Welcome to EE Status's documentation!
 ======================================================================
 
 .. toctree::

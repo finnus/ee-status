@@ -1,29 +1,30 @@
 {% extends "base.html" %}
-{% load i18n static %}
 
+{% load i18n static %}
 
 {% block content %}
   <div class="px-4 py-5 my-5 text-center">
-  <img src="{% static 'images/logo/ee_status_logo_no_text_square.png' %}" alt="Logo" width="250" height="250" class="d-inline-block align-text-center">
-    <h1 class="display-5 fw-bold">E<span class="h4">rneuerbare</span> E<span class="h4">nergien</span> S<span
-      class="h4">tatus</span></h1>
+    <img src="{% static 'images/logo/ee_status_logo_no_text_square.png' %}"
+         alt="Logo"
+         width="250"
+         height="250"
+         class="d-inline-block align-text-center" />
+    <h1 class="display-5 fw-bold">E<span class="h4">rneuerbare</span> E<span class="h4">nergien</span> S<span class="h4">tatus</span></h1>
     <div class="col-lg-9 mx-auto">
       <form autocomplete="off">
         <div class="form-group">
-
           <input type="text"
                  class="form-control form-control-lg mb-4 search-form"
                  hx-post="{% url 'mastr_data:search-municipality' %}"
                  hx-target='#results'
                  hx-trigger="keyup changed delay:500ms"
-                 name="search" id="searchtext"
+                 name="search"
+                 id="searchtext"
                  aria-describedby="searchfield"
-                 placeholder="{% trans "Search for Municipality, County, State, Zip-Code, Germany..." %}">
+                 placeholder="{% trans "Search for Municipality, County, State, Zip-Code, Germany..." %}" />
         </div>
       </form>
-        <div id="results"></div>
-
+      <div id="results"></div>
     </div>
   </div>
-
 {% endblock content %}

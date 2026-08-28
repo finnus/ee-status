@@ -1,6 +1,6 @@
 from operator import itemgetter
 
-from django.contrib.gis.db import models
+from django.db import models
 from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 
@@ -23,30 +23,30 @@ class MonthlyTimeline(models.Model):
 
 class CurrentTotal(models.Model):
     municipality_key = models.CharField(
-        verbose_name=_("Municipality Key"), max_length=200
+        verbose_name=_("Municipality Key"),
+        max_length=200,
     )
-    geom = models.MultiPolygonField(srid=25832)
     municipality = models.CharField(verbose_name=_("Municipality"), max_length=200)
     county = models.CharField(verbose_name=_("County"), max_length=200)
     state = models.CharField(verbose_name=_("State"), max_length=200, blank=True)
     zip_code = models.CharField(verbose_name=_("Zip-Code"), max_length=500, blank=True)
     pv_net_nominal_capacity = models.FloatField(
-        verbose_name=_("PV net nominal capacity (kW)")
+        verbose_name=_("PV net nominal capacity (kW)"),
     )
     wind_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Wind net nominal capacity (kW)")
+        verbose_name=_("Wind net nominal capacity (kW)"),
     )
     biomass_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Biomass net nominal capacity (kW)")
+        verbose_name=_("Biomass net nominal capacity (kW)"),
     )
     hydro_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Hydro net nominal capacity (kW)")
+        verbose_name=_("Hydro net nominal capacity (kW)"),
     )
     storage_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Storage net nominal capacity (kWh)")
+        verbose_name=_("Storage net nominal capacity (kWh)"),
     )
     total_net_nominal_capacity = models.FloatField(
-        verbose_name=_("total net nominal capacity (kW)")
+        verbose_name=_("total net nominal capacity (kW)"),
     )
     population = models.IntegerField(verbose_name=_("Population"))
     area = models.FloatField(verbose_name=_("Area (km²)"))
@@ -65,14 +65,11 @@ class CurrentTotal(models.Model):
         }
 
         denominator_filter_kwargs = {
-            "{}__{}".format(denominator, "isnull"): False,
-            "{}__{}".format(denominator, "gt"): 0,
+            f"{denominator}__isnull": False,
+            f"{denominator}__gt": 0,
         }
 
-        if realm_type == "country":
-            realm_type_for_values = "state"
-        else:
-            realm_type_for_values = realm_type
+        realm_type_for_values = "state" if realm_type == "country" else realm_type
 
         ranking = (
             CurrentTotal.objects.filter(**scope_dict.get(scope))
@@ -92,7 +89,7 @@ class CurrentTotal(models.Model):
         else:
             rank = str(
                 [i for i, d in enumerate(ranking) if self_dict.get(realm_type) in d][0]
-                + 1
+                + 1,
             )
 
         ranking_without_none = [t for t in ranking if None not in t]
@@ -109,7 +106,7 @@ class CurrentTotal(models.Model):
         }
 
         scope_average = CurrentTotal.objects.filter(**scope_dict.get(scope)).aggregate(
-            **{scope: Sum(numerator) / Sum(denominator)}
+            **{scope: Sum(numerator) / Sum(denominator)},
         )
         return round(scope_average[scope] or 0, 2)
 
@@ -126,7 +123,7 @@ class CurrentTotal(models.Model):
         # Define order for looping over multiple admin scopes
         order = ["municipality", "county", "state", "country"]
         ratio_and_rank = []
-        for i in order[order.index(realm_type) : :]:  # noqa: E203
+        for i in order[order.index(realm_type) :]:
             new_scope_dict = {}
             new_scope_dict["realm_type"] = i
             new_scope_dict["realm_name"] = self.get_scope_name(i)
@@ -141,36 +138,3 @@ class CurrentTotal(models.Model):
             ratio_and_rank.append(new_scope_dict)
 
         return ratio_and_rank
-
-
-class EnergyUnit(models.Model):
-    unit_nr = models.CharField(verbose_name=_("Unit Nr."), max_length=200)
-    municipality_key = models.CharField(
-        verbose_name=_("Municipality Key"), max_length=200
-    )
-    municipality = models.CharField(verbose_name=_("Municipality"), max_length=200)
-    county = models.CharField(verbose_name=_("County"), max_length=200)
-    state = models.CharField(verbose_name=_("State"), max_length=200, blank=True)
-    zip_code = models.CharField(verbose_name=_("Zip-Code"), max_length=7, blank=True)
-    start_up_date = models.DateTimeField(verbose_name=_("Start Up Date"), default=None)
-    date = models.DateTimeField(verbose_name=_("Corrected Date"), default=None)
-    pv_net_nominal_capacity = models.FloatField(
-        verbose_name=_("PV net nominal capacity")
-    )
-    wind_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Wind net nominal capacity")
-    )
-    biomass_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Biomass net nominal capacity")
-    )
-    hydro_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Hydro net nominal capacity")
-    )
-    storage_net_nominal_capacity = models.FloatField(
-        verbose_name=_("Storage net nominal capacity")
-    )
-    geolocation = models.PointField(verbose_name="Location")
-
-    class Meta:
-        managed = False
-        db_table = "energy_units"

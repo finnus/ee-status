@@ -1,14 +1,16 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include
+from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    # path("", TemplateView.as_view(template_name="mastr_data/search.html"), name="search"),
     path(
-        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
+        "about/",
+        TemplateView.as_view(template_name="pages/about.html"),
+        name="about",
     ),
     path(
         "imprint/",
@@ -26,8 +28,11 @@ urlpatterns = [
     path("users/", include("ee_status.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    # The mastr_data search page doubles as the site root ("mastr_data:search").
     path("", include("ee_status.mastr_data.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Media files
+    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+]
 
 
 if settings.DEBUG:
@@ -54,4 +59,7 @@ if settings.DEBUG:
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar
 
-        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+        urlpatterns = [
+            path("__debug__/", include(debug_toolbar.urls)),
+            *urlpatterns,
+        ]

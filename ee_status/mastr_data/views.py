@@ -1,19 +1,20 @@
-import json
-
-import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
-from django.contrib.gis.db.models.functions import AsGeoJSON
-from django.core.serializers import serialize
-from django.db.models import F, Q, Sum, Window
+from django.db.models import F
+from django.db.models import Q
+from django.db.models import Sum
+from django.db.models import Window
 from django.db.models.functions import Round
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from plotly.offline import plot
 
-from .filters import CurrentTotalFilter, MonthlyTimelineFilter, RankingsFilter
-from .models import CurrentTotal, MonthlyTimeline
+from .filters import CurrentTotalFilter
+from .filters import MonthlyTimelineFilter
+from .filters import RankingsFilter
+from .models import CurrentTotal
+from .models import MonthlyTimeline
 
 
 def search_municipality(request):
@@ -22,9 +23,11 @@ def search_municipality(request):
     # Search logic
     # search for aliases of Germany
     # 0 results = nothing found
-    # 1 result = single municipality or a municipality which is a county at the same time ("kreisfreie Stadt")
+    # 1 result = single municipality or a municipality which is a county at the
+    #   same time ("kreisfreie Stadt")
     # > 1 results:
-    #   as many municipalities as the county counts -> county or municipality which contain the name of the county
+    #   as many municipalities as the county counts -> county or municipality
+    #     which contain the name of the county
     #   as many municipalities as the state -> state
     #   more results: return list of results for user
 
@@ -43,19 +46,23 @@ def search_municipality(request):
         CurrentTotal.objects.filter(
             Q(municipality__icontains=query)
             | Q(municipality_key__icontains=query)
-            | Q(zip_code__icontains=query)
+            | Q(zip_code__icontains=query),
         )
         # we exclude municipalities that are their own counties ("kreisfreie Städte")
         # their municipality keys ends with "000"
-        .exclude(municipality_key__endswith="000").values(
-            "municipality", "county", "state"
+        .exclude(municipality_key__endswith="000")
+        .values(
+            "municipality",
+            "county",
+            "state",
         )
     )
 
     county_results = (
         CurrentTotal.objects.filter(county__icontains=query)
         .values("county", "state")
-        # we exclude counties that are their own states ("echte Stadtstaaten": Hamburg, Berlin)
+        # we exclude counties that are their own states
+        # ("echte Stadtstaaten": Hamburg, Berlin)
         # their municipality keys ends with "000000"
         .exclude(municipality_key__endswith="000000")
         .exclude(municipality_key="04011000")
@@ -76,23 +83,6 @@ def search_municipality(request):
     )
 
 
-def multi_polygon_map(request):
-    qs = (
-        CurrentTotal.objects.filter(geom__isnull=False)
-        .annotate(json=AsGeoJSON("geom", precision=4))
-        .values("id", "json")
-    )
-
-    # Prepare the GeoJSON object
-    json_object = json.loads(qs)
-
-    return render(
-        request,
-        "mastr_data/map_template.html",
-        {"geojson": json_object},
-    )
-
-
 def totals_view(request):
     tempdict = request.GET
     municipality_key = tempdict.get("municipality_key")
@@ -104,7 +94,8 @@ def totals_view(request):
     data = (
         f.qs.annotate(
             pv_net_sum=Window(
-                expression=Sum(F("pv_net_nominal_capacity")), order_by=[F("date").asc()]
+                expression=Sum(F("pv_net_nominal_capacity")),
+                order_by=[F("date").asc()],
             ),
             wind_net_sum=Window(
                 expression=Sum(F("wind_net_nominal_capacity")),
@@ -121,7 +112,11 @@ def totals_view(request):
         )
         .distinct("date")
         .values_list(
-            "date", "pv_net_sum", "wind_net_sum", "biomass_net_sum", "hydro_net_sum"
+            "date",
+            "pv_net_sum",
+            "wind_net_sum",
+            "biomass_net_sum",
+            "hydro_net_sum",
         )
     )
 
@@ -149,23 +144,23 @@ def totals_view(request):
 
     # Create the layout for the timeline graph
     layout = go.Layout(
-        xaxis=dict(title=_("Date")),
-        yaxis=dict(
-            title=_("Power generation"),
-        ),
+        xaxis={"title": _("Date")},
+        yaxis={"title": _("Power generation")},
         hovermode="x unified",
         template="plotly_white",
     )
 
     # Create a figure and add traces to it
     fig = go.Figure(
-        data=[trace_pv, trace_wind, trace_hydro, trace_biomass], layout=layout
+        data=[trace_pv, trace_wind, trace_hydro, trace_biomass],
+        layout=layout,
     )
 
     plt_div = plot(fig, output_type="div", include_plotlyjs=False)
 
     f_current_totals = CurrentTotalFilter(
-        request.GET, queryset=CurrentTotal.objects.all()
+        request.GET,
+        queryset=CurrentTotal.objects.all(),
     )
     current_object = f_current_totals.qs.first()
 
@@ -224,7 +219,7 @@ def totals_view(request):
     order = ["municipality", "county", "state"]
     hierarchy = {}
     if realm_type != "country":
-        for i in order[order.index(realm_type) : :]:  # noqa: E203
+        for i in order[order.index(realm_type) :]:
             hierarchy[i] = getattr(current_object, i)
     hierarchy["country"] = _("Germany")
 
@@ -233,7 +228,9 @@ def totals_view(request):
         "mastr_data/totals.html",
         {
             "filter": f_current_totals,
-            "total_net_nominal_capacity_per_capita": total_net_nominal_capacity_per_capita,
+            "total_net_nominal_capacity_per_capita": (
+                total_net_nominal_capacity_per_capita
+            ),
             "total_net_nominal_capacity_per_area": total_net_nominal_capacity_per_area,
             "storage_capacity_per_capita": storage_capacity_per_capita,
             "storage_capacity_per_area": storage_capacity_per_area,
@@ -287,21 +284,21 @@ def rankings_view(request):
 
     if numerator:
         numerator_annotate = {"numerator": Sum(numerator)}
-        table_captions.append(CurrentTotal._meta.get_field(numerator).verbose_name)
+        table_captions.append(CurrentTotal._meta.get_field(numerator).verbose_name)  # noqa: SLF001
         numerator_filter_kwargs = {
-            "{}__{}".format(numerator, "isnull"): False,
-            "{}__{}".format(numerator, "gt"): 0,
+            f"{numerator}__isnull": False,
+            f"{numerator}__gt": 0,
         }
         if denominator:
             denominator_filter_kwargs = {
-                "{}__{}".format(denominator, "isnull"): False,
-                "{}__{}".format(denominator, "gt"): 0,
+                f"{denominator}__isnull": False,
+                f"{denominator}__gt": 0,
             }
             denominator_annotate = {"denominator": Round(Sum(denominator))}
             score_expression = {"score": Sum(numerator) / Sum(denominator)}
             order_by_expression = ("-score",)
             table_captions.append(
-                CurrentTotal._meta.get_field(denominator).verbose_name
+                CurrentTotal._meta.get_field(denominator).verbose_name,  # noqa: SLF001
             )
             table_captions.append(_("Score"))
         else:
@@ -316,8 +313,8 @@ def rankings_view(request):
         score_expression = {}
         order_by_expression = ()
         numerator_filter_kwargs = {
-            "{}__{}".format(numerator, "isnull"): False,
-            "{}__{}".format(numerator, "gt"): 0,
+            f"{numerator}__isnull": False,
+            f"{numerator}__gt": 0,
         }
 
     filter_dict = {
@@ -331,7 +328,7 @@ def rankings_view(request):
         temp = list(filter_dict)
         try:
             scope = temp[temp.index(realm_type) + 1]
-        except (ValueError, IndexError):
+        except ValueError, IndexError:
             scope = realm_type
 
     ranking = (
@@ -346,58 +343,6 @@ def rankings_view(request):
         .distinct()
     )
 
-    if False:
-        plot_qs = CurrentTotal.objects.filter(county__exact=county)
-
-        geojson_data = serialize(
-            "geojson",
-            plot_qs,
-            geometry_field="geom",
-            fields=["pk"],
-        )
-        if denominator:
-            data = plot_qs.values("pk", "municipality", numerator, denominator)
-            df = pd.DataFrame.from_records(data)
-            df[numerator] = (df[numerator] / df[denominator]).astype(float).round(2)
-        else:
-            data = plot_qs.values("pk", "municipality", numerator)
-            df = pd.DataFrame.from_records(data)
-            df[numerator] = df[numerator].astype(float).round(2)
-
-        geojson = json.loads(geojson_data)
-
-        first_feature = geojson["features"][0]
-        coordinates = first_feature["geometry"]["coordinates"]
-
-        fig = px.choropleth_mapbox(
-            df,
-            geojson=geojson,
-            locations="pk",
-            color=numerator,
-            featureidkey="properties.pk",
-            color_continuous_scale="greens",
-            center={"lat": coordinates[0][0][0][1], "lon": coordinates[0][0][0][0]},
-            zoom=8,
-            opacity=0.5,
-            labels={},
-            custom_data=["municipality"],
-            mapbox_style="carto-positron",
-        )
-
-        fig.update_traces(
-            hovertemplate="<b>%{customdata[0]}</b><br> %{z}",
-        )
-        fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-        fig.update_layout(
-            coloraxis_colorbar=dict(
-                title="",  # Customize the legend title
-                x=0,  # Adjust the x position of the color legend
-                xanchor="left",  # Anchor the legend to the left side
-            ),
-        )
-        plt_div = plot(fig, output_type="div", include_plotlyjs=False)
-    else:
-        plt_div = ""
     return render(
         request,
         "mastr_data/rankings.html",
@@ -407,7 +352,6 @@ def rankings_view(request):
             "table_captions": table_captions,
             "hierarchy": hierarchy,
             "basics": basics,
-            "plt_div": plt_div,
         },
     )
 

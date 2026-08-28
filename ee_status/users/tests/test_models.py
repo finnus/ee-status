@@ -1,8 +1,9 @@
-import pytest
+from __future__ import annotations
 
-from ee_status.users.models import User
+from typing import TYPE_CHECKING
 
-pytestmark = pytest.mark.django_db
+if TYPE_CHECKING:
+    from ee_status.users.models import User
 
 
 def test_user_get_absolute_url(user: User):

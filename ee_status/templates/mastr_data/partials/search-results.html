@@ -1,29 +1,29 @@
 {% load i18n %}
 
 {% if municipality_results or state_results or county_results %}
-          <ul class="list-group">
-          {% if state_results %}
-            {% for result in state_results %}
-              <li class="list-group-item d-inline-block text-truncate text-start"><a href="{% url 'mastr_data:totals' %}?state={{ result.state }}">
-                {% trans "State" %} {{ result.state }} </a>({{ result.state }})
-              </li>
-            {% endfor %}
-            {% endif %}
-            {% if county_results %}
-              {% for result in county_results %}
-              <li class="list-group-item d-inline-block text-start"><a href="{% url 'mastr_data:totals' %}?county={{ result.county }}">
-                {% trans "County" %} {{ result.county }}&nbsp;</a>({{ result.state }})
-              </li>
-              {%  endfor %}
-            {% endif %}
-
-            {% for result in municipality_results %}
-              <li class="list-group-item d-inline-block text-start"><a href="{% url 'mastr_data:totals' %}?municipality={{ result.municipality }}">
-                {% trans "Municipality" %} {{ result.municipality }} &nbsp;</a>
-                ({% trans "County" %} {{ result.county }}, {{ result.state }})
-              </li>
-            {% endfor %}
-          </ul>
-      {% else %}
-      <p>No search results</p>
+  <ul class="list-group">
+    {% if state_results %}
+      {% for result in state_results %}
+        <li class="list-group-item d-inline-block text-truncate text-start">
+          <a href="{% url 'mastr_data:totals' %}?state={{ result.state }}">{% trans "State" %} {{ result.state }} </a>({{ result.state }})
+        </li>
+      {% endfor %}
+    {% endif %}
+    {% if county_results %}
+      {% for result in county_results %}
+        <li class="list-group-item d-inline-block text-start">
+          <a href="{% url 'mastr_data:totals' %}?county={{ result.county }}">{% trans "County" %} {{ result.county }}&nbsp;</a>({{ result.state }})
+        </li>
+      {% endfor %}
+    {% endif %}
+    {% for result in municipality_results %}
+      <li class="list-group-item d-inline-block text-start">
+        <a href="{% url 'mastr_data:totals' %}?municipality={{ result.municipality }}">
+        {% trans "Municipality" %} {{ result.municipality }} &nbsp;</a>
+        ({% trans "County" %} {{ result.county }}, {{ result.state }})
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No search results</p>
 {% endif %}

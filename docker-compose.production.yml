@@ -1,0 +1,40 @@
+# Production stack.
+#
+# Deployment is handled by Coolify, which runs its own reverse proxy and
+# terminates TLS. It routes traffic to the `django` service on port 5000, so
+# this file deliberately ships neither traefik nor nginx.
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+
+    image: ee_status_production_django
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    # Coolify's proxy connects to this port; it is not published on the host.
+    expose:
+      - '5000'
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: ee_status_production_postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+
+  redis:
+    image: docker.io/redis:7.2

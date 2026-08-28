@@ -1,136 +1,131 @@
-{% load static i18n %}<!DOCTYPE html>
+{% load static i18n %}
+
+<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE }}">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>{% block title %}EE-Status{% endblock title %}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Displaying Data from the 'Marktstammdatenregister'.">
-  <meta name="author" content="Finn Hees">
-
-  <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
-
-  {% block css %}
-    <!-- Latest compiled and minified Bootstrap CSS -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <!-- Your stuff: Third-party CSS libraries go here -->
-
-    <!-- This file stores project-specific CSS -->
-    <link href="{% static 'css/project.css' %}" rel="stylesheet">
-  {% endblock %}
-  <!-- Le javascript
-  ================================================== -->
-  {# Placed at the top of the document so pages load faster with defer #}
-  {% block javascript %}
-    <!-- Bootstrap JS -->
-    <script defer src="{% static 'js/bootstrap.min.js' %}"></script>
-    <!-- Your stuff: Third-party javascript libraries go here -->
-
-    <!-- place project specific Javascript in this file -->
-    <script defer src="{% static 'js/project.js' %}"></script>
-    <!-- HTMX -->
-        <script defer src="{% static 'vendors/htmx/htmx_1.9.10.min.js.js' %}"></script>
-
-  {% endblock javascript %}
-
-</head>
-
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-
-<div class="mb-1">
-  <nav class="navbar navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'mastr_data:search' %}">
-              <img src="{% static 'images/logo/ee_status_logo_no_text_square.png' %}" alt="Logo" width="50" height="50" class="d-inline-block align-text-center"> EE-Status</a>
-      {% if request.resolver_match.url_name != 'search' %}
-
-      {% endif %}
-      <button class="navbar-toggler navbar-toggler" type="button" data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-              aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-  </nav>
-
-</div>
-
-
-
-{% if messages %}
-  {% for message in messages %}
-    <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  {% endfor %}
-{% endif %}
-
-<div class="container mt-3 pb-5">
-  {% block content %}
-
-
-  {% endblock content %}
-</div>
-
-<div class="fixed-bottom bg-light border-top">
-  <footer class="d-flex flex-wrap justify-content-between align-items-center py-1 ms-4 me-4">
-    <p class="col-md-6 mb-0 text-muted">© 2023 EE-Status</p>
-
-
-    <ul class="nav col-md-6 justify-content-end">
-      <li class="nav-item"><a href="{% url 'imprint' %}"
-                              class="nav-link px-2 text-muted">{% trans "Imprint and data policy" %}</a></li>
-      <li class="nav-item"><a href="{% url 'sources' %}" class="nav-link px-2 text-muted">{% trans "Sources" %}</a></li>
-      <li class="nav-item"><a href="{% url 'about' %}" class="nav-link px-2 text-muted">{% trans "About us" %}</a></li>
-    </ul>
-  </footer>
-</div>
-
-
-<!-- /container -->
-
-{% block modal %}{% endblock modal %}
-
-{% block inline_javascript %}
-  {% comment %}
-    Script tags with only code, no src (defer by default). To run
-    with a "defer" so that you run inline code:
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {/* Run whatever you want */
-      });
-    </script>
-  {% endcomment %}
-  <script src="{% static 'js/external/sorttable.js' %}"></script>
-{% endblock inline_javascript %}
-<!-- SVG Icons
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>
+      {% block title %}
+        EE-Status
+      {% endblock title %}
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+          content="{% translate 'Displaying data from the German Marktstammdatenregister.' %}" />
+    <meta name="author" content="Finn Hees" />
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
+    {% block css %}
+      <!-- Bootstrap CSS, vendored locally instead of loaded from a CDN -->
+      <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+      <!-- Your stuff: Third-party CSS libraries go here -->
+      <!-- This file stores project-specific CSS -->
+      <link href="{% static 'css/project.css' %}" rel="stylesheet" />
+    {% endblock css %}
+    <!-- Le javascript
     ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<!-- Learn about this on: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use -->
-{% block icons %}
-  <div class="d-none">
-    {% include "icons.html" %}
-  </div>
-{% endblock icons %}
-
-<!-- Matomo -->
-<script>
-  var _paq = window._paq = window._paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function () {
-    var u = "https://analytics.interaction.digital/";
-    _paq.push(['setTrackerUrl', u + 'matomo.php']);
-    _paq.push(['setSiteId', '21']);
-    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-    g.async = true;
-    g.src = u + 'matomo.js';
-    s.parentNode.insertBefore(g, s);
-  })();
-</script>
-<!-- End Matomo Code -->
-
-</body>
+    {# Placed at the top of the document so pages load faster with defer #}
+    {% block javascript %}
+      <!-- Bootstrap JS, vendored locally instead of loaded from a CDN -->
+      <script defer src="{% static 'js/bootstrap.min.js' %}"></script>
+      <!-- Your stuff: Third-party javascript libraries go here -->
+      <script defer src="{% static 'vendors/htmx/htmx_1.9.10.min.js.js' %}"></script>
+      <!-- place project specific Javascript in this file -->
+      <script defer src="{% static 'js/project.js' %}"></script>
+    {% endblock javascript %}
+  </head>
+  <body class="{% block bodyclass %}{% endblock bodyclass %}"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    {% block body %}
+      <div class="mb-1">
+        <nav class="navbar navbar-light bg-light">
+          <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'mastr_data:search' %}">
+              <img src="{% static 'images/logo/ee_status_logo_no_text_square.png' %}"
+                   alt="{% translate 'EE-Status logo' %}"
+                   width="50"
+                   height="50"
+                   class="d-inline-block align-text-center" />
+              EE-Status
+            </a>
+          </div>
+        </nav>
+      </div>
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="{% translate 'Close' %}"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+      <div class="container mt-3 pb-5">
+        {% block main %}
+          {% block content %}
+          {% endblock content %}
+        {% endblock main %}
+      </div>
+      <div class="fixed-bottom bg-light border-top">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-1 ms-4 me-4">
+          <p class="col-md-6 mb-0 text-muted">© 2023 EE-Status</p>
+          <ul class="nav col-md-6 justify-content-end">
+            <li class="nav-item">
+              <a href="{% url 'imprint' %}" class="nav-link px-2 text-muted">{% translate "Imprint and data policy" %}</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'sources' %}" class="nav-link px-2 text-muted">{% translate "Sources" %}</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'about' %}" class="nav-link px-2 text-muted">{% translate "About us" %}</a>
+            </li>
+          </ul>
+        </footer>
+      </div>
+    {% endblock body %}
+    <!-- /container -->
+    {% block modal %}
+    {% endblock modal %}
+    {% block inline_javascript %}
+      {% comment %}
+      Script tags with only code, no src (defer by default). To run
+      with a "defer" so that you run inline code:
+      <script>
+        window.addEventListener('DOMContentLoaded', () => {
+          /* Run whatever you want */
+        });
+      </script>
+      {% endcomment %}
+      <script src="{% static 'js/external/sorttable.js' %}"></script>
+    {% endblock inline_javascript %}
+    <!-- SVG Icons
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- Learn about this on: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use -->
+    {% block icons %}
+      <div class="d-none">{% include "icons.html" %}</div>
+    {% endblock icons %}
+    <!-- Matomo -->
+    <script>
+      var _paq = window._paq = window._paq || [];
+      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function() {
+        var u = "https://analytics.interaction.digital/";
+        _paq.push(['setTrackerUrl', u + 'matomo.php']);
+        _paq.push(['setSiteId', '21']);
+        var d = document,
+          g = d.createElement('script'),
+          s = d.getElementsByTagName('script')[0];
+        g.async = true;
+        g.src = u + 'matomo.js';
+        s.parentNode.insertBefore(g, s);
+      })();
+    </script>
+    <!-- End Matomo Code -->
+  </body>
 </html>
