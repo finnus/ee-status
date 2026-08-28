@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.db.models import Window
 from django.db.models.functions import Round
+from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -90,6 +91,23 @@ def totals_view(request):
     county = tempdict.get("county")
     state = tempdict.get("state")
 
+    f_current_totals = CurrentTotalFilter(
+        request.GET,
+        queryset=CurrentTotal.objects.all(),
+    )
+    # Resolve the requested area before doing any of the expensive work below.
+    # An invalid filter value (e.g. a state that does not exist) leaves the
+    # queryset unfiltered rather than empty, which would otherwise render
+    # Germany-wide figures under the name of whichever row happened to come
+    # first, so reject that as well as an area with no row at all.
+    if not f_current_totals.form.is_valid():
+        msg = _("Invalid area requested.")
+        raise Http404(msg)
+    current_object = f_current_totals.qs.first()
+    if current_object is None:
+        msg = _("No data available for the requested area.")
+        raise Http404(msg)
+
     f = MonthlyTimelineFilter(tempdict, queryset=MonthlyTimeline.objects.all())
     data = (
         f.qs.annotate(
@@ -158,12 +176,6 @@ def totals_view(request):
     )
 
     plt_div = plot(fig, output_type="div", include_plotlyjs=False)
-
-    f_current_totals = CurrentTotalFilter(
-        request.GET,
-        queryset=CurrentTotal.objects.all(),
-    )
-    current_object = f_current_totals.qs.first()
 
     # Determine which realm type we are about to handle
     if municipality or municipality_key:
