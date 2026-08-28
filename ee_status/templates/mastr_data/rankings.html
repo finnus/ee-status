@@ -1,36 +1,31 @@
 {% extends "base.html" %}
+
 {% load i18n static %}
 {% load humanize %}
-
 {% load crispy_forms_tags %}
+
 {% block content %}
-
-
-
   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
     <ol class="breadcrumb">
       {% for realm_type, realm_name in hierarchy.items reversed %}
         {% if not forloop.last %}
           <li class="breadcrumb-item active" aria-current="page">
-            <a
-              href="{% url 'mastr_data:totals' %}?{{ realm_type }}={{ realm_name }}">{{ realm_name }}</a>
+            <a href="{% url 'mastr_data:totals' %}?{{ realm_type }}={{ realm_name }}">{{ realm_name }}</a>
           </li>
         {% else %}
-          <li class="breadcrumb-item active" aria-current="page">
-            {{ realm_name }}
-          </li>
+          <li class="breadcrumb-item active" aria-current="page">{{ realm_name }}</li>
         {% endif %}
       {% endfor %}
     </ol>
   </nav>
-
   <div class="row mt-1">
     <h1 class="title">{{ basics.realm_name }}</h1>
   </div>
   <div class="row mt-3">
     <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link" aria-current="page"
+        <a class="nav-link"
+           aria-current="page"
            href="{% url 'mastr_data:totals' %}?{{ basics.realm_type }}={{ basics.realm_name }}">Overview</a>
       </li>
       <li class="nav-item">
@@ -38,11 +33,8 @@
       </li>
     </ul>
   </div>
-
-
   <form method="get">
     <div class="row mt-3 align-items-end">
-
       <!-- hide fields that should not be used but needed for django-filters to work correctly -->
       <div class="fieldWrapper col d-none">
         {{ filter.form.municipality |as_crispy_field }}
@@ -50,52 +42,36 @@
         {{ filter.form.state |as_crispy_field }}
         {{ filter.form.scope |as_crispy_field }}
       </div>
-      <div class="fieldWrapper col">
-        {{ filter.form.numerator |as_crispy_field }}
-      </div>
-      <div class="fieldWrapper col">
-        {{ filter.form.denominator |as_crispy_field }}
-      </div>
-      <input type="hidden"/>
+      <div class="fieldWrapper col">{{ filter.form.numerator |as_crispy_field }}</div>
+      <div class="fieldWrapper col">{{ filter.form.denominator |as_crispy_field }}</div>
+      <input type="hidden" />
       <div class="mb-3 col-auto">
         <button class="btn btn-outline-primary btn-block" type="submit">{% trans "Filter" %}</button>
       </div>
     </div>
   </form>
-  <div class="row mt-3">
-    <script src="{% static 'vendors/plotly/plotly-2.27.0.min.js' %}"></script>
-    {{ plt_div|safe }}
-  </div>
   <table class="table table-striped sortable">
     <thead>
-    <tr>
-
-      {% for key in table_captions %}
-        <th scope="col">{% trans key %}</th>
-      {% endfor %}
-
-    </tr>
-
-    </thead>
-    <tbody>
-    {% for entry in rankings %}
       <tr>
-        <td>{{ forloop.counter }}</td>
-        {% for key, value in entry.items %}
-          {% if forloop.counter == 1 %}
-            <td {%  if value == basics.realm_name %} class="table-secondary" {% endif %}><a href="{% url 'mastr_data:totals' %}?{{ table_captions.1 }}={{ value }}"> {{ value }} </a></td>
-          {% else %}
-            <td>{{ value|intcomma }}</td>
-          {% endif %}
+        {% for key in table_captions %}
+          <th scope="col">{% trans key %}</th>
         {% endfor %}
       </tr>
-    {% endfor %}
+    </thead>
+    <tbody>
+      {% for entry in rankings %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          {% for key, value in entry.items %}
+            {% if forloop.counter == 1 %}
+              <td {% if value == basics.realm_name %} class="table-secondary" {% endif %}><a href="{% url 'mastr_data:totals' %}?{{ table_captions.1 }}={{ value }}"> {{ value }} </a></td>
+            {% else %}
+              <td>{{ value|intcomma }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
     </tbody>
   </table>
-  <br>
-
-
-
-
-
+  <br />
 {% endblock content %}

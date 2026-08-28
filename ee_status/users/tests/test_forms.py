@@ -1,13 +1,15 @@
-"""
-Module for all Form Tests.
-"""
-import pytest
+"""Module for all Form Tests."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.utils.translation import gettext_lazy as _
 
 from ee_status.users.forms import UserAdminCreationForm
-from ee_status.users.models import User
 
-pytestmark = pytest.mark.django_db
+if TYPE_CHECKING:
+    from ee_status.users.models import User
 
 
 class TestUserAdminCreationForm:
@@ -30,7 +32,7 @@ class TestUserAdminCreationForm:
                 "username": user.username,
                 "password1": user.password,
                 "password2": user.password,
-            }
+            },
         )
 
         assert not form.is_valid()

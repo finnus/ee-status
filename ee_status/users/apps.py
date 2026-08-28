@@ -7,7 +7,6 @@ class UsersConfig(AppConfig):
     verbose_name = _("Users")
 
     def ready(self):
-        try:
-            import ee_status.users.signals  # noqa F401
-        except ImportError:
-            pass
+        """
+        Override this method in subclasses to run code when Django starts.
+        """

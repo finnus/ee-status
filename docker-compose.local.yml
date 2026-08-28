@@ -1,0 +1,48 @@
+volumes:
+  ee_status_local_postgres_data: {}
+  ee_status_local_postgres_data_backups: {}
+  
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: ee_status_local_django
+    container_name: ee_status_local_django
+    depends_on:
+      - postgres
+      - mailpit
+    volumes:
+      - /app/.venv
+      - .:/app:z
+    env_file:
+      - path: ./.envs/.local/.django
+        required: false
+      - path: ./.envs/.local/.postgres
+        required: false
+    ports:
+      - '8000:8000'
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: ee_status_production_postgres
+    container_name: ee_status_local_postgres
+    volumes:
+      - ee_status_local_postgres_data:/var/lib/postgresql/data
+      - ee_status_local_postgres_data_backups:/backups
+    env_file:
+      - path: ./.envs/.local/.postgres
+        required: false
+    ports:
+      # 5433 on the host, because another local stack already holds 5432.
+      - '5433:5432'
+
+  mailpit:
+    image: docker.io/axllent/mailpit:latest
+    container_name: ee_status_local_mailpit
+    ports:
+      - "8025:8025"

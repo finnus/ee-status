@@ -1,18 +1,19 @@
-from collections.abc import Sequence
-from typing import Any
+from __future__ import annotations
 
-from django.contrib.auth import get_user_model
-from factory import Faker, post_generation
+from factory import Faker
+from factory import post_generation
 from factory.django import DjangoModelFactory
 
+from ee_status.users.models import User
 
-class UserFactory(DjangoModelFactory):
+
+class UserFactory(DjangoModelFactory[User]):
     username = Faker("user_name")
     email = Faker("email")
     name = Faker("name")
 
     @post_generation
-    def password(self, create: bool, extracted: Sequence[Any], **kwargs):
+    def password(self: User, create: bool, extracted: str | None, **kwargs):  # noqa: FBT001
         password = (
             extracted
             if extracted
@@ -26,7 +27,10 @@ class UserFactory(DjangoModelFactory):
             ).evaluate(None, None, extra={"locale": None})
         )
         self.set_password(password)
+        if create:
+            self.save()
 
     class Meta:
-        model = get_user_model()
+        model = User
         django_get_or_create = ["username"]
+        skip_postgeneration_save = True

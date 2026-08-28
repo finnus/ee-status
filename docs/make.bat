@@ -40,7 +40,7 @@ sphinx-apidoc -o %SOURCEDIR%/api %APP%
 GOTO :EOF
 
 :help
-%SPHINXBUILD% -b help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+%SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
 :end
 popd

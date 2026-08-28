@@ -1,17 +1,29 @@
+from __future__ import annotations
+
+from http import HTTPStatus
+from typing import TYPE_CHECKING
+
 import pytest
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.http import HttpRequest, HttpResponseRedirect
-from django.test import RequestFactory
+from django.http import HttpRequest
+from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from ee_status.users.forms import UserAdminChangeForm
-from ee_status.users.models import User
 from ee_status.users.tests.factories import UserFactory
-from ee_status.users.views import UserRedirectView, UserUpdateView, user_detail_view
+from ee_status.users.views import UserRedirectView
+from ee_status.users.views import UserUpdateView
+from ee_status.users.views import user_detail_view
+
+if TYPE_CHECKING:
+    from django.test import RequestFactory
+
+    from ee_status.users.models import User
 
 pytestmark = pytest.mark.django_db
 
@@ -34,7 +46,6 @@ class TestUserUpdateView:
         request.user = user
 
         view.request = request
-
         assert view.get_success_url() == f"/users/{user.username}/"
 
     def test_get_object(self, user: User, rf: RequestFactory):
@@ -60,10 +71,11 @@ class TestUserUpdateView:
         # Initialize the form
         form = UserAdminChangeForm()
         form.cleaned_data = {}
+        form.instance = user
         view.form_valid(form)
 
         messages_sent = [m.message for m in messages.get_messages(request)]
-        assert messages_sent == ["Information successfully updated"]
+        assert messages_sent == [_("Information successfully updated")]
 
 
 class TestUserRedirectView:
@@ -73,26 +85,23 @@ class TestUserRedirectView:
         request.user = user
 
         view.request = request
-
         assert view.get_redirect_url() == f"/users/{user.username}/"
 
 
 class TestUserDetailView:
     def test_authenticated(self, user: User, rf: RequestFactory):
         request = rf.get("/fake-url/")
-        request.user = UserFactory()
-
+        request.user = UserFactory.create()
         response = user_detail_view(request, username=user.username)
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
     def test_not_authenticated(self, user: User, rf: RequestFactory):
         request = rf.get("/fake-url/")
         request.user = AnonymousUser()
-
         response = user_detail_view(request, username=user.username)
         login_url = reverse(settings.LOGIN_URL)
 
         assert isinstance(response, HttpResponseRedirect)
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url == f"{login_url}?next=/fake-url/"

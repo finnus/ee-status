@@ -1,9 +1,12 @@
-import pytest
-from django.urls import resolve, reverse
+from __future__ import annotations
 
-from ee_status.users.models import User
+from typing import TYPE_CHECKING
 
-pytestmark = pytest.mark.django_db
+from django.urls import resolve
+from django.urls import reverse
+
+if TYPE_CHECKING:
+    from ee_status.users.models import User
 
 
 def test_detail(user: User):
