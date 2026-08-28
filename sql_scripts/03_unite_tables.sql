@@ -5,6 +5,10 @@ These commands transform the data to only contain the needed values and prepare 
 3. Delete rows that have not been approved (grid_operator_status)
 4. Prepare data for easier time-series-analysis by duplicating rows that are no longer active and set the value to negative and the new timestamp
 5. Set min date to 2000-01-01 as this project is only interested in the development from 2000 on.
+
+Note on coordinates: ST_MakePoint takes (x, y), i.e. (longitude, latitude).
+open-MaStR supplies "breitengrad" (latitude) and "laengengrad" (longitude), so
+the longitude has to be passed first.
 */
 CREATE EXTENSION IF NOT EXISTS postgis;
 DROP TABLE IF EXISTS energy_units;
@@ -44,7 +48,7 @@ SELECT einheitmastrnummer,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
        nettonennleistung,
-       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
+       ST_SetSRID(ST_MakePoint(laengengrad, breitengrad), 4326)
 FROM hydro_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
@@ -61,7 +65,7 @@ SELECT einheitmastrnummer,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
        nettonennleistung,
-       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
+       ST_SetSRID(ST_MakePoint(laengengrad, breitengrad), 4326)
 FROM wind_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
@@ -78,7 +82,7 @@ SELECT einheitmastrnummer,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
        nettonennleistung,
-       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
+       ST_SetSRID(ST_MakePoint(laengengrad, breitengrad), 4326)
 FROM biomass_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
@@ -95,7 +99,7 @@ SELECT einheitmastrnummer,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
        nettonennleistung,
-       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
+       ST_SetSRID(ST_MakePoint(laengengrad, breitengrad), 4326)
 FROM solar_extended;
 
 INSERT INTO energy_units (unit_nr, grid_operator_status, municipality_key, municipality, county,
@@ -112,7 +116,7 @@ SELECT einheitmastrnummer,
        datumendgueltigestilllegung,
        inbetriebnahmedatum,
        nettonennleistung,
-       ST_SetSRID(ST_MakePoint(breitengrad, laengengrad), 4326)
+       ST_SetSRID(ST_MakePoint(laengengrad, breitengrad), 4326)
 FROM storage_extended;
 
 -- Drop units that are not approved or disapproved
