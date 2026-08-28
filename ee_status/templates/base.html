@@ -39,7 +39,8 @@
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% block body %}
       <div class="mb-1">
-        <nav class="navbar navbar-light bg-light">
+        {# navbar-light was removed in Bootstrap 5.3; the light appearance is now the default #}
+        <nav class="navbar bg-light">
           <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'mastr_data:search' %}">
               <img src="{% static 'images/logo/ee_status_logo_no_text_square.png' %}"
