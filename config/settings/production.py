@@ -18,6 +18,9 @@ from .base import env
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["ee-status.de"])
+# The container healthcheck reaches gunicorn over the loopback interface, so
+# the Host header it sends has to pass Django's validation.
+ALLOWED_HOSTS += ["127.0.0.1"]
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -44,6 +47,10 @@ CACHES = {
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-ssl-redirect
 SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=True)
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-redirect-exempt
+# The healthcheck speaks plain HTTP to the container, so it must not be
+# bounced to HTTPS.
+SECURE_REDIRECT_EXEMPT = [r"^health/$"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-secure
 SESSION_COOKIE_SECURE = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-name

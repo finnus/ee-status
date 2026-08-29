@@ -30,6 +30,21 @@ services:
     expose:
       - '5000'
     command: /start
+    # Coolify only routes traffic to a container it considers healthy, and it
+    # falls back to a curl-based probe when the compose file declares none --
+    # the slim image has no curl, so declare our own. Python is on PATH, and
+    # /health/ is exempted from the HTTPS redirect in config.settings.production.
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request as r; r.urlopen("http://127.0.0.1:5000/health/", timeout=5)
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      # collectstatic and the wait-for-postgres in the entrypoint run first.
+      start_period: 90s
 
   postgres:
     build:

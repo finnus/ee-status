@@ -6,7 +6,11 @@ from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 
+from config.views import health
+
 urlpatterns = [
+    # Container healthcheck; see docker-compose.production.yml.
+    path("health/", health, name="health"),
     path(
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),
