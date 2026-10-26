@@ -2,7 +2,7 @@
 # columns (current_totals.geom, energy_units.geolocation), so the server needs the
 # postgis extension to hold them. The Django app itself does not use GeoDjango,
 # so no GDAL/GEOS is needed in the app image.
-FROM docker.io/postgis/postgis:17-3.5
+FROM docker.io/postgis/postgis:18-3.6
 
 COPY ./compose/production/postgres/maintenance /usr/local/bin/maintenance
 RUN chmod +x /usr/local/bin/maintenance/*
